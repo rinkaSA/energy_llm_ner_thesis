@@ -15,7 +15,7 @@ test-flake8:
     - docker
   image: registry.gitlab.com/pipeline-components/flake8:latest
   script:
-    - flake8 . --count --select=E9,F63,F7,F82 --max-complexity=10 --max-line-length=127 --show-source --statistics
+    - flake8 . --count --select=E9,F63,F7,F82,E1,C901,W503,E701 --max-complexity=8 --max-line-length=127 --show-source --statistics
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push'
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
