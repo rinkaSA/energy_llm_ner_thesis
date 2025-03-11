@@ -1,0 +1,61 @@
+variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+
+
+stages:
+  - linting
+  - test
+  - run
+
+
+test-flake8:
+  stage: linting
+  tags:
+    - docker
+  image: registry.gitlab.com/pipeline-components/flake8:latest
+  script:
+    - flake8 . --count --select=E9,F63,F7,F82 --max-complexity=10 --max-line-length=127 --show-source --statistics
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+
+test-black:
+  stage: linting
+  tags:
+    - docker
+  image: registry.gitlab.com/pipeline-components/black:latest
+  script:
+    - black . --check --quiet --verbose --diff --color --fast --exclude=other/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+test-pylint:
+  stage: linting
+  tags:
+    - docker
+  image: registry.gitlab.com/pipeline-components/pylint:latest
+  script:
+    - pylint --disable=import-error,line-too-long,trailing-whitespace,missing-final-newline,too-many-arguments --rcfile=src/.pylintrc --load-plugins=pylint_gitlab $(find . -name "*.py" ! -name ".pylintrc")
+    ##- pylint --disable=import-error --rcfile= src/.pylintrc --load-plugins=pylint_gitlab **/*.py
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+#unittests:
+#  stage: test
+#  tags:
+#    - docker
+#  image: python:3.10.4-slim
+#  before_script:
+#    - apt-get update && apt-get install -y git
+#    - pip install -r requirements/requirements_ci.txt
+#    - python -m nltk.downloader punkt
+#  script:
+#    - pytest -vv --ignore tests/pipelines/ner/uni_ner_test.py tests/
+#  rules:
+#    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
