@@ -29,7 +29,7 @@ test-black:
   script:
     - black . --check --quiet --verbose --diff --color --fast --exclude=other/
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'push'
+    #- if: $CI_PIPELINE_SOURCE == 'push'
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 test-pylint:
@@ -38,7 +38,7 @@ test-pylint:
     - docker
   image: registry.gitlab.com/pipeline-components/pylint:latest
   script:
-    - pylint --disable=import-error,line-too-long,trailing-whitespace,missing-final-newline,too-many-arguments --rcfile=src/.pylintrc --load-plugins=pylint_gitlab $(find . -name "*.py" ! -name ".pylintrc")
+    - pylint --disable=import-error,line-too-long,trailing-whitespace,missing-final-newline,too-many-arguments, --rcfile=src/.pylintrc --load-plugins=pylint_gitlab $(find . -name "*.py" ! -name ".pylintrc")
     ##- pylint --disable=import-error --rcfile= src/.pylintrc --load-plugins=pylint_gitlab **/*.py
   allow_failure: false
   rules:
