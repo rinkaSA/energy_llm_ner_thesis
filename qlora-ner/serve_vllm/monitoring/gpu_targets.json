@@ -1,0 +1,6 @@
+[
+  {
+    "labels": {"job":"gpu_hw"},
+    "targets": ["c125.capella.hpc.tu-dresden.de:9400"]
+  }
+]

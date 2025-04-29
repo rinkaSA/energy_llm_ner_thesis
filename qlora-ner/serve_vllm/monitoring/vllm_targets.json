@@ -1,0 +1,6 @@
+[
+  {
+    "labels": {"job":"vllm"},
+    "targets": ["c125.capella.hpc.tu-dresden.de:8000"]
+  }
+]
