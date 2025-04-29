@@ -1,0 +1,15 @@
+[MASTER]
+
+ignore=__pycache__
+
+
+[MESSAGES CONTROL]
+
+#confidence=
+
+disable=import-error,no-name-in-module
+
+
+[FORMAT]
+
+max-line-length=100
