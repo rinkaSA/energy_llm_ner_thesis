@@ -1,6 +1,6 @@
 [
   {
     "labels": {"job":"gpu_hw"},
-    "targets": ["c125.capella.hpc.tu-dresden.de:9400"]
+    "targets": ["i8016.alpha.hpc.tu-dresden.de:9400"]
   }
 ]

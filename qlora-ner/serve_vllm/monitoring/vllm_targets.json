@@ -1,6 +1,6 @@
 [
   {
     "labels": {"job":"vllm"},
-    "targets": ["c125.capella.hpc.tu-dresden.de:8000"]
+    "targets": ["i8016.alpha.hpc.tu-dresden.de:8000"]
   }
 ]

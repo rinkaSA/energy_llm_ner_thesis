@@ -1,1 +1,1 @@
-c77.capella.hpc.tu-dresden.de
+i8008.alpha.hpc.tu-dresden.de

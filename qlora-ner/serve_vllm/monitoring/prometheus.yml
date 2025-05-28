@@ -1,19 +1,10 @@
 global:
-  scrape_interval: 15s
-
+  scrape_interval: 5s
 scrape_configs:
   - job_name: 'vllm'
-    file_sd_configs:
-      - files:
-          - '/monitoring/vllm_targets.json'
-        refresh_interval: 30s
-
+    static_configs: [{ targets: ['localhost:8000'] }]
+  - job_name: 'gpu_hw'
+    static_configs: [{ targets: ['localhost:9400'] }]
   - job_name: 'jaeger'
-    static_configs:
-      - targets: ['localhost:14269']
-    metrics_path: /metrics
-
-    file_sd_configs:
-      - files:
-          - '/monitoring/gpu_targets.json'
-        refresh_interval: 30s
+    metrics_path: '/metrics'
+    static_configs: [{ targets: ['localhost:14269'] }]
