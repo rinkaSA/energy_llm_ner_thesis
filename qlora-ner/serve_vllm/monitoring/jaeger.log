@@ -1,0 +1,47 @@
+INFO:    Using cached SIF image
+2025/06/04 20:38:28 maxprocs: Leaving GOMAXPROCS=3: CPU quota undefined
+2025/06/04 20:38:28 application version: git-commit=55e991a29725468164b11be5fc4e260dc09598d6, git-version=v1.57.0, build-date=2024-05-01T23:19:12Z
+{"level":"info","ts":1749062308.7568014,"caller":"flags/service.go:110","msg":"Mounting metrics handler on admin server","route":"/metrics"}
+{"level":"info","ts":1749062308.784471,"caller":"flags/service.go:116","msg":"Mounting expvar handler on admin server","route":"/debug/vars"}
+{"level":"info","ts":1749062308.785432,"caller":"flags/admin.go:130","msg":"Mounting health check on admin server","route":"/"}
+{"level":"info","ts":1749062308.7856727,"caller":"flags/admin.go:144","msg":"Starting admin HTTP server","http-addr":":14269"}
+{"level":"info","ts":1749062308.7856855,"caller":"flags/admin.go:122","msg":"Admin server started","http.host-port":"[::]:14269","health-status":"unavailable"}
+{"level":"info","ts":1749062308.7857764,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #1]Channel created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7858028,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #1]original dial target is: \"localhost:4317\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7865422,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #1]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"4317\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.786548,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #1]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7865553,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #1]parsed dial target is: dns:///localhost:4317","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.786562,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #1]Channel authority set to \"localhost:4317\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7869217,"caller":"memory/factory.go:85","msg":"Memory storage initialized","configuration":{"MaxTraces":0}}
+{"level":"info","ts":1749062308.787077,"caller":"static/strategy_store.go:160","msg":"Loading sampling strategies","filename":"/etc/jaeger/sampling_strategies.json"}
+{"level":"warn","ts":1749062308.7872202,"caller":"static/strategy_store.go:82","msg":"Default operations level strategies will not be included for Ratelimiting service strategies.This behavior will be changed in future releases. Cf. https://github.com/jaegertracing/jaeger/issues/5270"}
+{"level":"info","ts":1749062308.7929766,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #2]Server created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.793089,"caller":"server/grpc.go:104","msg":"Starting jaeger-collector gRPC server","grpc.host-port":"[::]:14250"}
+{"level":"info","ts":1749062308.7930982,"caller":"server/http.go:56","msg":"Starting jaeger-collector HTTP server","http host-port":":14268"}
+{"level":"info","ts":1749062308.793153,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #2 ListenSocket #3]ListenSocket created","system":"grpc","grpc_log":true}
+{"level":"warn","ts":1749062308.795388,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+{"level":"info","ts":1749062308.7954552,"caller":"handler/otlp_receiver.go:77","msg":"OTLP receiver status change","status":"StatusStarting"}
+{"level":"warn","ts":1749062308.7954636,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+{"level":"info","ts":1749062308.7955809,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #4]Server created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.795589,"caller":"otlpreceiver@v0.98.0/otlp.go:102","msg":"Starting GRPC server","endpoint":"0.0.0.0:4317"}
+{"level":"warn","ts":1749062308.795628,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+{"level":"info","ts":1749062308.7957075,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #4 ListenSocket #5]ListenSocket created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7962847,"caller":"otlpreceiver@v0.98.0/otlp.go:152","msg":"Starting HTTP server","endpoint":"0.0.0.0:4318"}
+{"level":"info","ts":1749062308.7963278,"caller":"grpc/builder.go:74","msg":"Agent requested insecure grpc connection to collector(s)"}
+{"level":"info","ts":1749062308.7963545,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #6]Channel created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7963614,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #6]original dial target is: \"localhost:14250\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.796373,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #6]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"14250\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7963786,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #6]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.796385,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #6]parsed dial target is: dns:///localhost:14250","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7963908,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #6]Channel authority set to \"localhost:14250\"","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7964678,"caller":"grpc/builder.go:115","msg":"Checking connection to collector"}
+{"level":"info","ts":1749062308.7964747,"caller":"grpc/builder.go:131","msg":"Agent collector connection state change","dialTarget":"localhost:14250","status":"IDLE"}
+{"level":"info","ts":1749062308.7969673,"caller":"all-in-one/main.go:265","msg":"Starting agent"}
+{"level":"info","ts":1749062308.7970915,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #7]Server created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.7973115,"caller":"app/agent.go:69","msg":"Starting jaeger-agent HTTP server","http-port":5778}
+{"level":"info","ts":1749062308.7973619,"caller":"app/static_handler.go:109","msg":"Using UI configuration","path":""}
+{"level":"info","ts":1749062308.7976863,"caller":"app/server.go:236","msg":"Query server started","http_addr":"[::]:16686","grpc_addr":"[::]:16685"}
+{"level":"info","ts":1749062308.7977004,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"ready"}
+{"level":"info","ts":1749062308.7977078,"caller":"app/server.go:319","msg":"Starting GRPC server","port":16685,"addr":":16685"}
+{"level":"info","ts":1749062308.7977824,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #7 ListenSocket #8]ListenSocket created","system":"grpc","grpc_log":true}
+{"level":"info","ts":1749062308.797802,"caller":"app/server.go:301","msg":"Starting HTTP server","port":16686,"addr":":16686"}

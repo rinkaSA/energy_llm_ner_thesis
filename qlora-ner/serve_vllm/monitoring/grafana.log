@@ -1,0 +1,116 @@
+INFO:    Using cached SIF image
+logger=settings t=2025-06-04T20:38:31.563739163+02:00 level=info msg="Starting Grafana" version=12.0.1 commit=80658a73c5355e3ed318e5e021c0866285153b57 branch=HEAD compiled=2025-06-04T20:38:31+02:00
+logger=settings t=2025-06-04T20:38:31.564389349+02:00 level=info msg="Config loaded from" file=/usr/share/grafana/conf/defaults.ini
+logger=settings t=2025-06-04T20:38:31.564398899+02:00 level=info msg="Config loaded from" file=/etc/grafana/grafana.ini
+logger=settings t=2025-06-04T20:38:31.564403009+02:00 level=info msg="Config overridden from command line" arg="default.paths.data=/var/lib/grafana"
+logger=settings t=2025-06-04T20:38:31.564406619+02:00 level=info msg="Config overridden from command line" arg="default.paths.logs=/var/log/grafana"
+logger=settings t=2025-06-04T20:38:31.564409759+02:00 level=info msg="Config overridden from command line" arg="default.paths.plugins=/var/lib/grafana/plugins"
+logger=settings t=2025-06-04T20:38:31.564412759+02:00 level=info msg="Config overridden from command line" arg="default.paths.provisioning=/etc/grafana/provisioning"
+logger=settings t=2025-06-04T20:38:31.564415869+02:00 level=info msg="Config overridden from command line" arg="default.log.mode=console"
+logger=settings t=2025-06-04T20:38:31.564419269+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_DATA=/var/lib/grafana"
+logger=settings t=2025-06-04T20:38:31.564422459+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_LOGS=/var/log/grafana"
+logger=settings t=2025-06-04T20:38:31.564425509+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
+logger=settings t=2025-06-04T20:38:31.564429619+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+logger=settings t=2025-06-04T20:38:31.564432639+02:00 level=info msg="Config overridden from Environment variable" var="GF_SECURITY_ADMIN_PASSWORD=*********"
+logger=settings t=2025-06-04T20:38:31.564435669+02:00 level=info msg=Target target=[all]
+logger=settings t=2025-06-04T20:38:31.564442379+02:00 level=info msg="Path Home" path=/usr/share/grafana
+logger=settings t=2025-06-04T20:38:31.564445619+02:00 level=info msg="Path Data" path=/var/lib/grafana
+logger=settings t=2025-06-04T20:38:31.564448599+02:00 level=info msg="Path Logs" path=/var/log/grafana
+logger=settings t=2025-06-04T20:38:31.564451609+02:00 level=info msg="Path Plugins" path=/var/lib/grafana/plugins
+logger=settings t=2025-06-04T20:38:31.564454679+02:00 level=info msg="Path Provisioning" path=/etc/grafana/provisioning
+logger=settings t=2025-06-04T20:38:31.564457899+02:00 level=info msg="App mode production"
+logger=featuremgmt t=2025-06-04T20:38:31.56580404+02:00 level=info msg=FeatureToggles unifiedRequestLog=true influxdbBackendMigration=true dashboardSceneSolo=true logsContextDatasourceUi=true alertingNotificationsStepMode=true useSessionStorageForRedirection=true tlsMemcached=true alertingSimplifiedRouting=true awsAsyncQueryCaching=true failWrongDSUID=true cloudWatchCrossAccountQuerying=true cloudWatchRoundUpEndTime=true logsPanelControls=true alertingInsights=true panelMonitoring=true unifiedStorageSearchPermissionFiltering=true lokiStructuredMetadata=true angularDeprecationUI=true externalCorePlugins=true alertingUIOptimizeReducer=true formatString=true alertRuleRestore=true groupToNestedTableTransformation=true newFiltersUI=true azureMonitorPrometheusExemplars=true onPremToCloudMigrations=true azureMonitorEnableUserAuth=true logRowsPopoverMenu=true annotationPermissionUpdate=true lokiLabelNamesQueryApi=true cloudWatchNewLabelParsing=true publicDashboardsScene=true pluginsDetailsRightPanel=true kubernetesPlaylists=true kubernetesClientDashboardsFolders=true alertingRulePermanentlyDelete=true logsExploreTableVisualisation=true preinstallAutoUpdate=true newPDFRendering=true recoveryThreshold=true logsInfiniteScrolling=true alertingQueryAndExpressionsStepMode=true correlations=true dashgpt=true addFieldFromCalculationStatFunctions=true dashboardScene=true alertingRuleRecoverDeleted=true lokiQuerySplitting=true transformationsRedesign=true newDashboardSharingComponent=true dashboardSceneForViewers=true promQLScope=true prometheusUsesCombobox=true pinNavItems=true ssoSettingsApi=true lokiQueryHints=true reportingUseRawTimeRange=true nestedFolders=true alertingApiServer=true dataplaneFrontendFallback=true ssoSettingsSAML=true prometheusAzureOverrideAudience=true grafanaconThemes=true recordedQueriesMulti=true alertingRuleVersionHistoryRestore=true
+logger=sqlstore t=2025-06-04T20:38:31.565907961+02:00 level=info msg="Connecting to DB" dbtype=sqlite3
+logger=migrator t=2025-06-04T20:38:31.672055942+02:00 level=info msg="Locking database"
+logger=migrator t=2025-06-04T20:38:31.672084362+02:00 level=info msg="Starting DB migrations"
+logger=migrator t=2025-06-04T20:38:31.687455038+02:00 level=info msg="migrations completed" performed=0 skipped=654 duration=469.943µs
+logger=migrator t=2025-06-04T20:38:31.688115214+02:00 level=info msg="Unlocking database"
+logger=secrets t=2025-06-04T20:38:31.688679948+02:00 level=info msg="Envelope encryption state" enabled=true currentprovider=secretKey.v1
+logger=plugin.angulardetectorsprovider.dynamic t=2025-06-04T20:38:31.988358317+02:00 level=info msg="Restored cache from database" duration=768.296µs
+logger=resource-migrator t=2025-06-04T20:38:32.001882298+02:00 level=info msg="Locking database"
+logger=resource-migrator t=2025-06-04T20:38:32.001896628+02:00 level=info msg="Starting DB migrations"
+logger=resource-migrator t=2025-06-04T20:38:32.0069662+02:00 level=info msg="migrations completed" performed=0 skipped=26 duration=23.53µs
+logger=resource-migrator t=2025-06-04T20:38:32.007566905+02:00 level=info msg="Unlocking database"
+t=2025-06-04T20:38:32.007989478+02:00 level=info caller=logger.go:214 time=2025-06-04T20:38:32.007982328+02:00 msg="Using channel notifier" logger=sql-resource-server
+logger=plugin.store t=2025-06-04T20:38:32.012039971+02:00 level=info msg="Loading plugins..."
+logger=plugins.registration t=2025-06-04T20:38:32.180785036+02:00 level=error msg="Could not register plugin" pluginId=table error="plugin table is already registered"
+logger=plugins.initialization t=2025-06-04T20:38:32.180819096+02:00 level=error msg="Could not initialize plugin" pluginId=table error="plugin table is already registered"
+logger=plugins.registration t=2025-06-04T20:38:33.378788715+02:00 level=info msg="Plugin registered" pluginId=grafana-exploretraces-app
+logger=plugins.registration t=2025-06-04T20:38:34.967826492+02:00 level=info msg="Plugin registered" pluginId=grafana-lokiexplore-app
+logger=plugins.registration t=2025-06-04T20:38:35.938560556+02:00 level=info msg="Plugin registered" pluginId=grafana-metricsdrilldown-app
+logger=plugins.registration t=2025-06-04T20:38:36.809843034+02:00 level=info msg="Plugin registered" pluginId=grafana-pyroscope-app
+logger=plugin.store t=2025-06-04T20:38:36.809869524+02:00 level=info msg="Plugins loaded" count=57 duration=4.797829863s
+logger=query_data t=2025-06-04T20:38:36.87758314+02:00 level=info msg="Query Service initialization"
+logger=live.push_http t=2025-06-04T20:38:36.882831023+02:00 level=info msg="Live Push Gateway initialization"
+logger=ngalert.notifier.alertmanager org=1 t=2025-06-04T20:38:36.887207439+02:00 level=info msg="Applying new configuration to Alertmanager" configHash=d2c56faca6af2a5772ff4253222f7386
+logger=ngalert t=2025-06-04T20:38:36.926707433+02:00 level=info msg="Using simple database alert instance store"
+logger=ngalert.state.manager.persist t=2025-06-04T20:38:36.926730003+02:00 level=info msg="Using sync state persister"
+logger=infra.usagestats.collector t=2025-06-04T20:38:36.938942383+02:00 level=info msg="registering usage stat providers" usageStatsProvidersLen=2
+logger=ngalert.state.manager t=2025-06-04T20:38:36.948656433+02:00 level=info msg="Warming state cache for startup"
+logger=http.server t=2025-06-04T20:38:36.949199917+02:00 level=info msg="HTTP Server Listen" address=[::]:3000 protocol=http subUrl= socket=
+logger=grafanaStorageLogger t=2025-06-04T20:38:36.949262378+02:00 level=info msg="Storage starting"
+logger=ngalert.state.manager t=2025-06-04T20:38:36.953945146+02:00 level=info msg="State cache has been initialized" states=0 duration=5.287783ms
+logger=ngalert.multiorg.alertmanager t=2025-06-04T20:38:36.971353889+02:00 level=info msg="Starting MultiOrg Alertmanager"
+logger=ngalert.scheduler t=2025-06-04T20:38:36.971380289+02:00 level=info msg="Starting scheduler" tickInterval=10s maxAttempts=3
+logger=ticker t=2025-06-04T20:38:36.971712992+02:00 level=info msg=starting first_tick=2025-06-04T20:38:40+02:00
+logger=plugin.backgroundinstaller t=2025-06-04T20:38:36.99578109+02:00 level=error msg="Failed to get plugin info" pluginId=grafana-pyroscope-app error="Get \"https://grafana.com/api/plugins/grafana-pyroscope-app/versions\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+logger=grafana.update.checker t=2025-06-04T20:38:37.012223855+02:00 level=error msg="Update check failed" error="failed to get stable version from grafana.com: Get \"https://grafana.com/api/grafana/versions/stable\": tls: failed to verify certificate: x509: certificate signed by unknown authority" duration=42.520169ms
+logger=plugin.backgroundinstaller t=2025-06-04T20:38:37.032241379+02:00 level=error msg="Failed to get plugin info" pluginId=grafana-exploretraces-app error="Get \"https://grafana.com/api/plugins/grafana-exploretraces-app/versions\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+logger=plugin.backgroundinstaller t=2025-06-04T20:38:37.071551201+02:00 level=error msg="Failed to get plugin info" pluginId=grafana-metricsdrilldown-app error="Get \"https://grafana.com/api/plugins/grafana-metricsdrilldown-app/versions\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+logger=plugin.backgroundinstaller t=2025-06-04T20:38:37.104838954+02:00 level=error msg="Failed to get plugin info" pluginId=grafana-lokiexplore-app error="Get \"https://grafana.com/api/plugins/grafana-lokiexplore-app/versions\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+logger=provisioning.plugins t=2025-06-04T20:38:37.163389875+02:00 level=error msg="Failed to read plugin provisioning files from directory" path=/etc/grafana/provisioning/plugins error="open /etc/grafana/provisioning/plugins: no such file or directory"
+logger=provisioning.alerting t=2025-06-04T20:38:37.163570286+02:00 level=error msg="can't read alerting provisioning files from directory" path=/etc/grafana/provisioning/alerting error="open /etc/grafana/provisioning/alerting: no such file or directory"
+logger=provisioning.alerting t=2025-06-04T20:38:37.163576636+02:00 level=info msg="starting to provision alerting"
+logger=provisioning.alerting t=2025-06-04T20:38:37.163584006+02:00 level=info msg="finished to provision alerting"
+logger=provisioning.dashboard t=2025-06-04T20:38:37.16648084+02:00 level=info msg="starting to provision dashboards"
+logger=plugin.angulardetectorsprovider.dynamic t=2025-06-04T20:38:37.249230889+02:00 level=error msg="Error while updating detectors" error="fetch: http do: Get \"https://grafana.com/api/plugins/angular_patterns\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+logger=plugin.angulardetectorsprovider.dynamic t=2025-06-04T20:38:37.249556122+02:00 level=info msg="Patterns update finished" duration=95.124541ms
+logger=grafana-apiserver t=2025-06-04T20:38:37.372140967+02:00 level=info msg="Adding GroupVersion iam.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.373560229+02:00 level=info msg="Adding GroupVersion notifications.alerting.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.374047123+02:00 level=info msg="Adding GroupVersion userstorage.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.374425186+02:00 level=info msg="Adding GroupVersion playlist.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.377196909+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v1beta1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.377618782+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.377970155+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v2alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.378352918+02:00 level=info msg="Adding GroupVersion featuretoggle.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-06-04T20:38:37.379131655+02:00 level=info msg="Adding GroupVersion folder.grafana.app v1beta1 to ResourceManager"
+logger=app-registry t=2025-06-04T20:38:37.405937845+02:00 level=info msg="app registry initialized"
+logger=provisioning.dashboard t=2025-06-04T20:38:37.465946177+02:00 level=info msg="finished to provision dashboards"
+logger=infra.usagestats t=2025-06-04T20:39:52.97605793+02:00 level=info msg="Usage stats are ready to report"
+logger=authn.service t=2025-06-04T20:40:40.11809797+02:00 level=warn msg="Failed to authenticate request" client=auth.client.session error="user token not found"
+logger=context userId=0 orgId=0 uname= t=2025-06-04T20:40:40.118213421+02:00 level=info msg="Request Completed" method=GET path=/d/b281712d-8bff-41ef-9f3f-71ad43c05e9b/vllm status=302 remote_addr=[::1] time_ms=1 duration=1.12517ms size=221 referer= handler=/d/:uid/:slug status_source=server
+logger=authn.service t=2025-06-04T20:40:40.127235145+02:00 level=warn msg="Failed to authenticate request" client=auth.client.session error="user token not found"
+logger=authn.service t=2025-06-04T20:40:48.829425471+02:00 level=warn msg="Failed to authenticate request" client=auth.client.session error="user token not found"
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T20:40:49.268289551+02:00 level=info msg="Request Completed" method=GET path=/api/live/ws status=-1 remote_addr=[::1] time_ms=5 duration=5.095182ms size=0 referer= handler=/api/live/ws status_source=server
+logger=live t=2025-06-04T20:40:49.627921772+02:00 level=info msg="Initialized channel handler" channel=grafana/dashboard/uid/b281712d-8bff-41ef-9f3f-71ad43c05e9b address=grafana/dashboard/uid/b281712d-8bff-41ef-9f3f-71ad43c05e9b
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T20:42:54.072690602+02:00 level=info msg="Request Completed" method=GET path=/apis/provisioning.grafana.app/v0alpha1/namespaces/default/settings status=404 remote_addr=[::1] time_ms=3 duration=3.880442ms size=19 referer=http://localhost:3000/dashboards handler=/apis/* status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T20:42:54.285958752+02:00 level=info msg="Request Completed" method=GET path=/apis/provisioning.grafana.app/v0alpha1/namespaces/default/settings status=404 remote_addr=[::1] time_ms=3 duration=3.006365ms size=19 referer=http://localhost:3000/dashboards handler=/apis/* status_source=server
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T20:42:57.165166624+02:00 level=info msg="Request Completed" method=GET path=/apis/provisioning.grafana.app/v0alpha1/namespaces/default/settings status=404 remote_addr=[::1] time_ms=2 duration=2.708792ms size=19 referer=http://localhost:3000/dashboards handler=/apis/* status_source=server
+logger=live t=2025-06-04T20:42:58.243540041+02:00 level=info msg="Initialized channel handler" channel=grafana/dashboard/uid/eejzvoihb5g5cd address=grafana/dashboard/uid/eejzvoihb5g5cd
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T20:43:05.848302034+02:00 level=info msg="Request Completed" method=GET path=/apis/provisioning.grafana.app/v0alpha1/namespaces/default/settings status=404 remote_addr=[::1] time_ms=3 duration=3.63432ms size=19 referer=http://localhost:3000/dashboards handler=/apis/* status_source=server
+logger=cleanup t=2025-06-04T20:48:36.970178162+02:00 level=info msg="Completed cleanup jobs" duration=11.774537ms
+logger=cleanup t=2025-06-04T20:58:37.021401636+02:00 level=info msg="Completed cleanup jobs" duration=63.582391ms
+logger=context userId=1 orgId=1 uname=admin t=2025-06-04T21:07:47.993104985+02:00 level=info msg="Request Completed" method=GET path=/api/live/ws status=-1 remote_addr=[::1] time_ms=24 duration=24.168768ms size=0 referer= handler=/api/live/ws status_source=server
+logger=cleanup t=2025-06-04T21:08:36.96920612+02:00 level=info msg="Completed cleanup jobs" duration=11.548925ms
+logger=infra.usagestats t=2025-06-04T21:09:53.012967801+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T21:18:37.026764684+02:00 level=info msg="Completed cleanup jobs" duration=68.731413ms
+logger=cleanup t=2025-06-04T21:28:36.970266573+02:00 level=info msg="Completed cleanup jobs" duration=11.837117ms
+logger=cleanup t=2025-06-04T21:38:36.968966401+02:00 level=info msg="Completed cleanup jobs" duration=10.658658ms
+logger=infra.usagestats t=2025-06-04T21:39:53.012934701+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T21:48:36.969887946+02:00 level=info msg="Completed cleanup jobs" duration=11.789698ms
+logger=cleanup t=2025-06-04T21:58:37.00270291+02:00 level=info msg="Completed cleanup jobs" duration=44.020064ms
+logger=cleanup t=2025-06-04T22:08:36.970014425+02:00 level=info msg="Completed cleanup jobs" duration=12.19317ms
+logger=infra.usagestats t=2025-06-04T22:09:53.013259835+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T22:18:37.073898585+02:00 level=info msg="Completed cleanup jobs" duration=116.010049ms
+logger=cleanup t=2025-06-04T22:28:36.969117369+02:00 level=info msg="Completed cleanup jobs" duration=11.015931ms
+logger=cleanup t=2025-06-04T22:38:37.299157777+02:00 level=info msg="Completed cleanup jobs" duration=341.271184ms
+logger=infra.usagestats t=2025-06-04T22:39:53.012829719+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T22:48:37.003508433+02:00 level=info msg="Completed cleanup jobs" duration=45.618297ms
+logger=cleanup t=2025-06-04T22:58:36.969459136+02:00 level=info msg="Completed cleanup jobs" duration=11.791907ms
+logger=cleanup t=2025-06-04T23:08:36.969060568+02:00 level=info msg="Completed cleanup jobs" duration=11.407224ms
+logger=infra.usagestats t=2025-06-04T23:09:53.012897502+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T23:18:36.969898775+02:00 level=info msg="Completed cleanup jobs" duration=11.624007ms
+logger=cleanup t=2025-06-04T23:28:37.02301026+02:00 level=info msg="Completed cleanup jobs" duration=65.084543ms
+logger=cleanup t=2025-06-04T23:38:36.969114097+02:00 level=info msg="Completed cleanup jobs" duration=11.295065ms
+logger=infra.usagestats t=2025-06-04T23:39:53.012775398+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-06-04T23:48:36.969513882+02:00 level=info msg="Completed cleanup jobs" duration=11.527947ms
