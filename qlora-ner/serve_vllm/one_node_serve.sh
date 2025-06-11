@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=vllm_stack
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=6     
+#SBATCH --cpus-per-task=8     # Increased to accommodate both workloads
 #SBATCH --gres=gpu:1        
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
-#SBATCH --output=slurm_%x_%j.out
-#SBATCH --error=slurm_%x_%j.err
+#SBATCH --output=slurm_onenode/slurm_%x_%j.out
+#SBATCH --error=slurm_onenode/slurm_%x_%j.err
 
 HOST_BASE="/data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/qlora-ner/serve_vllm"
 HOST_MON="${HOST_BASE}/monitoring"
@@ -14,40 +14,60 @@ HOST_MODEL="${HOST_BASE}/models/base/Llama-2-7b-chat-hf"
 SIF_IMAGE="${HOST_BASE}/containers/vllm_serve_otel.sif"
 
 mkdir -p "${HOST_MON}"/{prometheus,jaeger,grafana/{data,logs,provisioning,dashboards}}
-
-srun --overlap -n1 --cpus-per-task=2 --cpu-bind=cores bash <<EOF &
+srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores bash <<EOF &
   set -x
 
-  singularity exec  --nv --network host \
+  # GPU metrics exporter
+  singularity exec --nv --network host \
     docker://nvidia/dcgm-exporter:3.1.7-3.1.4-ubuntu20.04 \
     /usr/bin/dcgm-exporter --address=:9400 \
     > "${HOST_MON}/dcgm.log" 2>&1 &
 
+  # Prometheus
   singularity exec --network host \
     -B "${HOST_MON}":/monitoring:rw \
     docker://prom/prometheus:v3.4.0 \
     prometheus --config.file=/monitoring/prometheus.yml \
     > "${HOST_MON}/prometheus.log" 2>&1 &
 
-  singularity run  --network host \
+  # Jaeger
+  singularity run --network host \
     -B "${HOST_MON}":/monitoring:rw \
     docker://jaegertracing/all-in-one:1.57 \
       --collector.zipkin.host-port=9411 \
     > "${HOST_MON}/jaeger.log" 2>&1 &
 
+  # Grafana
+  export SINGULARITYENV_GF_SECURITY_ADMIN_PASSWORD="admin"
+  export SINGULARITYENV_GF_DASHBOARDS_JSON_ENABLED="true"
+  
   singularity exec --network host \
     -B "${HOST_MON}/grafana/data":/var/lib/grafana:rw \
+    -B "${HOST_MON}/grafana/logs":/var/log/grafana:rw \
     -B "${HOST_MON}/grafana/provisioning":/etc/grafana/provisioning:ro \
     -B "${HOST_MON}/grafana/dashboards":/var/lib/grafana/dashboards:ro \
-    docker://grafana/grafana:latest /run.sh \
-    > "${HOST_MON}/grafana.log" 2>&1 &
+    docker://grafana/grafana:latest \
+    /run.sh \
+    > "${HOST_MON}/grafana.log" 2>&1
 
-  sleep 5
+  wait
 EOF
 
-srun --overlap -n1 --cpus-per-task=4 --cpu-bind=cores --gres=gpu:1 bash <<EOF
-  set -x
 
+sleep 5
+
+
+srun --overlap -n1 --cpus-per-task=5 --cpu-bind=cores --gres=gpu:1 bash <<EOF
+  set -x
+  
+  # Record GPU metrics
+  nvidia-smi \
+    --query-gpu=timestamp,utilization.gpu,utilization.memory,temperature.gpu \
+    --format=csv -l 5 \
+    > "${HOST_MON}/gpu_metrics.csv" &
+  gpu_log_pid=\$!
+
+  # Start vLLM server
   singularity exec --nv --network host \
     -B "${HOST_MODEL}":/model:ro \
     -B "${HOST_MON}":/monitoring \
@@ -56,6 +76,8 @@ srun --overlap -n1 --cpus-per-task=4 --cpu-bind=cores --gres=gpu:1 bash <<EOF
         --host 0.0.0.0 --port 8000 \
         --otlp-traces-endpoint="grpc://localhost:4317" \
     > "${HOST_MON}/vllm.log" 2>&1
+
+  kill \${gpu_log_pid}
 EOF
 
 wait
