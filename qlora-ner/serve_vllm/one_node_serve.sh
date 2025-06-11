@@ -64,7 +64,7 @@ srun --overlap -n1 --cpus-per-task=5 --cpu-bind=cores --gres=gpu:1 bash <<EOF
   nvidia-smi \
     --query-gpu=timestamp,utilization.gpu,utilization.memory,temperature.gpu \
     --format=csv -l 5 \
-    > "${HOST_MON}/gpu_metrics.csv" &
+    > "${HOST_BASE}/gpu_metrics_server/gpu_metrics_${SLURM_JOB_NAME}.csv" &
   gpu_log_pid=\$!
 
   # Start vLLM server
