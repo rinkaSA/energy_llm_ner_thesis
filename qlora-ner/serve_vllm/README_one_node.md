@@ -15,6 +15,9 @@ Put it into ./serve_vllm/containers directory
 
 ```singularity build vllm_serve_otel.sif docker://irv12/vllm_serve_otel:latest```
 
+Docker for inference: 
+```singularity build inference.sif docker://irv12/inference:latest```
+
 # 2. Download LLama 2
 prerequsites are having account on hugging face where the usage terms of Meta where accecpted (https://medium.com/@tushitdavergtu/how-to-install-llama-2-locally-d3e3c6c8eb4c)
 
