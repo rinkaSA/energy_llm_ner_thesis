@@ -1,23 +1,23 @@
 import argparse
-import time
-import yaml
 import json
-import torch
-from transformers import pipeline
-from datasets import load_dataset
-import mlflow
-import os
-import matplotlib.pyplot as plt
-import evaluate
-import numpy as np
+import sys
+import time
 from datetime import datetime
+
+import evaluate
+import matplotlib.pyplot as plt
+import mlflow
+import numpy as np
+import plotly.graph_objects as go
+import torch
+import yaml
+from datasets import load_dataset
 from dotenv import load_dotenv
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-import sys
-import plotly.graph_objects as go
+from transformers import pipeline
 
 sys.path.insert(0, '/data/horse/ws/irve354e-uniNer_test/code/universal-ner/src')
-from utils import preprocess_instance 
+from utils import preprocess_instance
 
 load_dotenv()
 
@@ -59,7 +59,7 @@ def build_input(sample, model_type, entity_type=None):
         #]
         conversation = {"conversations": [{"from": "human", "value": f"Text: {sample['joined_text']}"}, {"from": "gpt", "value": "I've read this text."}, {"from": "human", "value": f"What describes {entity_type} in the text?"}, {"from": "gpt", "value": "[]"}]}
 
-        from utils import preprocess_instance  
+      
         prompt = preprocess_instance(conversation["conversations"])
         return prompt
     else:
@@ -247,18 +247,9 @@ def plot_all_entity_confusion_matrices(true_labels_list, pred_labels_list, entit
         mlflow.log_artifact(path)
     return all_figures, all_cm_percent
 
-def run_ner(args):
-    """
-    Unified function to run NER evaluation for either a Roberta-based or UniversalNER model.
-    Both pipelines are processed in batches.
-    """
+def setup_mlflow_run(args, run_name):
+    """Setup MLflow run and log parameters."""
     mlflow.set_experiment(args.experiment_name)
-    run_name = (
-        args.run_name
-        if args.run_name != "default_run"
-        else f"NER_{args.model_path.replace('/', '_')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    )
-
     with mlflow.start_run(run_name=run_name, log_system_metrics=True):
         mlflow.log_param("experiment_name", args.experiment_name)
         mlflow.log_param("run_name", run_name)
@@ -267,87 +258,114 @@ def run_ner(args):
         mlflow.log_param("model_type", args.model_type)
         mlflow.log_param("batch_size", args.batch_size)
         mlflow.log_param("max_new_tokens", args.max_new_tokens)
+        return mlflow.active_run()
 
-        dataset = load_dataset(args.dataset_name)['test']
-        label_names = dataset.features["ner_tags"].feature.names
+def prepare_dataset(dataset_name):
+    """Load and prepare dataset samples."""
+    dataset = load_dataset(dataset_name)['test']
+    label_names = dataset.features["ner_tags"].feature.names
+    
+    samples = []
+    for sample in dataset:
+        tokens = sample["tokens"]
+        joined_text = " ".join(tokens)
+        true_labels = [label_names[tag] for tag in sample["ner_tags"]]
+        samples.append({
+            "tokens": tokens,
+            "joined_text": joined_text,
+            "true_labels": true_labels
+        })
+    return samples
 
-        samples = []
-        for sample in dataset:
-            tokens = sample["tokens"]
-            joined_text = " ".join(tokens)
-            true_labels = [label_names[tag] for tag in sample["ner_tags"]]
-            samples.append({
-                "tokens": tokens,
-                "joined_text": joined_text,
-                "true_labels": true_labels
-            })
+def get_model_pipeline(model_type, model_path):
+    """Initialize the appropriate model pipeline."""
+    if model_type == "roberta":
+        return pipeline(
+            "ner",
+            model=model_path,
+            tokenizer=model_path,
+            aggregation_strategy="simple"
+        )
+    elif model_type == "universalner":
+        return pipeline(
+            "text-generation",
+            model=model_path,
+            torch_dtype=torch.float16,
+            device=0
+        )
+    raise ValueError(f"Unsupported model type: {model_type}")
 
-        if args.model_type == "roberta":
-            model_pipeline = pipeline(
-                "ner",
-                model=args.model_path,
-                tokenizer=args.model_path,
-                aggregation_strategy="simple"
-            )
-        elif args.model_type == "universalner":
-            model_pipeline = pipeline(
-                "text-generation",
-                model=args.model_path,
-                torch_dtype=torch.float16,
-                device=0
-            )
+def process_batch(batch, model_type, model_pipeline, args):
+    """Process a batch of samples and return predictions."""
+    inputs = [build_input(sample, model_type, args.entity_type) for sample in batch]
+    
+    if model_type == "roberta":
+        outputs = model_pipeline(inputs)
+        if outputs and isinstance(outputs[0], dict):
+            outputs = [outputs]
+    else:
+        outputs = model_pipeline(inputs, max_new_tokens=args.max_new_tokens, return_full_text=False)
+    
+    batch_predictions = []
+    batch_comparisons = []
+    
+    for sample, output in zip(batch, outputs):
+        if model_type == "roberta":
+            pred_labels = parse_roberta_output(sample, output)
+        elif model_type == "universalner":
+            pred_labels = parse_universalner_output(sample, output, args.entity_type)
         else:
-            raise ValueError(f"Unsupported model type: {args.model_type}")
+            pred_labels = ["O"] * len(sample["tokens"])
+            
+        batch_predictions.append(pred_labels)
+        batch_comparisons.append({
+            "tokens": sample["tokens"],
+            "true_labels": sample["true_labels"],
+            "predicted_labels": pred_labels,
+            "input": build_input(sample, model_type),
+            "raw_output": output
+        })
+    
+    return batch_predictions, batch_comparisons
 
+def run_ner(args):
+    """Run NER evaluation for either a Roberta-based or UniversalNER model."""
+    run_name = (
+        args.run_name
+        if args.run_name != "default_run"
+        else f"NER_{args.model_path.replace('/', '_')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    )
+
+    with mlflow.start_run(run_name=run_name, log_system_metrics=True):
+        setup_mlflow_run(args, run_name)
+        samples = prepare_dataset(args.dataset_name)
+        model_pipeline = get_model_pipeline(args.model_type, args.model_path)
 
         effective_batch_size = len(samples) if args.use_full_batch else args.batch_size
         all_true_labels = [sample["true_labels"] for sample in samples]
         all_predicted_labels = []
         comparisons = []
-        num_samples = len(samples)
+        
         start_time = time.time()
-
-        for i in range(0, num_samples, effective_batch_size):
+        
+        for i in range(0, len(samples), effective_batch_size):
             batch = samples[i : i + effective_batch_size]
-            inputs = [build_input(sample, args.model_type, args.entity_type) for sample in batch]
-            if args.model_type == "roberta":
-                outputs = model_pipeline(inputs)
-            elif args.model_type == "universalner":
-                outputs = model_pipeline(inputs, max_new_tokens=args.max_new_tokens, return_full_text=False)
-            else:
-                print('wrong input model')
-                outputs = []
-
-
-            if args.model_type == "roberta":
-                if outputs and isinstance(outputs[0], dict):
-                    outputs = [outputs]
-            for sample, output in zip(batch, outputs):
-                if args.model_type == "roberta":
-                    pred_labels = parse_roberta_output(sample, output)
-                elif args.model_type == "universalner":
-                    pred_labels = parse_universalner_output(sample, output, args.entity_type)
-                else:
-                    pred_labels = ["O"] * len(sample["tokens"])
-                all_predicted_labels.append(pred_labels)
-                comparisons.append({
-                    "tokens": sample["tokens"],
-                    "true_labels": sample["true_labels"],
-                    "predicted_labels": pred_labels,
-                    "input": build_input(sample, args.model_type),
-                    "raw_output": output
-                })
+            batch_predictions, batch_comparisons = process_batch(
+                batch, args.model_type, model_pipeline, args
+            )
+            all_predicted_labels.extend(batch_predictions)
+            comparisons.extend(batch_comparisons)
 
         total_time = time.time() - start_time
         mlflow.log_metric("total_processing_time", total_time)
         print(f"Total processing time: {total_time:.2f} seconds")
 
-        results = evaluate_and_log(all_true_labels, all_predicted_labels, comparisons, artifact_prefix=args.model_type)
+        results = evaluate_and_log(all_true_labels, all_predicted_labels, 
+                                 comparisons, artifact_prefix=args.model_type)
         print("Evaluation results:")
         print(json.dumps(results, indent=2, default=np_encoder))
         print(mlflow.active_run().info)
-
-
+        
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default=None, help="Path to YAML config file with parameters")
