@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=vllm_stack
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=8     # Increased to accommodate both workloads
+#SBATCH --cpus-per-task=6  # was 8 for cappella
 #SBATCH --gres=gpu:1        
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
@@ -21,6 +21,7 @@ srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores bash <<EOF &
   singularity exec --nv --network host \
     docker://nvidia/dcgm-exporter:3.1.7-3.1.4-ubuntu20.04 \
     /usr/bin/dcgm-exporter --address=:9400 \
+    --c 500 \
     > "${HOST_MON}/dcgm.log" 2>&1 &
 
   # Prometheus
@@ -57,7 +58,7 @@ EOF
 sleep 5
 
 
-srun --overlap -n1 --cpus-per-task=5 --cpu-bind=cores --gres=gpu:1 bash <<EOF
+srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores --gres=gpu:1 bash <<EOF #was 5!!
   set -x
   
   # Record GPU metrics
@@ -74,6 +75,10 @@ srun --overlap -n1 --cpus-per-task=5 --cpu-bind=cores --gres=gpu:1 bash <<EOF
     "${SIF_IMAGE}" \
       opentelemetry-instrument vllm serve /model \
         --host 0.0.0.0 --port 8000 \
+        --tensor-parallel-size 1 \
+        --max-num-batched-tokens 32768 \
+        --max-num-seqs 256 \
+        --block-size 16 \
         --otlp-traces-endpoint="grpc://localhost:4317" \
     > "${HOST_MON}/vllm.log" 2>&1
 
