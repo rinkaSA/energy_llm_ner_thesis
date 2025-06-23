@@ -59,6 +59,7 @@ also check for the logs in the dir ```/slurm_onenode``` and all ```.log``` files
 - Change in .env (create if not done already) ```SERVER_URL```  to the current path (node) where the model is hosted. Also, to be sure I statically added the variable with this path to ```inference.sh```. Adjust the pathes to your working directory as well as servers url (e.g. SERVER_URL="http://i8001.alpha.hpc.tu-dresden.de:8000/v1/completions")
 
 - Run ```sbatch inference.sh```.
+IMPORTANT NOTE: firstly send a request with old ```eval_llm_batches.py``` , most metrics are NaN before any request, they are spun up by sending at lest something. This important for the logic inside ```batched_eval_energy.py``` which relies on the scrape before and after batched request. (Basically just change executable python file)
 
 
 # Details on inference
