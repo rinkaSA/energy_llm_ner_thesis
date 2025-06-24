@@ -16,9 +16,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-SERVER_URL = os.getenv("SERVER_URL", "http://i8001.alpha.hpc.tu-dresden.de:8000/v1/completions")
-ENERGY_URL = os.getenv("ENERGY_URL", "http://i8001.alpha.hpc.tu-dresden.de:9400/metrics")
-VLLM_METRICS_URL =os.getenv("VLLM_METRICS_URL","http://i8001.alpha.hpc.tu-dresden.de:8000/metrics")
+SERVER_URL = os.getenv("SERVER_URL", "http://i8027.alpha.hpc.tu-dresden.de:8000/v1/completions")
+ENERGY_URL = os.getenv("ENERGY_URL", "http://i8027.alpha.hpc.tu-dresden.de:9400/metrics")
+VLLM_METRICS_URL =os.getenv("VLLM_METRICS_URL","http://i8027.alpha.hpc.tu-dresden.de:8000/metrics")
 
 MLFLOW_TRACKING_URI   = os.getenv("MLFLOW_TRACKING_URI")
 
@@ -35,7 +35,8 @@ Expected output: {'MISC': ['Brazilian'], 'PER': ['Antonio Kandir'], 'ORG': ['Con
 Given the sentence below perform a task and include in the resulting output in json style format as in example only."""
 
 ENERGY_METRIC_NAME    = "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"  
-
+ARTIFACTS_DIR = "inference_artifacts_1_128"
+os.makedirs(ARTIFACTS_DIR, exist_ok=True)
 
 def read_energy_joules() -> float:
     """Scrape the DCGM exporters gauge from localhost:9400/metrics."""
@@ -147,7 +148,7 @@ async def process_and_measure(session, prompts, max_tokens):
     e1    = read_energy_joules()
     v1    = read_vllm_metrics()
 
-    joules    = e1 - e0 / 1000 # IN MILIJOULES ->> convert to Joules
+    joules    = (e1 - e0) / 1000 # IN MILIJOULES ->> convert to Joules
     latency   = t1 - t0
 
     prompt_t  = v1["prompt_tokens_total"]     - v0["prompt_tokens_total"]
@@ -156,7 +157,7 @@ async def process_and_measure(session, prompts, max_tokens):
 
     e2e_latency_mean      = (v1["e2e_latency_sum"]      - v0["e2e_latency_sum"])      \
                              / (v1["e2e_latency_count"] - v0["e2e_latency_count"])
-    ttfb_mean             = (v1["time_to_first_sum"]    - v0["time_to_first_sum"])    \
+    ttft_mean             = (v1["time_to_first_sum"]    - v0["time_to_first_sum"])    \
                              / (v1["time_to_first_count"] - v0["time_to_first_count"])
     time_per_token_mean   = (v1["time_per_token_sum"]   - v0["time_per_token_sum"])   \
                              / (v1["time_per_token_count"] - v0["time_per_token_count"])
@@ -181,12 +182,11 @@ async def process_and_measure(session, prompts, max_tokens):
         "total_tokens":         total_t,
 
         "e2e_latency_mean":     e2e_latency_mean, # COMPARE THIS TO LATENSY_S!
-        "ttfb_mean":            ttfb_mean,
+        "ttft_mean":            ttft_mean,
         "time_per_token_mean":  time_per_token_mean,
 
         "diff" : diff,
     
-
         "prefill_total_s":   prefill_total,
         "inference_total_s": inference_total,
         "decode_total_s":    decode_total,
@@ -199,10 +199,15 @@ async def process_and_measure(session, prompts, max_tokens):
         "joules_inference":    joules_inference,
         "joules_decode":       joules_decode,
 
-        "J_per_prompt_token":  joules_prefill   / prompt_t,
-        "J_per_gen_token":     joules_inference / gen_t,
+        "J_prefill_per_prompt_token":  joules_prefill   / prompt_t,
+        "J_inf_per_gen_token":     joules_inference / gen_t,
         "J_per_total_token":   joules          / total_t, # SHOULD I ADD PERCENTILES FOR TTTF AND E2E
-        "avg_power_draw_W_per_batch_request": joules / latency # in Watts
+        
+        "J_total_per_prompt_token":     joules / prompt_t,
+        "J_total_per_gen_token":        joules / gen_t,
+        "J_total_per_token":            joules / total_t,
+
+        "avg_power_draw": joules / latency # in Watts
     }
     return responses, telemetry
 
@@ -258,7 +263,7 @@ async def main():
     test_ds = load_dataset("conll2003", trust_remote_code=True, split="test").select(range(10*32)) # make it devidable to the batch size!
     labels  = test_ds.features["ner_tags"].feature.names
 
-    for B in [128]: # [1, 4, 8, 16, 32, 64, 128]:
+    for B in [1, 4, 8, 16, 32, 64, 128]: # [1, 4, 8, 16, 32, 64, 128]:
         run_name = f"LLama2_fewshot_batch{B}"
         with mlflow.start_run(run_name=run_name, log_system_metrics=True) as run:
             mlflow.log_param("batch_size", B)
@@ -284,29 +289,78 @@ async def main():
                     "prompt_tokens":      telem["prompt_tokens"],
                     "generation_tokens":  telem["generation_tokens"],
                     "total_tokens":       telem["total_tokens"],
-                    "joules_per_token":   telem["joules_per_token"],
-                }, step=step)
+                     "e2e_latency_mean":   telem["e2e_latency_mean"],
+                    "ttft_mean":       telem["ttft_mean"],
+                    "time_per_token_mean":  telem["time_per_token_mean"],
+                    "diff":      telem["diff"],
+
+                    "prefill_total_s":  telem["prefill_total_s"],
+                    "inference_total_s": telem["inference_total_s"],
+                    "decode_total_s":  telem["decode_total_s"],
+
+                    "prefill_avg_s":   telem["prefill_avg_s"],
+                    "inference_avg_s":  telem["inference_avg_s"],
+                    "decode_avg_s":  telem["decode_avg_s"],
+                    
+                    "joules_prefill":    telem["joules_prefill"],
+                    "joules_inference": telem["joules_inference"],
+                    "joules_decode":      telem["joules_decode"],
+
+                    "J_prefill_per_prompt_token": telem["J_prefill_per_prompt_token"],
+                    "J_inf_per_gen_token": telem["J_inf_per_gen_token"],
+                    "J_per_total_token": telem["J_per_total_token"],
+                    "J_total_per_prompt_token": telem["J_total_per_prompt_token"],
+                    "J_total_per_gen_token": telem["J_total_per_gen_token"],
+                    "J_total_per_token": telem["J_total_per_token"],
+                    "avg_power_draw_W": telem["avg_power_draw"]
+                                    }, step=step)
 
             with open(f"telemetry_batch_{B}.json", "w") as f:
                 json.dump(batch_telemetry, f, indent=2)
             mlflow.log_artifact(f"telemetry_batch_{B}.json")   
 
 
-            avg_latency = np.mean([t["latency_s"] for t in batch_telemetry])
-            avg_energy  = np.mean([t["energy_j"] for t in batch_telemetry])
-            avg_jpt     = np.mean([t["joules_per_token"] for t in batch_telemetry])
+            mean_metrics = {
+                "avg_latency_s":            np.mean([t["latency_s"] for t in batch_telemetry]),
+                "avg_energy_j":             np.mean([t["energy_j"] for t in batch_telemetry]),
+                "avg_joules_per_token":     np.mean([t["J_total_per_token"] for t in batch_telemetry]),
 
-            mlflow.log_metric("avg_latency_s",       avg_latency)
-            mlflow.log_metric("avg_energy_j",        avg_energy)
-            mlflow.log_metric("avg_joules_per_token",avg_jpt)
+                "mean_e2e_latency_s":       np.mean([t["e2e_latency_mean"]       for t in batch_telemetry]),
+                "mean_ttfb_s":              np.mean([t["ttft_mean"]             for t in batch_telemetry]),
+                "mean_time_per_token_s":    np.mean([t["time_per_token_mean"]    for t in batch_telemetry]),
+                "mean_diff":                np.mean([t["diff"]                   for t in batch_telemetry]),
 
-            os.makedirs("server_response_results", exist_ok=True)
-            with open(f"server_response_results/responses_B{B}.json", "w") as f:
+                "mean_prefill_total_s":     np.mean([t["prefill_total_s"]       for t in batch_telemetry]),
+                "mean_inference_total_s":   np.mean([t["inference_total_s"]     for t in batch_telemetry]),
+                "mean_decode_total_s":      np.mean([t["decode_total_s"]        for t in batch_telemetry]),
+
+                "mean_prefill_avg_s":       np.mean([t["prefill_avg_s"]         for t in batch_telemetry]),
+                "mean_inference_avg_s":     np.mean([t["inference_avg_s"]       for t in batch_telemetry]),
+                "mean_decode_avg_s":        np.mean([t["decode_avg_s"]          for t in batch_telemetry]),
+
+                "mean_joules_prefill":      np.mean([t["joules_prefill"]        for t in batch_telemetry]),
+                "mean_joules_inference":    np.mean([t["joules_inference"]      for t in batch_telemetry]),
+                "mean_joules_decode":       np.mean([t["joules_decode"]         for t in batch_telemetry]),
+
+                "mean_J_prefill_per_prompt_token": np.mean([t["J_prefill_per_prompt_token"] for t in batch_telemetry]),
+                "mean_J_inf_per_gen_token": np.mean([t["J_inf_per_gen_token"] for t in batch_telemetry]),
+                "mean_J_per_total_token": np.mean([t["J_per_total_token"] for t in batch_telemetry]),
+                "mean_J_total_per_prompt_token": np.mean([t["J_total_per_prompt_token"] for t in batch_telemetry]),
+                
+                "mean_J_total_per_gen_token": np.mean([t["J_total_per_gen_token"] for t in batch_telemetry]),
+                "mean_J_total_per_token": np.mean([t["J_total_per_token"] for t in batch_telemetry]),
+                "mean_avg_power_draw_W": np.mean([t["avg_power_draw"] for t in batch_telemetry])
+            }
+            mlflow.log_metrics(mean_metrics, step=step)
+
+            responses_folder = os.path.join(ARTIFACTS_DIR, "server_response_results")
+            os.makedirs(responses_folder, exist_ok=True)
+
+            responses_path = os.path.join(responses_folder, f"responses_B{B}.json")
+            with open(responses_path, "w") as f:
                 json.dump(gen_responses, f, indent=2)
 
-
-            mlflow.log_artifact(f"server_response_results/responses_B{B}.json")
-            mlflow.log_artifact(f"server_response_results/telemetry_B{B}.json")
+            mlflow.log_artifact(responses_path, artifact_path="server_response_results")
 
 if __name__ == "__main__":
     from eval_llm_batches import parse_response, get_bio_tags

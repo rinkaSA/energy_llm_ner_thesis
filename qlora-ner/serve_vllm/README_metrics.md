@@ -82,13 +82,13 @@ histogram_quantile(0.95,
 
 1. **Energy consumed** over run
    - From cumulative counter:\
-     \(E_{GPU} = E_{end} - E_{start}\)
+     E_GPU = E_end - E_start
    - Or integrate power samples:\
-     \(E_{GPU} \approx \sum P_{GPU}(t) \times \Delta t\)
+     E_GPU ~ \sum P_{GPU} * delta t
 2. **Total generated tokens**:\
-   \(N_{gen} = increase(vllm:generation_tokens_total[run_interval])\)
+   N_gen = increase(vllm:generation_tokens_total[run_interval])\)
 3. **Energy efficiency**:\
-   \(J/token = \frac{E_{GPU}}{N_{gen}}\)
+   J/token = E_GPU/N_gen
 
 ---
 
@@ -205,3 +205,53 @@ For each batch of N concurrent requests, collect these before/after counters and
 - Optional? Percentiles (not sure)
 
    - Fetch histogram buckets (_bucket, _count, _sum) and scan to compute P50/P95/P99 for TTFT or E2E.
+
+### Why the division happens with latency_s (wall clocl time on client side) and not e2e latency?
+
+####  latency_s –  end-to-end wall-clock
+
+t0 = time.perf_counter()
+
+ ─── send batch ───▶
+
+│     … network, server work, streaming back, client post-proc  
+ ◀──────────────────  
+t1 = time.perf_counter()
+
+latency_s = t1 - t0
+
+Starts when the client issues the HTTP/gRPC call for the batch.
+
+Ends when the client has fully received all responses and returned from await process_batch(...).
+
+Includes:
+
+- Network round-trip time (client → server, server → client)
+
+- vLLM scheduling + compute (prefill, inference, decode)
+
+- Any client-side parsing or post-processing (e.g. splitting, JSON parsing)
+
+#### e2e latency
+
+Measured entirely inside the vLLM server process.
+
+Starts when vLLM begins handling each individual request (right after it’s dequeued from its internal queue).
+
+Ends when vLLM has finished generating and streaming that request’s tokens.
+
+Includes all three pipeline stages:
+
+   - Prefill: processing the prompt through the model once.
+
+   - Inference: iterative forward passes for new tokens.
+
+   - Decode: converting logits to actual tokens/strings.
+
+Excludes any time spent:
+
+   - In client’s network stack before the request reaches the server.
+
+   - In client’s Python code after the last token arrives.
+
+   - (Usually) any scheduling delay before the request enters vLLM’s queue—unless vLLM’s own queueing is instrumented.
