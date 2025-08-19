@@ -71,7 +71,7 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
+
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -192,9 +192,24 @@ cython_debug/
 .vscode/
 mlruns/
 
-/data/horse/ws/irve354e-uniNer_test/energy_ner_llm/energy_ner_llm/src/mod_distil_by_cot/my_key_scads
 
-qlora-ner/serve_vllm/models/
-qlora-ner/output/
-qlora-ner/serve_vllm/monitoring/grafana/data/grafana.db
+src/serve_vllm/models/
+src/output/
+src/serve_vllm/monitoring/grafana/data/grafana.db
  *.sif
+
+/src/serve_vllm/data
+
+/src/models/*
+!/src/models/.gitkeep
+.env
+*.db
+
+/src/serve_vllm/containers/*
+!/src/serve_vllm/containers/Dockerfiles/
+!/src/serve_vllm/containers/Dockerfiles/**
+
+/src/serve_vllm/data/
+
+/src/serve_vllm/inference_eval_artifacts/
+/

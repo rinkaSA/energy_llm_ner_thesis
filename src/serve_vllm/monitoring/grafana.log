@@ -1,0 +1,131 @@
+INFO:    Using cached SIF image
+logger=settings t=2025-08-05T17:26:16.054753779+02:00 level=info msg="Starting Grafana" version=12.2.0-16711121739 commit=8ac74e24df1ff9e5de0c1d0f78dcd8be12305b4e branch=main compiled=2025-08-05T17:26:16+02:00
+logger=settings t=2025-08-05T17:26:16.055583451+02:00 level=info msg="Config loaded from" file=/usr/share/grafana/conf/defaults.ini
+logger=settings t=2025-08-05T17:26:16.055594271+02:00 level=info msg="Config loaded from" file=/etc/grafana/grafana.ini
+logger=settings t=2025-08-05T17:26:16.055598611+02:00 level=info msg="Config overridden from command line" arg="default.paths.data=/var/lib/grafana"
+logger=settings t=2025-08-05T17:26:16.055602231+02:00 level=info msg="Config overridden from command line" arg="default.paths.logs=/var/log/grafana"
+logger=settings t=2025-08-05T17:26:16.055605531+02:00 level=info msg="Config overridden from command line" arg="default.paths.plugins=/var/lib/grafana/plugins"
+logger=settings t=2025-08-05T17:26:16.055608571+02:00 level=info msg="Config overridden from command line" arg="default.paths.provisioning=/etc/grafana/provisioning"
+logger=settings t=2025-08-05T17:26:16.055611711+02:00 level=info msg="Config overridden from command line" arg="default.log.mode=console"
+logger=settings t=2025-08-05T17:26:16.055615331+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_DATA=/var/lib/grafana"
+logger=settings t=2025-08-05T17:26:16.055618671+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_LOGS=/var/log/grafana"
+logger=settings t=2025-08-05T17:26:16.055621651+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
+logger=settings t=2025-08-05T17:26:16.055624721+02:00 level=info msg="Config overridden from Environment variable" var="GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+logger=settings t=2025-08-05T17:26:16.055627751+02:00 level=info msg="Config overridden from Environment variable" var="GF_SECURITY_ADMIN_PASSWORD=*********"
+logger=settings t=2025-08-05T17:26:16.055630841+02:00 level=info msg=Target target=[all]
+logger=settings t=2025-08-05T17:26:16.055638201+02:00 level=info msg="Path Home" path=/usr/share/grafana
+logger=settings t=2025-08-05T17:26:16.055641441+02:00 level=info msg="Path Data" path=/var/lib/grafana
+logger=settings t=2025-08-05T17:26:16.055644441+02:00 level=info msg="Path Logs" path=/var/log/grafana
+logger=settings t=2025-08-05T17:26:16.0556475+02:00 level=info msg="Path Plugins" path=/var/lib/grafana/plugins
+logger=settings t=2025-08-05T17:26:16.05565064+02:00 level=info msg="Path Provisioning" path=/etc/grafana/provisioning
+logger=settings t=2025-08-05T17:26:16.05565376+02:00 level=info msg="App mode production"
+logger=featuremgmt t=2025-08-05T17:26:16.055916848+02:00 level=info msg=FeatureToggles influxdbBackendMigration=true recordedQueriesMulti=true alertingRulePermanentlyDelete=true unifiedStorageHistoryPruner=true awsAsyncQueryCaching=true alertingImportYAMLUI=true improvedExternalSessionHandlingSAML=true correlations=true publicDashboardsScene=true awsDatasourcesTempCredentials=true transformationsRedesign=true panelMonitoring=true addFieldFromCalculationStatFunctions=true formatString=true azureMonitorPrometheusExemplars=true tlsMemcached=true alertingUIOptimizeReducer=true alertingBulkActionsInUI=true logRowsPopoverMenu=true alertRuleRestore=true dashboardSceneForViewers=true cloudWatchRoundUpEndTime=true logsPanelControls=true dashboardScene=true ssoSettingsLDAP=true annotationPermissionUpdate=true logsContextDatasourceUi=true unifiedRequestLog=true lokiQuerySplitting=true alertingRuleRecoverDeleted=true alertingQueryAndExpressionsStepMode=true cloudWatchNewLabelParsing=true teamHttpHeadersMimir=true newPDFRendering=true lokiLabelNamesQueryApi=true grafanaconThemes=true improvedExternalSessionHandling=true azureMonitorEnableUserAuth=true newFiltersUI=true useSessionStorageForRedirection=true preinstallAutoUpdate=true groupToNestedTableTransformation=true nestedFolders=true logsInfiniteScrolling=true dashgpt=true dashboardSceneSolo=true unifiedStorageSearchPermissionFiltering=true dataplaneFrontendFallback=true newDashboardSharingComponent=true promQLScope=true cloudWatchCrossAccountQuerying=true alertingRuleVersionHistoryRestore=true prometheusAzureOverrideAudience=true onPremToCloudMigrations=true skipTokenRotationIfRecent=true pinNavItems=true alertingNotificationsStepMode=true logsExploreTableVisualisation=true alertingMigrationUI=true
+logger=sqlstore t=2025-08-05T17:26:16.05667296+02:00 level=info msg="Connecting to DB" dbtype=sqlite3
+logger=migrator t=2025-08-05T17:26:16.20146711+02:00 level=info msg="Locking database"
+logger=migrator t=2025-08-05T17:26:16.20149347+02:00 level=info msg="Starting DB migrations"
+logger=migrator t=2025-08-05T17:26:16.211739728+02:00 level=info msg="migrations completed" performed=0 skipped=671 duration=442.436µs
+logger=migrator t=2025-08-05T17:26:16.212371701+02:00 level=info msg="Unlocking database"
+logger=secrets t=2025-08-05T17:26:16.212931176+02:00 level=info msg="Envelope encryption state" enabled=true currentprovider=secretKey.v1
+logger=plugin.angulardetectorsprovider.dynamic t=2025-08-05T17:26:16.393522839+02:00 level=info msg="Restored cache from database" duration=741.082µs
+logger=resource-db t=2025-08-05T17:26:16.397303902+02:00 level=info msg="Using database section" db_type=sqlite3
+logger=resource-db t=2025-08-05T17:26:16.397360441+02:00 level=info msg="Initializing Resource DB" db_type=sqlite3 open_conn=0 in_use_conn=0 idle_conn=0 max_open_conn=0
+logger=resource-migrator t=2025-08-05T17:26:16.401379211+02:00 level=info msg="Locking database"
+logger=resource-migrator t=2025-08-05T17:26:16.401390921+02:00 level=info msg="Starting DB migrations"
+logger=resource-migrator t=2025-08-05T17:26:16.406706458+02:00 level=info msg="migrations completed" performed=0 skipped=26 duration=28.14µs
+logger=resource-migrator t=2025-08-05T17:26:16.407302952+02:00 level=info msg="Unlocking database"
+t=2025-08-05T17:26:16.41754459+02:00 level=info caller=logger.go:214 time=2025-08-05T17:26:16.41753404+02:00 msg="Using channel notifier" logger=sql-resource-server
+logger=plugin.store t=2025-08-05T17:26:16.420846137+02:00 level=info msg="Loading plugins..."
+logger=plugins.registration t=2025-08-05T17:26:16.656160107+02:00 level=error msg="Could not register plugin" pluginId=table error="plugin table is already registered"
+logger=plugins.initialization t=2025-08-05T17:26:16.656182206+02:00 level=error msg="Could not initialize plugin" pluginId=table error="plugin table is already registered"
+logger=plugins.registration t=2025-08-05T17:26:17.218954828+02:00 level=info msg="Plugin registered" pluginId=grafana-exploretraces-app
+logger=plugins.registration t=2025-08-05T17:26:17.353069814+02:00 level=info msg="Plugin registered" pluginId=grafana-lokiexplore-app
+logger=plugins.registration t=2025-08-05T17:26:17.418429763+02:00 level=info msg="Plugin registered" pluginId=grafana-metricsdrilldown-app
+logger=plugins.registration t=2025-08-05T17:26:17.484546126+02:00 level=info msg="Plugin registered" pluginId=grafana-pyroscope-app
+logger=plugin.store t=2025-08-05T17:26:17.484565226+02:00 level=info msg="Plugins loaded" count=57 duration=1.063719329s
+logger=query_data t=2025-08-05T17:26:17.518582187+02:00 level=info msg="Query Service initialization"
+logger=live.push_http t=2025-08-05T17:26:17.535586188+02:00 level=info msg="Live Push Gateway initialization"
+logger=ngalert.notifier component=alertmanager orgID=1 t=2025-08-05T17:26:17.540070473+02:00 level=info msg="Applying new configuration to Alertmanager" configHash=d2c56faca6af2a5772ff4253222f7386
+logger=ngalert.writer t=2025-08-05T17:26:17.60174564+02:00 level=info msg="Setting up remote write using data sources" timeout=30s default_datasource_uid=
+logger=ngalert t=2025-08-05T17:26:17.601797399+02:00 level=info msg="Using simple database alert instance store"
+logger=ngalert.state.manager.persist t=2025-08-05T17:26:17.601805879+02:00 level=info msg="Using sync state persister"
+logger=infra.usagestats.collector t=2025-08-05T17:26:17.631341825+02:00 level=info msg="registering usage stat providers" usageStatsProvidersLen=2
+logger=grafanaStorageLogger t=2025-08-05T17:26:17.631543393+02:00 level=info msg="Storage starting"
+logger=ngalert.state.manager t=2025-08-05T17:26:17.649249757+02:00 level=info msg="Warming state cache for startup"
+logger=ngalert.multiorg.alertmanager t=2025-08-05T17:26:17.65503275+02:00 level=info msg="Starting MultiOrg Alertmanager"
+logger=http.server t=2025-08-05T17:26:17.657412256+02:00 level=info msg="HTTP Server Listen" address=[::]:3000 protocol=http subUrl= socket=
+t=2025-08-05T17:26:17.660850372+02:00 level=info caller=logger.go:214 time=2025-08-05T17:26:17.660841852+02:00 msg="Registered admission plugin" app=playlist
+logger=plugins.update.checker t=2025-08-05T17:26:17.785879158+02:00 level=info msg="Update check succeeded" duration=146.216245ms
+logger=grafana.update.checker t=2025-08-05T17:26:17.785992837+02:00 level=info msg="Update check succeeded" duration=147.069207ms
+logger=plugin.backgroundinstaller t=2025-08-05T17:26:17.791040817+02:00 level=info msg="Installing plugin" pluginId=grafana-lokiexplore-app version=
+logger=plugin.installer t=2025-08-05T17:26:17.837691283+02:00 level=info msg="Updating plugin" pluginId=grafana-lokiexplore-app from=1.0.24 to=1.0.25
+logger=ngalert.state.manager t=2025-08-05T17:26:17.878892573+02:00 level=info msg="State cache has been initialized" states=0 duration=229.642456ms
+logger=ngalert.scheduler t=2025-08-05T17:26:17.878916683+02:00 level=info msg="Starting scheduler" tickInterval=10s maxAttempts=3
+logger=ticker t=2025-08-05T17:26:17.878952282+02:00 level=info msg=starting first_tick=2025-08-05T17:26:20+02:00
+logger=provisioning.plugins t=2025-08-05T17:26:17.880296729+02:00 level=error msg="Failed to read plugin provisioning files from directory" path=/etc/grafana/provisioning/plugins error="open /etc/grafana/provisioning/plugins: no such file or directory"
+logger=provisioning.alerting t=2025-08-05T17:26:17.880493587+02:00 level=error msg="can't read alerting provisioning files from directory" path=/etc/grafana/provisioning/alerting error="open /etc/grafana/provisioning/alerting: no such file or directory"
+logger=provisioning.alerting t=2025-08-05T17:26:17.880500297+02:00 level=info msg="starting to provision alerting"
+logger=provisioning.alerting t=2025-08-05T17:26:17.880506747+02:00 level=info msg="finished to provision alerting"
+logger=provisioning.dashboard t=2025-08-05T17:26:17.883506287+02:00 level=info msg="starting to provision dashboards"
+logger=provisioning.dashboard t=2025-08-05T17:26:17.890167921+02:00 level=info msg="finished to provision dashboards"
+t=2025-08-05T17:26:18.261809344+02:00 level=error caller=logger.go:234 time=2025-08-05T17:26:18.261795974+02:00 msg="error initializing DataQuery apiequality" err=<nil>
+logger=grafana-apiserver t=2025-08-05T17:26:18.319219702+02:00 level=info msg="Adding GroupVersion iam.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.320323242+02:00 level=info msg="Adding GroupVersion userstorage.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.32047376+02:00 level=info msg="Adding GroupVersion features.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.32146565+02:00 level=info msg="Adding GroupVersion notifications.alerting.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.324861906+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v1beta1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.325090584+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v0alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.325350371+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v2beta1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.325590149+02:00 level=info msg="Adding GroupVersion dashboard.grafana.app v2alpha1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.326068294+02:00 level=info msg="Adding GroupVersion folder.grafana.app v1beta1 to ResourceManager"
+logger=grafana-apiserver t=2025-08-05T17:26:18.32654395+02:00 level=info msg="Adding GroupVersion playlist.grafana.app v0alpha1 to ResourceManager"
+t=2025-08-05T17:26:18.326573899+02:00 level=info caller=logger.go:214 time=2025-08-05T17:26:18.326570899+02:00 msg="Installed APIs for app" app=playlist
+t=2025-08-05T17:26:18.364771239+02:00 level=info caller=logger.go:214 time=2025-08-05T17:26:18.364767459+02:00 msg="App initialized" app=playlist
+logger=app-registry t=2025-08-05T17:26:18.364779589+02:00 level=info msg="app registry initialized"
+logger=installer.fs t=2025-08-05T17:26:18.401057718+02:00 level=info msg="Downloaded and extracted grafana-lokiexplore-app v1.0.25 zip successfully to /var/lib/grafana/plugins/grafana-lokiexplore-app"
+logger=plugins.registration t=2025-08-05T17:26:18.452680345+02:00 level=info msg="Plugin registered" pluginId=grafana-lokiexplore-app
+logger=plugin.backgroundinstaller t=2025-08-05T17:26:18.452704815+02:00 level=info msg="Plugin successfully installed" pluginId=grafana-lokiexplore-app version= duration=661.653538ms
+logger=infra.usagestats t=2025-08-05T17:28:08.644937391+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T17:36:17.76150743+02:00 level=info msg="Completed cleanup jobs" duration=99.53689ms
+logger=plugins.update.checker t=2025-08-05T17:36:17.891627236+02:00 level=info msg="Update check succeeded" duration=104.953276ms
+logger=cleanup t=2025-08-05T17:46:17.692599946+02:00 level=info msg="Completed cleanup jobs" duration=31.015861ms
+logger=plugins.update.checker t=2025-08-05T17:46:17.867021311+02:00 level=info msg="Update check succeeded" duration=81.071723ms
+logger=cleanup t=2025-08-05T17:56:17.692606755+02:00 level=info msg="Completed cleanup jobs" duration=30.907872ms
+logger=plugins.update.checker t=2025-08-05T17:56:17.864603934+02:00 level=info msg="Update check succeeded" duration=78.628087ms
+logger=infra.usagestats t=2025-08-05T17:58:08.650841269+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T18:06:17.707034575+02:00 level=info msg="Completed cleanup jobs" duration=45.17611ms
+logger=plugins.update.checker t=2025-08-05T18:06:17.86342668+02:00 level=info msg="Update check succeeded" duration=77.021164ms
+logger=cleanup t=2025-08-05T18:16:17.672503496+02:00 level=info msg="Completed cleanup jobs" duration=11.474526ms
+logger=plugins.update.checker t=2025-08-05T18:16:17.839132219+02:00 level=info msg="Update check succeeded" duration=53.123182ms
+logger=cleanup t=2025-08-05T18:26:17.698455375+02:00 level=info msg="Completed cleanup jobs" duration=36.918873ms
+logger=plugins.update.checker t=2025-08-05T18:26:17.843220114+02:00 level=info msg="Update check succeeded" duration=56.713445ms
+logger=infra.usagestats t=2025-08-05T18:28:08.650715869+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T18:36:17.708741884+02:00 level=info msg="Completed cleanup jobs" duration=47.011873ms
+logger=plugins.update.checker t=2025-08-05T18:36:17.858415895+02:00 level=info msg="Update check succeeded" duration=72.217261ms
+logger=cleanup t=2025-08-05T18:46:17.709309537+02:00 level=info msg="Completed cleanup jobs" duration=47.417668ms
+logger=plugins.update.checker t=2025-08-05T18:46:17.949824075+02:00 level=info msg="Update check succeeded" duration=163.319255ms
+logger=cleanup t=2025-08-05T18:56:17.711384352+02:00 level=info msg="Completed cleanup jobs" duration=49.483707ms
+logger=plugins.update.checker t=2025-08-05T18:56:17.843933702+02:00 level=info msg="Update check succeeded" duration=57.924104ms
+logger=infra.usagestats t=2025-08-05T18:58:08.650949718+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T19:06:17.728005968+02:00 level=info msg="Completed cleanup jobs" duration=66.184351ms
+logger=plugins.update.checker t=2025-08-05T19:06:17.858243082+02:00 level=info msg="Update check succeeded" duration=72.095933ms
+logger=cleanup t=2025-08-05T19:16:17.700133282+02:00 level=info msg="Completed cleanup jobs" duration=38.211969ms
+logger=plugins.update.checker t=2025-08-05T19:16:17.849854232+02:00 level=info msg="Update check succeeded" duration=63.654636ms
+logger=cleanup t=2025-08-05T19:26:17.739456879+02:00 level=info msg="Completed cleanup jobs" duration=77.683507ms
+logger=plugins.update.checker t=2025-08-05T19:26:17.848823081+02:00 level=info msg="Update check succeeded" duration=62.671166ms
+logger=infra.usagestats t=2025-08-05T19:28:08.650407005+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T19:36:17.693842746+02:00 level=info msg="Completed cleanup jobs" duration=31.980002ms
+logger=plugins.update.checker t=2025-08-05T19:36:17.855401019+02:00 level=info msg="Update check succeeded" duration=69.245371ms
+logger=cleanup t=2025-08-05T19:46:17.755659537+02:00 level=info msg="Completed cleanup jobs" duration=93.750238ms
+logger=plugins.update.checker t=2025-08-05T19:46:17.860038019+02:00 level=info msg="Update check succeeded" duration=73.603538ms
+logger=cleanup t=2025-08-05T19:56:17.672916313+02:00 level=info msg="Completed cleanup jobs" duration=11.583165ms
+logger=plugins.update.checker t=2025-08-05T19:56:17.852993683+02:00 level=info msg="Update check succeeded" duration=66.203121ms
+logger=infra.usagestats t=2025-08-05T19:58:08.651153763+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T20:06:17.709702006+02:00 level=info msg="Completed cleanup jobs" duration=48.578177ms
+logger=plugins.update.checker t=2025-08-05T20:06:17.850370438+02:00 level=info msg="Update check succeeded" duration=63.874246ms
+logger=cleanup t=2025-08-05T20:16:17.67742695+02:00 level=info msg="Completed cleanup jobs" duration=15.539295ms
+logger=plugins.update.checker t=2025-08-05T20:16:17.84848403+02:00 level=info msg="Update check succeeded" duration=62.064403ms
+logger=cleanup t=2025-08-05T20:26:17.761181197+02:00 level=info msg="Completed cleanup jobs" duration=99.463462ms
+logger=plugins.update.checker t=2025-08-05T20:26:17.836282131+02:00 level=info msg="Update check succeeded" duration=50.30907ms
+logger=infra.usagestats t=2025-08-05T20:28:08.651022017+02:00 level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-08-05T20:36:17.691473594+02:00 level=info msg="Completed cleanup jobs" duration=29.476717ms
+logger=plugins.update.checker t=2025-08-05T20:36:17.862600405+02:00 level=info msg="Update check succeeded" duration=76.264372ms

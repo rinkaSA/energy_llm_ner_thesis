@@ -1,29 +1,0 @@
-Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
-Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:09<00:09,  9.38s/it]
-Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:11<00:00,  5.20s/it]
-Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:11<00:00,  5.82s/it]
-
-Capturing CUDA graph shapes:   0%|          | 0/35 [00:00<?, ?it/s]Capturing CUDA graph shapes:   3%|▎         | 1/35 [00:00<00:14,  2.42it/s]Capturing CUDA graph shapes:   6%|▌         | 2/35 [00:00<00:13,  2.36it/s]Capturing CUDA graph shapes:   9%|▊         | 3/35 [00:01<00:15,  2.08it/s]Capturing CUDA graph shapes:  11%|█▏        | 4/35 [00:01<00:15,  1.98it/s]Capturing CUDA graph shapes:  14%|█▍        | 5/35 [00:02<00:14,  2.07it/s]Capturing CUDA graph shapes:  17%|█▋        | 6/35 [00:02<00:12,  2.24it/s]Capturing CUDA graph shapes:  20%|██        | 7/35 [00:03<00:11,  2.34it/s]Capturing CUDA graph shapes:  23%|██▎       | 8/35 [00:03<00:11,  2.41it/s]Capturing CUDA graph shapes:  26%|██▌       | 9/35 [00:03<00:10,  2.48it/s]Capturing CUDA graph shapes:  29%|██▊       | 10/35 [00:04<00:09,  2.53it/s]Capturing CUDA graph shapes:  31%|███▏      | 11/35 [00:04<00:09,  2.56it/s]Capturing CUDA graph shapes:  34%|███▍      | 12/35 [00:05<00:08,  2.59it/s]Capturing CUDA graph shapes:  37%|███▋      | 13/35 [00:05<00:08,  2.62it/s]Capturing CUDA graph shapes:  40%|████      | 14/35 [00:05<00:08,  2.57it/s]Capturing CUDA graph shapes:  43%|████▎     | 15/35 [00:06<00:07,  2.59it/s]Capturing CUDA graph shapes:  46%|████▌     | 16/35 [00:06<00:07,  2.57it/s]Capturing CUDA graph shapes:  49%|████▊     | 17/35 [00:06<00:06,  2.61it/s]Capturing CUDA graph shapes:  51%|█████▏    | 18/35 [00:07<00:06,  2.64it/s]Capturing CUDA graph shapes:  54%|█████▍    | 19/35 [00:07<00:05,  2.67it/s]Capturing CUDA graph shapes:  57%|█████▋    | 20/35 [00:08<00:05,  2.66it/s]Capturing CUDA graph shapes:  60%|██████    | 21/35 [00:08<00:05,  2.68it/s]Capturing CUDA graph shapes:  63%|██████▎   | 22/35 [00:08<00:04,  2.71it/s]Capturing CUDA graph shapes:  66%|██████▌   | 23/35 [00:09<00:04,  2.70it/s]Capturing CUDA graph shapes:  69%|██████▊   | 24/35 [00:09<00:04,  2.73it/s]Capturing CUDA graph shapes:  71%|███████▏  | 25/35 [00:09<00:03,  2.75it/s]Capturing CUDA graph shapes:  74%|███████▍  | 26/35 [00:10<00:03,  2.77it/s]Capturing CUDA graph shapes:  77%|███████▋  | 27/35 [00:10<00:02,  2.79it/s]Capturing CUDA graph shapes:  80%|████████  | 28/35 [00:10<00:02,  2.80it/s]Capturing CUDA graph shapes:  83%|████████▎ | 29/35 [00:11<00:02,  2.74it/s]Capturing CUDA graph shapes:  86%|████████▌ | 30/35 [00:11<00:01,  2.77it/s]Capturing CUDA graph shapes:  89%|████████▊ | 31/35 [00:12<00:01,  2.72it/s]Capturing CUDA graph shapes:  91%|█████████▏| 32/35 [00:12<00:01,  2.76it/s]Capturing CUDA graph shapes:  94%|█████████▍| 33/35 [00:12<00:00,  2.79it/s]Capturing CUDA graph shapes:  97%|█████████▋| 34/35 [00:13<00:00,  2.74it/s]Capturing CUDA graph shapes: 100%|██████████| 35/35 [00:13<00:00,  2.74it/s]Capturing CUDA graph shapes: 100%|██████████| 35/35 [00:13<00:00,  2.59it/s]
-INFO:     Started server process [492282]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1745600269.697150  492459 ssl_transport_security.cc:1665] Handshake failed with error SSL_ERROR_SSL: error:100000f7:SSL routines:OPENSSL_internal:WRONG_VERSION_NUMBER: Invalid certificate verification context
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 1s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 2s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 4s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 8s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 16s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 32s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 1s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 2s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 4s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 8s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 16s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 32s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 1s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 2s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 4s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 8s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 16s.
-Transient error StatusCode.UNAVAILABLE encountered while exporting traces to c77.capella.hpc.tu-dresden.de:4317, retrying in 32s.
