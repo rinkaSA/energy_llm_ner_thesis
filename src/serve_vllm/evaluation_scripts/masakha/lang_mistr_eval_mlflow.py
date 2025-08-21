@@ -20,7 +20,7 @@ ENERGY_URL = os.getenv("ENERGY_URL")
 VLLM_METRICS_URL = os.getenv("VLLM_METRICS_URL")
 ENERGY_METRIC_NAME = "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"  
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
-FEW_SHOTS_PATH = os.getenv("FEW_SHOTS_PATH", "ner_few_shots_masakha.json")
+FEW_SHOTS_PATH = "./prompts_in_all_languages/ner_few_shots_masakha.json"
 
 ### IN THIS DATASET PER, LOC, ORG, AND DATE!! ARE GOLD TAGS. I get rid of date for now!
 
