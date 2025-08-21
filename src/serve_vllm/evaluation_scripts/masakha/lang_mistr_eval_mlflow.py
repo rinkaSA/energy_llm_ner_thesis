@@ -10,54 +10,108 @@ import numpy as np
 from tqdm import tqdm
 from datasets import load_dataset
 from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
-
-
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
 SERVER_URL = os.getenv("SERVER_URL")
 ENERGY_URL = os.getenv("ENERGY_URL")
 VLLM_METRICS_URL = os.getenv("VLLM_METRICS_URL")
+ENERGY_METRIC_NAME = "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"  
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
+FEW_SHOTS_PATH = os.getenv("FEW_SHOTS_PATH", "ner_few_shots_masakha.json")
+
+### IN THIS DATASET PER, LOC, ORG, AND DATE!! ARE GOLD TAGS. I get rid of date for now!
+
+TARGET_TYPES = {"PER", "ORG", "LOC"}
 
 
-# Updated system message for Twi language
-system_msg = {
-    "role": "system",
-    "content": (
-        "You are a Named Entity Recognition (NER) engine for Twi language.  \n"
-        "- **Input:** a sentence in **Twi** language.  \n"
-        "- **Output:** **only** a **single**, **valid** JSON object with four arrays: `PER`, `ORG`, `LOC`, `DATE`.  \n"
-        "- `PER` for person names, `ORG` for organizations, `LOC` for locations, and `DATE` for dates and time expressions.  \n"
-        "- Do **not** output any extra text, bulleted lists, or explanation.  \n"
-        "- JSON must be parseable by `json.loads`."
-    )
+masakhaner2_langs = {
+    "bam": "Bambara",
+    "ewe": "Ewe",
+    "fon": "Fon",
+    "hau": "Hausa",
+    "ibo": "Igbo",
+    "kin": "Kinyarwanda",
+    "lug": "Luganda",
+    "luo": "Luo (Dholuo)",
+    "mos": "Mossi",
+    "pcm": "Nigerian Pidgin",
+    "sna": "Shona",
+    "swa": "Swahili",
+    "tsn": "Setswana (Tswana)",
+    "twi": "Twi (Akan)",
+    "wol": "Wolof",
+    "xho": "Xhosa",
+    "yor": "Yoruba",
+    "zul": "Zulu"
 }
-# Examples in Twi with English translations as comments
-examples = [
-    {"role":"user", "content":"Sentence: Kofi Annan kɔɔ United Nations dwumadibea wɔ New York."},
-    # Translation: "Kofi Annan went to the United Nations headquarters in New York."
-    {"role":"assistant","content":(
-        '{\n'
-        '  "PER": ["Kofi Annan"],\n'
-        '  "ORG": ["United Nations"],\n'
-        '  "LOC": ["New York"],\n'
-        '  "DATE": []\n'
-        '}'
-    )}
-]
 
-def make_messages_for(sentence: str):
-    return [system_msg] + examples + [
-        {"role":"user", "content":f"Sentence: {sentence}"}
+SYSTEM_TEMPLATE = (
+    "You are a Named Entity Recognition (NER) annotator for the {language} language.\n"
+    "- Input: a single {language} sentence (do not translate).\n"
+    "- Output: only a single, valid JSON object with three arrays: `PER`, `ORG`, `LOC`.\n"
+    "- Do not output any extra text, explanations, or markdown.\n"
+    "- JSON must be parseable by json.loads.\n"
+    "- Extract only entities that appear verbatim in the input sentence (no hallucinations).\n"
+    "- Keep entity surface forms exactly as they appear; do not normalize or translate."
+)
+
+
+def build_system_msg(language: str) -> dict:
+    return {
+        "role": "system",
+        "content": SYSTEM_TEMPLATE.format(language=masakhaner2_langs.get(language, language))
+    }
+
+
+def load_few_shots(language: str):
+    with open(FEW_SHOTS_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if language not in data:
+        raise ValueError(f"No few-shot examples found for language: {language}")
+    return data[language]  
+
+def make_messages_for(sentence: str, language: str, examples_for_lang: list):
+    system_msg = build_system_msg(language)
+    return [system_msg] + examples_for_lang + [
+        {"role": "user", "content": f"Sentence: {sentence}"}
     ]
 
+async def process_batch_chat(session, sentences, max_tokens,model_name, language):
+    async def single_request(sentence):
+        few_shots = load_few_shots(language)
+        messages = make_messages_for(sentence, language, few_shots)
+        payload = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": 0.0,
+            "max_tokens": max_tokens,
+            "stop": ["}"]   
+        }
+    
+        async with session.post(SERVER_URL, json=payload) as resp:
+            result = await resp.json()
+            return result["choices"][0]["message"]["content"]
+    
+    tasks = [single_request(s) for s in sentences]
+    return await asyncio.gather(*tasks)
 
-ENERGY_METRIC_NAME = "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"  
-ARTIFACTS_DIR = "INFERENCE_TWINER_1-128_awq_mistrall_full"
-
-
-os.makedirs(ARTIFACTS_DIR, exist_ok=True)
+def project_to_targets(tags, target_types=TARGET_TYPES):
+    """Keep only BIO tags whose entity type is in target_types; map others (e.g., DATE) to 'O'."""
+    out = []
+    for t in tags:
+        if t == "O" or not t:
+            out.append("O")
+            continue
+        parts = t.split("-", 1)
+        if len(parts) != 2:
+            out.append("O")
+            continue
+        pref, typ = parts[0], parts[1].upper()
+        out.append(f"{pref}-{typ}" if typ in target_types else "O")
+    return out
 
 
 def parse_response_new(response_text: str) -> dict:
@@ -130,42 +184,6 @@ def read_energy_joules() -> float:
         if line.startswith(ENERGY_METRIC_NAME):
             return float(line.split()[-1])  # already in millijoules
     raise RuntimeError(f"{ENERGY_METRIC_NAME} not found in /metrics")
-
-
-async def process_batch_chat(session, sentences, max_tokens):
-    async def single_request(sentence):
-        messages = make_messages_for(sentence)
-        payload = {
-            "model": "/model",
-            "messages": messages,
-            "temperature": 0.0,
-            "max_tokens": max_tokens,
-            "stop": ["}"]   
-        }
-    
-        async with session.post(SERVER_URL, json=payload) as resp:
-            result = await resp.json()
-            return result["choices"][0]["message"]["content"]
-    
-    tasks = [single_request(s) for s in sentences]
-    return await asyncio.gather(*tasks)
-
-
-async def process_batch(session, prompts, max_tokens):
-    """Your original fan-out of one-prompt → one HTTP call."""
-    async def single_request(prompt):
-        payload = {
-            "model": "/model",
-            "prompt": prompt,
-            "max_tokens": max_tokens,
-            "temperature": 0.0,
-        }
-        async with session.post(SERVER_URL, json=payload) as resp:
-            result = await resp.json()
-            return result["choices"][0]["text"]
-
-    tasks = [single_request(p) for p in prompts]
-    return await asyncio.gather(*tasks)
 
 
 def numpy_serializer(obj):
@@ -248,12 +266,12 @@ def read_vllm_metrics() -> dict:
     return m
 
 
-async def process_and_measure(session, prompts, max_tokens):
+async def process_and_measure(session, prompts, max_tokens, model_name, language):
     e0 = read_energy_joules()
     v0 = read_vllm_metrics()
     t0 = time.perf_counter()
 
-    responses = await process_batch_chat(session, prompts, max_tokens)
+    responses = await process_batch_chat(session, prompts, max_tokens, model_name, language)
 
     t1 = time.perf_counter()
     e1 = read_energy_joules()
@@ -350,8 +368,8 @@ def get_bio_tags(sentence, entities):
     return tokens, tags
 
 
-async def evaluate_ner_pipeline_masakhaner2_twi(
-    test_dataset, label_list, batch_size, max_new_tokens=150
+async def evaluate_ner_pipeline_masakhaner2(
+    test_dataset, label_list, batch_size, model_name, max_new_tokens=150, language="twi"
 ):
     all_gold, all_pred = [], []
     generated_results = []
@@ -361,10 +379,11 @@ async def evaluate_ner_pipeline_masakhaner2_twi(
         for i in tqdm(range(0, len(test_dataset), batch_size)):
             batch = test_dataset.select(range(i, min(i+batch_size, len(test_dataset)))).to_list()
             sents = [" ".join(ex["tokens"]) for ex in batch]
-            golds = [[label_list[t] for t in ex["ner_tags"]] for ex in batch]
-
+            
+            golds_raw = [[label_list[t] for t in ex["ner_tags"]] for ex in batch]
+            golds = [project_to_targets(seq) for seq in golds_raw]
             try:
-                responses, telem = await process_and_measure(session, sents, max_new_tokens)
+                responses, telem = await process_and_measure(session, sents, max_new_tokens, model_name, language)
                 batch_telemetry.append(telem)
 
                 for sent, resp, g in zip(sents, responses, golds):
@@ -398,92 +417,130 @@ async def evaluate_ner_pipeline_masakhaner2_twi(
     return ner_metrics, generated_results, batch_telemetry
 
 
-async def main():
-    # Load MasakhaNER2 Twi dataset
-    test_ds = load_dataset("masakhane/masakhaner2", "twi", split="test")
+def build_artifacts_dir(language: str, batch_size: int, model_name: str):
+    safe_model = re.sub(r"[^a-zA-Z0-9_.-]+", "_", model_name)
+    return f"{language}_B{batch_size}_{safe_model}"
+
+
+
+async def run(args):
+    test_ds = load_dataset("masakhane/masakhaner2", args.language, split="test")
     labels = test_ds.features["ner_tags"].feature.names
 
-    print(f"Loaded MasakhaNER2 Twi dataset with {len(test_ds)} samples and {len(labels)} labels: {labels}")
+    print(f"Loaded MasakhaNER2 {args.language} dataset with {len(test_ds)} samples and {len(labels)} labels: {labels}")
 
-    test_subset = test_ds  # Use the full test set for evaluation
-    # Select a subset for testing if needed
-    #test_subset = test_ds.select(range(min(320, len(test_ds))))
+    test_subset = test_ds.select(range(min(1000, len(test_ds))))
     print(f"Testing with {len(test_subset)} samples")
 
-    for B in [1, 4, 8, 16, 32, 64, 128]:
-        print(f"Processing with batch size {B}...")
-        ner_metrics, gen_responses, batch_telemetry = await evaluate_ner_pipeline_masakhaner2_twi(
-            test_subset, labels, batch_size=B
+    artifacts_dir = build_artifacts_dir(args.language, args.batch_size, args.model)
+    base_dir = "./inference_eval_artifacts/masakha"
+    full_artifacts_dir = os.path.join(base_dir, artifacts_dir)
+    os.makedirs(full_artifacts_dir, exist_ok=True)
+
+
+    experiment_name = f"{args.model}_masakha"
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    mlflow.start_run(experiment_name=experiment_name)
+
+    with mlflow.start_run(run_name=f"masakha_ner_{args.language}_B{args.batch_size}"):
+        mlflow.set_tags({
+            "language": args.language,
+            "batch_size": str(args.batch_size),
+            "model": args.model,
+            "dataset": "masakha",
+            "n_samples" : str(len(test_subset))
+        })
+        mlflow.log_params({
+            "language": args.language,
+            "batch_size": args.batch_size,
+            "model": args.model,
+            "max_new_tokens": args.max_new_tokens,
+            "dataset": "masakha",
+            "n_samples" : str(len(test_subset))
+        })
+
+
+        ner_metrics, gen_responses, batch_telemetry = await evaluate_ner_pipeline_masakhaner2(
+            test_subset, labels, batch_size=args.batch_size, model_name=args.model,
+            max_new_tokens=args.max_new_tokens, language=args.language
         )
 
-        # Save generated responses
-        responses_folder = os.path.join(ARTIFACTS_DIR, "generated_responses")
+        responses_folder = os.path.join(full_artifacts_dir, "generated_responses")
         os.makedirs(responses_folder, exist_ok=True)
-        
-        responses_path = os.path.join(responses_folder, f"responses_B{B}.json")
+        responses_path = os.path.join(responses_folder, f"responses_B{args.batch_size}.json")
         with open(responses_path, "w") as f:
             json.dump(gen_responses, f, indent=2, default=numpy_serializer)
 
-        # Save NER metrics
-        ner_folder = os.path.join(ARTIFACTS_DIR, "ner_metrics")
+        ner_folder = os.path.join(full_artifacts_dir, "ner_metrics")
         os.makedirs(ner_folder, exist_ok=True)
-        
-        ner_metrics_path = os.path.join(ner_folder, f"ner_metrics_B_{B}.json")
+        ner_metrics_path = os.path.join(ner_folder, f"ner_metrics_B_{args.batch_size}.json")
         with open(ner_metrics_path, "w") as f:
             json.dump(ner_metrics, f, indent=2, default=numpy_serializer)
 
-        # Save telemetry data
-        telem_folder = os.path.join(ARTIFACTS_DIR, "telemetry")
+        telem_folder = os.path.join(full_artifacts_dir, "telemetry")
         os.makedirs(telem_folder, exist_ok=True)
-        
-        telemetry_path = os.path.join(telem_folder, f"telemetry_B_{B}.json")
+        telemetry_path = os.path.join(telem_folder, f"telemetry_B_{args.batch_size}.json")
         with open(telemetry_path, "w") as f:
             json.dump(batch_telemetry, f, indent=2, default=numpy_serializer)
 
-        # Calculate mean metrics across batches
-        mean_metrics = {
-            "avg_latency_s": np.mean([t["latency_s"] for t in batch_telemetry]),
-            "avg_energy_j": np.mean([t["energy_j"] for t in batch_telemetry]),
-            "avg_joules_per_token": np.mean([t["J_total_per_token"] for t in batch_telemetry]),
+        mlflow.log_artifact(responses_path)
+        mlflow.log_artifact(ner_metrics_path)
+        mlflow.log_artifact(telemetry_path)
 
-            "mean_e2e_latency_s": np.mean([t["e2e_latency_mean"] for t in batch_telemetry]),
-            "mean_ttfb_s": np.mean([t["ttft_mean"] for t in batch_telemetry]),
-            "mean_time_per_token_s": np.mean([t["time_per_token_mean"] for t in batch_telemetry]),
-            "mean_diff": np.mean([t["diff"] for t in batch_telemetry]),
+        if batch_telemetry:
+            numeric_keys = [k for k, v in batch_telemetry[0].items() if isinstance(v, (int, float))]
+            mean_metrics = {
+                f"mean_{k}": float(np.mean([t[k] for t in batch_telemetry]))
+                for k in numeric_keys
+            }
+            whole_energy = float(np.sum([t['energy_j'] for t in batch_telemetry]))
+            mean_metrics.update({
+                "ner_precision": ner_metrics["precision"],
+                "ner_recall": ner_metrics["recall"],
+                "ner_f1": ner_metrics["f1"],
+                "whole_energy": whole_energy
+            })
+            mlflow.log_metrics(mean_metrics)
 
-            "mean_prefill_total_s": np.mean([t["prefill_total_s"] for t in batch_telemetry]),
-            "mean_inference_total_s": np.mean([t["inference_total_s"] for t in batch_telemetry]),
-            "mean_decode_total_s": np.mean([t["decode_total_s"] for t in batch_telemetry]),
+            mean_metrics_path = os.path.join(full_artifacts_dir, f"mean_metrics_B_{args.batch_size}.json")
+            with open(mean_metrics_path, "w") as f:
+                json.dump(mean_metrics, f, indent=2, default=numpy_serializer)
+            mlflow.log_artifact(mean_metrics_path)
 
-            "mean_prefill_avg_s": np.mean([t["prefill_avg_s"] for t in batch_telemetry]),
-            "mean_inference_avg_s": np.mean([t["inference_avg_s"] for t in batch_telemetry]),
-            "mean_decode_avg_s": np.mean([t["decode_avg_s"] for t in batch_telemetry]),
+        print(f"Completed: F1={ner_metrics['f1']:.4f}, Latency={mean_metrics['avg_latency_s']:.4f}s, Energy={mean_metrics['avg_energy_j']:.4f}J, Whole Energy={mean_metrics['whole_energy']:.4f}J")
 
-            "mean_joules_prefill": np.mean([t["joules_prefill"] for t in batch_telemetry]),
-            "mean_joules_inference": np.mean([t["joules_inference"] for t in batch_telemetry]),
-            "mean_joules_decode": np.mean([t["joules_decode"] for t in batch_telemetry]),
 
-            "mean_J_prefill_per_prompt_token": np.mean([t["J_prefill_per_prompt_token"] for t in batch_telemetry]),
-            "mean_J_inf_per_gen_token": np.mean([t["J_inf_per_gen_token"] for t in batch_telemetry]),
-            "mean_J_per_total_token": np.mean([t["J_per_total_token"] for t in batch_telemetry]),
-            "mean_J_total_per_prompt_token": np.mean([t["J_total_per_prompt_token"] for t in batch_telemetry]),
-            
-            "mean_J_total_per_gen_token": np.mean([t["J_total_per_gen_token"] for t in batch_telemetry]),
-            "mean_J_total_per_token": np.mean([t["J_total_per_token"] for t in batch_telemetry]),
-            "mean_avg_power_draw_W": np.mean([t["avg_power_draw"] for t in batch_telemetry]),
-            
-            # Add NER performance metrics
-            "ner_precision": ner_metrics["precision"],
-            "ner_recall": ner_metrics["recall"],
-            "ner_f1": ner_metrics["f1"]
-        }
-        
-        mean_metrics_path = os.path.join(ARTIFACTS_DIR, f"mean_metrics_B_{B}.json")
-        with open(mean_metrics_path, "w") as f:
-            json.dump(mean_metrics, f, indent=2)
-        
-        print(f"Batch size {B} completed: F1={ner_metrics['f1']:.4f}, Latency={mean_metrics['avg_latency_s']:.4f}s, Energy={mean_metrics['avg_energy_j']:.4f}J")
 
+def main():
+    parser = argparse.ArgumentParser(description="MasakhaNER2 evaluation with vLLM + energy & MLflow")
+    parser.add_argument(
+        "--language",
+        type=str,
+        required=True,
+        choices=["bam", "ewe", "fon", "hau", "ibo", "kin", "lug", "luo", "mos", "pcm", "sna", "swa", "tsn", "twi", "wol", "xho", "yor", "zul"],
+        help="Language subset from MasakhaNER2 with bbj (Ghomala) and nya (Nyanja) exluded"
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        required=True,
+        help="Model identifier passed in the request payload ( '/model' or '/Mistral-7B-Instruct-v0.2')."
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=128,
+        help="Fixed batch size to use (default: 128)."
+    )
+    parser.add_argument(
+        "--max-new-tokens",
+        type=int,
+        default=150,
+        help="Max tokens to generate per request (default: 150)."
+    )
+    args = parser.parse_args()
+    asyncio.run(run(args))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
+

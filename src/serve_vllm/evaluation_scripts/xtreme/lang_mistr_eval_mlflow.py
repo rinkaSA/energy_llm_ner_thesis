@@ -28,7 +28,7 @@ MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 FEW_SHOTS_PATH = os.getenv("FEW_SHOTS_PATH", "ner_few_shots_panx.json")
 
 # ---------------------------
-# Prompt template (German NER example few-shot remains as generic)
+# Prompt template 
 # ---------------------------
 
 SYSTEM_TEMPLATE = (
@@ -41,10 +41,20 @@ SYSTEM_TEMPLATE = (
     "- Keep entity surface forms exactly as they appear; do not normalize or translate."
 )
 
+def full_lang_name(language: str) -> str:
+    return {
+        "de": "German",
+        "en": "English",
+        "ar": "Arabic",
+        "bg": "Bulgarian",
+        "zh": "Chinese"
+    }.get(language, language)
+
+
 def build_system_msg(language: str) -> dict:
     return {
         "role": "system",
-        "content": SYSTEM_TEMPLATE.format(language=language)
+        "content": SYSTEM_TEMPLATE.format(language=full_lang_name(language))
     }
 
 
@@ -227,12 +237,12 @@ async def process_batch_chat(session, sentences, max_tokens, model_name, languag
     tasks = [single_request(s) for s in sentences]
     return await asyncio.gather(*tasks, return_exceptions=True)
 
-async def process_and_measure(session, prompts, max_tokens, model_name):
+async def process_and_measure(session, prompts, max_tokens, model_name, language):
     e0 = read_energy_joules()
     v0 = read_vllm_metrics()
     t0 = time.perf_counter()
 
-    responses = await process_batch_chat(session, prompts, max_tokens, model_name, languagee)
+    responses = await process_batch_chat(session, prompts, max_tokens, model_name, language)
 
     t1 = time.perf_counter()
     e1 = read_energy_joules()
@@ -379,18 +389,20 @@ def resolve_xtreme_subset(language: str) -> str:
 
 def build_artifacts_dir(language: str, batch_size: int, model_name: str):
     safe_model = re.sub(r"[^a-zA-Z0-9_.-]+", "_", model_name)
-    return f"INFERENCE_XTREME_{language}_B{batch_size}_{safe_model}"
+    return f"{language}_B{batch_size}_{safe_model}"
 
 async def run(args):
     subset = resolve_xtreme_subset(args.language)
     print(f"Loading XTREME subset: {subset}")
     test_ds = load_dataset("google/xtreme", subset, split="test", trust_remote_code=True)
-    test_subset = test_ds.select(range(min(1000, len(test_ds))))  
+    test_subset = test_ds.select(range(min(1000, len(test_ds)))) 
     labels = test_ds.features["ner_tags"].feature.names
     print(f"Loaded {args.language} dataset with {len(test_subset)} samples and {len(labels)} labels: {labels}")
 
     artifacts_dir = build_artifacts_dir(args.language, args.batch_size, args.model)
-    os.makedirs(artifacts_dir, exist_ok=True)
+    base_dir = "./inference_eval_artifacts/xtreme"
+    full_artifacts_dir = os.path.join(base_dir, artifacts_dir)
+    os.makedirs(full_artifacts_dir, exist_ok=True)
 
     experiment_name = f"{args.model}_xtreme"
     
@@ -402,14 +414,16 @@ async def run(args):
             "language": args.language,
             "batch_size": str(args.batch_size),
             "model": args.model,
-            "dataset": "xtreme"
+            "dataset": "xtreme",
+            "n_samples" : str(len(test_subset))
         })
-        # Params (often handy)
         mlflow.log_params({
             "language": args.language,
             "batch_size": args.batch_size,
             "model": args.model,
-            "max_new_tokens": args.max_new_tokens
+            "max_new_tokens": args.max_new_tokens,
+            "dataset": "xtreme",
+            "n_samples" : str(len(test_subset))
         })
 
         ner_metrics, gen_responses, batch_telemetry = await evaluate_ner_pipeline_xtreme(
@@ -417,19 +431,19 @@ async def run(args):
             max_new_tokens=args.max_new_tokens, language=args.language
         )
 
-        responses_folder = os.path.join(artifacts_dir, "generated_responses")
+        responses_folder = os.path.join(full_artifacts_dir, "generated_responses")
         os.makedirs(responses_folder, exist_ok=True)
         responses_path = os.path.join(responses_folder, f"responses_B{args.batch_size}.json")
         with open(responses_path, "w") as f:
             json.dump(gen_responses, f, indent=2, default=numpy_serializer)
 
-        ner_folder = os.path.join(artifacts_dir, "ner_metrics")
+        ner_folder = os.path.join(full_artifacts_dir, "ner_metrics")
         os.makedirs(ner_folder, exist_ok=True)
         ner_metrics_path = os.path.join(ner_folder, f"ner_metrics_B_{args.batch_size}.json")
         with open(ner_metrics_path, "w") as f:
             json.dump(ner_metrics, f, indent=2, default=numpy_serializer)
 
-        telem_folder = os.path.join(artifacts_dir, "telemetry")
+        telem_folder = os.path.join(full_artifacts_dir, "telemetry")
         os.makedirs(telem_folder, exist_ok=True)
         telemetry_path = os.path.join(telem_folder, f"telemetry_B_{args.batch_size}.json")
         with open(telemetry_path, "w") as f:
@@ -444,20 +458,27 @@ async def run(args):
         mlflow.log_metric("recall", float(ner_metrics.get("recall", 0.0)))
         mlflow.log_metric("f1", float(ner_metrics.get("f1", 0.0)))
 
-        # Aggregate mean telemetry (if present)
         if batch_telemetry:
-            mean_metrics = {}
             numeric_keys = [k for k, v in batch_telemetry[0].items() if isinstance(v, (int, float))]
-            for key in numeric_keys:
-                mean_metrics[key] = float(np.mean([t[key] for t in batch_telemetry]))
-                mlflow.log_metric(f"mean_{key}", mean_metrics[key])
+            mean_metrics = {
+                f"mean_{k}": float(np.mean([t[k] for t in batch_telemetry]))
+                for k in numeric_keys
+            }
+            whole_energy = float(np.sum([t['energy_j'] for t in batch_telemetry]))
+            mean_metrics.update({
+                "ner_precision": ner_metrics["precision"],
+                "ner_recall": ner_metrics["recall"],
+                "ner_f1": ner_metrics["f1"],
+                "whole_energy": whole_energy
+            })
+            mlflow.log_metrics(mean_metrics)
 
-            mean_metrics_path = os.path.join(artifacts_dir, f"mean_metrics_B_{args.batch_size}.json")
+            mean_metrics_path = os.path.join(full_artifacts_dir, f"mean_metrics_B_{args.batch_size}.json")
             with open(mean_metrics_path, "w") as f:
                 json.dump(mean_metrics, f, indent=2, default=numpy_serializer)
             mlflow.log_artifact(mean_metrics_path)
 
-        print(f"Done. F1: {ner_metrics['f1']:.4f}")
+        print(f"Completed: F1={ner_metrics['f1']:.4f}, Latency={mean_metrics['avg_latency_s']:.4f}s, Energy={mean_metrics['avg_energy_j']:.4f}J, Whole Energy={mean_metrics['whole_energy']:.4f}J")
 
 def main():
     parser = argparse.ArgumentParser(description="XTREME NER evaluation with vLLM + energy & MLflow")

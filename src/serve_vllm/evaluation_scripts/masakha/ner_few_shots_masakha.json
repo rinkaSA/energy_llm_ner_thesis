@@ -1,0 +1,182 @@
+{
+  "twi": [
+    {
+      "role": "user",
+      "content": "Sentence: Kofi Annan kɔɔ United Nations dwumadibea wɔ New York."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Kofi Annan\"],\n  \"ORG\": [\"United Nations\"],\n  \"LOC\": [\"New York\"]\n}"
+    }
+  ],
+  "bam": [
+    {
+      "role": "user",
+      "content": "Sentence: Modibo Keïta taa ka sɔrɔ ka kɛ baara ni Université de Bamako i Bamako, Mali."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Modibo Keïta\"],\n  \"ORG\": [\"Université de Bamako\"],\n  \"LOC\": [\"Bamako\", \"Mali\"]\n}"
+    }
+  ],
+  "ewe": [
+    {
+      "role": "user",
+      "content": "Sentence: Kofi Annan ɖe asi le University of Ghana le Accra, Ghana."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Kofi Annan\"],\n  \"ORG\": [\"University of Ghana\"],\n  \"LOC\": [\"Accra\", \"Ghana\"]\n}"
+    }
+  ],
+  "fon": [
+    {
+      "role": "user",
+      "content": "Sentence: Angélique Kidjo zɔ mi na Fondation Zinsou le Cotonou, Benin."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Angélique Kidjo\"],\n  \"ORG\": [\"Fondation Zinsou\"],\n  \"LOC\": [\"Cotonou\", \"Benin\"]\n}"
+    }
+  ],
+  "hau": [
+    {
+      "role": "user",
+      "content": "Sentence: Muhammadu Buhari ya ziyarci ofishin BBC Hausa a Abuja, Najeriya."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Muhammadu Buhari\"],\n  \"ORG\": [\"BBC Hausa\"],\n  \"LOC\": [\"Abuja\", \"Najeriya\"]\n}"
+    }
+  ],
+  "ibo": [
+    {
+      "role": "user",
+      "content": "Sentence: Chimamanda Ngozi Adichie gara University of Lagos na Lagos, Naịjịrịa."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Chimamanda Ngozi Adichie\"],\n  \"ORG\": [\"University of Lagos\"],\n  \"LOC\": [\"Lagos\", \"Naịjịrịa\"]\n}"
+    }
+  ],
+  "kin": [
+    {
+      "role": "user",
+      "content": "Sentence: Paul Kagame yasura Kaminuza y’u Rwanda i Kigali, Rwanda."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Paul Kagame\"],\n  \"ORG\": [\"Kaminuza y’u Rwanda\"],\n  \"LOC\": [\"Kigali\", \"Rwanda\"]\n}"
+    }
+  ],
+  "lug": [
+    {
+      "role": "user",
+      "content": "Sentence: Bobi Wine yalambula Makerere University e Kampala, Uganda."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Bobi Wine\"],\n  \"ORG\": [\"Makerere University\"],\n  \"LOC\": [\"Kampala\", \"Uganda\"]\n}"
+    }
+  ],
+  "luo": [
+    {
+      "role": "user",
+      "content": "Sentence: Raila Odinga odwogo e Kisumu, Kenya, ka oduogo koa e ODM office."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Raila Odinga\"],\n  \"ORG\": [\"ODM\"],\n  \"LOC\": [\"Kisumu\", \"Kenya\"]\n}"
+    }
+  ],
+  "mos": [
+    {
+      "role": "user",
+      "content": "Sentence: Roch Marc Christian Kaboré raaga Ouagadougou, Burkina Faso, n ye taa Zaman Laye."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Roch Marc Christian Kaboré\"],\n  \"ORG\": [],\n  \"LOC\": [\"Ouagadougou\", \"Burkina Faso\"]\n}"
+    }
+  ],
+  "pcm": [
+    {
+      "role": "user",
+      "content": "Sentence: Burna Boy go University of Port Harcourt for Port Harcourt, Nigeria."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Burna Boy\"],\n  \"ORG\": [\"University of Port Harcourt\"],\n  \"LOC\": [\"Port Harcourt\", \"Nigeria\"]\n}"
+    }
+  ],
+  "sna": [
+    {
+      "role": "user",
+      "content": "Sentence: Strive Masiyiwa akashanyira Econet Wireless kuHarare, Zimbabwe."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Strive Masiyiwa\"],\n  \"ORG\": [\"Econet Wireless\"],\n  \"LOC\": [\"Harare\", \"Zimbabwe\"]\n}"
+    }
+  ],
+  "swa": [
+    {
+      "role": "user",
+      "content": "Sentence: Uhuru Kenyatta alitembelea Chuo Kikuu cha Nairobi jijini Nairobi, Kenya."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Uhuru Kenyatta\"],\n  \"ORG\": [\"Chuo Kikuu cha Nairobi\"],\n  \"LOC\": [\"Nairobi\", \"Kenya\"]\n}"
+    }
+  ],
+  "tsn": [
+    {
+      "role": "user",
+      "content": "Sentence: Mokgweetsi Masisi o etetse Gaborone, Botswana, a kopana le University of Botswana."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Mokgweetsi Masisi\"],\n  \"ORG\": [\"University of Botswana\"],\n  \"LOC\": [\"Gaborone\", \"Botswana\"]\n}"
+    }
+  ],
+  "wol": [
+    {
+      "role": "user",
+      "content": "Sentence: Youssou N'Dour dem ci RTS ci Dakar, Senegaal."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Youssou N'Dour\"],\n  \"ORG\": [\"RTS\"],\n  \"LOC\": [\"Dakar\", \"Senegal\"]\n}"
+    }
+  ],
+  "xho": [
+    {
+      "role": "user",
+      "content": "Sentence: Nelson Mandela watyelela iYunivesithi yaseKapa eKapa, eMzantsi Afrika."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Nelson Mandela\"],\n  \"ORG\": [\"iYunivesithi yaseKapa\"],\n  \"LOC\": [\"eKapa\", \"eMzantsi Afrika\"]\n}"
+    }
+  ],
+  "yor": [
+    {
+      "role": "user",
+      "content": "Sentence: Wole Soyinka ṣàbẹ̀wò sí University of Ibadan ní Ìbàdàn, Nàìjíríà."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Wole Soyinka\"],\n  \"ORG\": [\"University of Ibadan\"],\n  \"LOC\": [\"Ìbàdàn\", \"Nàìjíríà\"]\n}"
+    }
+  ],
+  "zul": [
+    {
+      "role": "user",
+      "content": "Sentence: Cyril Ramaphosa uvakashele eThekwini eNingizimu Afrika."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Cyril Ramaphosa\"],\n  \"ORG\": [],\n  \"LOC\": [\"eThekwini\", \"eNingizimu Afrika\"]\n}"
+    }
+  ]
+}

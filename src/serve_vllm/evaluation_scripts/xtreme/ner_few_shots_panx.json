@@ -1,5 +1,5 @@
 {
-  "german": [
+  "de": [
     {
       "role": "user",
       "content": "Sentence: Angela Merkel sprach bei den Vereinten Nationen in New York."
@@ -9,7 +9,7 @@
       "content": "{\n  \"PER\": [\"Angela Merkel\"],\n  \"ORG\": [\"Vereinten Nationen\"],\n  \"LOC\": [\"New York\"]\n}"
     }
   ],
-  "english": [
+  "en": [
     {
       "role": "user",
       "content": "Sentence: Barack Obama met Tim Cook at Apple in Cupertino."
@@ -19,7 +19,7 @@
       "content": "{\n  \"PER\": [\"Barack Obama\", \"Tim Cook\"],\n  \"ORG\": [\"Apple\"],\n  \"LOC\": [\"Cupertino\"]\n}"
     }
   ],
-  "arabic": [
+  "ar": [
     {
       "role": "user",
       "content": "Sentence: زار محمد صلاح نادي ليفربول في لندن."
@@ -29,7 +29,7 @@
       "content": "{\n  \"PER\": [\"محمد صلاح\"],\n  \"ORG\": [\"نادي ليفربول\"],\n  \"LOC\": [\"لندن\"]\n}"
     }
   ],
-  "bulgarian": [
+  "bg": [
     {
       "role": "user",
       "content": "Sentence: Румен Радев посети Европейската комисия в Брюксел."
@@ -39,7 +39,7 @@
       "content": "{\n  \"PER\": [\"Румен Радев\"],\n  \"ORG\": [\"Европейската комисия\"],\n  \"LOC\": [\"Брюксел\"]\n}"
     }
   ],
-  "chinese": [
+  "zh": [
     {
       "role": "user",
       "content": "Sentence: 习近平在北京会见了联合国秘书长安东尼奥·古特雷斯。"
