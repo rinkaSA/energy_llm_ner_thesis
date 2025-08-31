@@ -1,9 +1,0 @@
-experiment_name: "Energy_LLMs_on_CONLL03"
-run_name: 'UniversalNER_on_CONLL03_by_batches'
-model_path: "Universal-NER/UniNER-7B-type"
-dataset_name: "conll2003"
-entity_type: "PER"
-max_new_tokens: 256
-batch_size: 16
-use_full_batch: true
-model_type: "universalner" 

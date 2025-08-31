@@ -1,8 +1,0 @@
-experiment_name: "Energy_LLMs_on_CONLL03"
-run_name: 'Roberta_on_CONLL03'
-model_path: "Davlan/xlm-roberta-base-ner-hrl"
-dataset_name: "conll2003"
-max_new_tokens: 256
-batch_size: 16
-use_full_batch: true
-model_type: "roberta" 

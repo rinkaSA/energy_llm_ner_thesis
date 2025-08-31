@@ -1,0 +1,1854 @@
+Job ID is 695948
+[INFO] ENERGY_URL=http://c68.capella.hpc.tu-dresden.de:9400/metrics
+[INFO] METRICS_CSV=/data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/gpu_metrics_server/metrics_col_xt_all_langs_695948.csv
+[INFO] METRICS_INTERVAL_MS=100
+[INFO] starting GPU metrics scraper...
+[INFO] scraper PID=619936
+[INFO] Starting run for language=de, system_prompt_choice=6, max_new_tokens=60 using generic template at 2025-08-31T19:22:15.600320
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.de
+Loaded de dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['WEITERLEITUNG', 'Hu', '(', 'Xi’an', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: WEITERLEITUNG Hu ( Xi’an )
+
+Debug Example 1:
+  Tokens: ['Katja', 'Kipping', ',', 'Bernd', 'Riexinger']
+  Raw NER tag IDs: [1, 2, 0, 1, 2]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+  Sentence: Katja Kipping , Bernd Riexinger
+
+Debug Example 2:
+  Tokens: ['Runde', 'rammte', 'Lorenzo', 'Bandini', 'an', 'zweiter', 'Stelle', 'liegend', 'die', 'Streckenbegrenzung', 'aus', 'Strohballen', '.']
+  Raw NER tag IDs: [0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: Runde rammte Lorenzo Bandini an zweiter Stelle liegend die Streckenbegrenzung aus Strohballen .
+
+Debug Example 3:
+  Tokens: ['Im', 'Doppel', 'waren', 'Marcelo', 'Melo', 'und', 'André', 'Sá', 'die', 'Titelverteidiger', ',', 'sie', 'schieden', 'in', 'der', 'ersten', 'Runde', 'aus', '.']
+  Raw NER tag IDs: [0, 0, 0, 1, 2, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: Im Doppel waren Marcelo Melo und André Sá die Titelverteidiger , sie schieden in der ersten Runde aus .
+
+Debug Example 4:
+  Tokens: ["'", "''", 'Gary', 'Glitter', "''", "'", '-', "''Always", 'Yours', "''"]
+  Raw NER tag IDs: [0, 0, 1, 2, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: ' '' Gary Glitter '' ' - ''Always Yours ''
+
+Before batch request:  2025-08-31 21:22:41.924602
+After batch request:  2025-08-31 21:22:44.582285
+
+DEBUG Example 'WEITERLEITUNG Hu ( Xi’an )...':
+  Extracted entities: {'PER': [], 'ORG': ['Hu'], 'LOC': ['Xi’an']}
+  Generated pred_tags: ['O', 'B-ORG', 'O', 'B-LOC', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'Katja Kipping , Bernd Riexinger...':
+  Extracted entities: {'PER': ['Katja Kipping', 'Bernd Riexinger'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+
+DEBUG Example 'Runde rammte Lorenzo Bandini an zweiter ...':
+  Extracted entities: {'PER': ['Lorenzo Bandini'], 'ORG': [], 'LOC': ['Streckenbegrenzung']}
+  Generated pred_tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example 'Im Doppel waren Marcelo Melo und André S...':
+  Extracted entities: {'PER': ['Marcelo Melo', 'André Sá'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example '' '' Gary Glitter '' ' - ''Always Yours ...':
+  Extracted entities: {'PER': ['Gary Glitter'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:22:44.605888
+After batch request:  2025-08-31 21:22:46.813618
+Before batch request:  2025-08-31 21:22:46.836785
+After batch request:  2025-08-31 21:22:49.092360
+
+DEBUG Example '' '' Cardiff City '' '...':
+  Extracted entities: {'PER': [], 'ORG': ['Cardiff City'], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+Before batch request:  2025-08-31 21:22:49.118229
+After batch request:  2025-08-31 21:22:51.559965
+
+DEBUG Example '' '' Cardiff City '' '...':
+  Extracted entities: {'PER': [], 'ORG': ['Cardiff City'], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+Before batch request:  2025-08-31 21:22:51.583527
+After batch request:  2025-08-31 21:22:53.925645
+Before batch request:  2025-08-31 21:22:53.950323
+After batch request:  2025-08-31 21:22:56.262031
+Before batch request:  2025-08-31 21:22:56.285983
+After batch request:  2025-08-31 21:22:58.756975
+Before batch request:  2025-08-31 21:22:58.780442
+After batch request:  2025-08-31 21:23:01.024925
+Before batch request:  2025-08-31 21:23:01.049863
+After batch request:  2025-08-31 21:23:03.438487
+Before batch request:  2025-08-31 21:23:03.464023
+After batch request:  2025-08-31 21:23:06.218446
+Before batch request:  2025-08-31 21:23:06.246034
+After batch request:  2025-08-31 21:23:08.589505
+Before batch request:  2025-08-31 21:23:08.613086
+After batch request:  2025-08-31 21:23:10.985006
+Before batch request:  2025-08-31 21:23:11.007385
+After batch request:  2025-08-31 21:23:13.317283
+Before batch request:  2025-08-31 21:23:13.341108
+After batch request:  2025-08-31 21:23:15.609509
+Before batch request:  2025-08-31 21:23:15.632979
+After batch request:  2025-08-31 21:23:17.838324
+Before batch request:  2025-08-31 21:23:17.860312
+After batch request:  2025-08-31 21:23:20.058351
+Before batch request:  2025-08-31 21:23:20.081686
+After batch request:  2025-08-31 21:23:22.265538
+Before batch request:  2025-08-31 21:23:22.289199
+After batch request:  2025-08-31 21:23:24.558550
+Before batch request:  2025-08-31 21:23:24.583263
+After batch request:  2025-08-31 21:23:27.032375
+Before batch request:  2025-08-31 21:23:27.056899
+After batch request:  2025-08-31 21:23:29.293642
+Before batch request:  2025-08-31 21:23:29.316481
+After batch request:  2025-08-31 21:23:31.696061
+Before batch request:  2025-08-31 21:23:31.719424
+After batch request:  2025-08-31 21:23:33.913151
+Before batch request:  2025-08-31 21:23:33.936454
+After batch request:  2025-08-31 21:23:36.446183
+Before batch request:  2025-08-31 21:23:36.471135
+After batch request:  2025-08-31 21:23:38.731049
+Before batch request:  2025-08-31 21:23:38.755351
+After batch request:  2025-08-31 21:23:41.029897
+Before batch request:  2025-08-31 21:23:41.054410
+After batch request:  2025-08-31 21:23:43.373455
+Before batch request:  2025-08-31 21:23:43.395515
+After batch request:  2025-08-31 21:23:45.859664
+Before batch request:  2025-08-31 21:23:45.883189
+After batch request:  2025-08-31 21:23:48.396171
+Before batch request:  2025-08-31 21:23:48.418934
+After batch request:  2025-08-31 21:23:50.849821
+Before batch request:  2025-08-31 21:23:50.876538
+After batch request:  2025-08-31 21:23:53.060061
+Before batch request:  2025-08-31 21:23:53.085054
+After batch request:  2025-08-31 21:23:55.362008
+Before batch request:  2025-08-31 21:23:55.384352
+After batch request:  2025-08-31 21:23:57.780086
+Before batch request:  2025-08-31 21:23:57.803820
+After batch request:  2025-08-31 21:24:00.370634
+Before batch request:  2025-08-31 21:24:00.394540
+After batch request:  2025-08-31 21:24:02.649207
+Before batch request:  2025-08-31 21:24:02.673658
+After batch request:  2025-08-31 21:24:05.144598
+Before batch request:  2025-08-31 21:24:05.169501
+After batch request:  2025-08-31 21:24:07.590139
+Before batch request:  2025-08-31 21:24:07.616129
+After batch request:  2025-08-31 21:24:09.892137
+Before batch request:  2025-08-31 21:24:09.918306
+After batch request:  2025-08-31 21:24:12.221971
+Before batch request:  2025-08-31 21:24:12.247280
+After batch request:  2025-08-31 21:24:14.595023
+Before batch request:  2025-08-31 21:24:14.619841
+After batch request:  2025-08-31 21:24:16.871625
+Before batch request:  2025-08-31 21:24:16.895769
+After batch request:  2025-08-31 21:24:19.388727
+Before batch request:  2025-08-31 21:24:19.412251
+After batch request:  2025-08-31 21:24:21.799883
+Before batch request:  2025-08-31 21:24:21.824803
+After batch request:  2025-08-31 21:24:24.344786
+Before batch request:  2025-08-31 21:24:24.367940
+After batch request:  2025-08-31 21:24:26.660947
+Before batch request:  2025-08-31 21:24:26.685374
+After batch request:  2025-08-31 21:24:28.993608
+Before batch request:  2025-08-31 21:24:29.018376
+After batch request:  2025-08-31 21:24:31.559206
+Before batch request:  2025-08-31 21:24:31.584659
+After batch request:  2025-08-31 21:24:33.968948
+Before batch request:  2025-08-31 21:24:33.996713
+After batch request:  2025-08-31 21:24:36.456186
+Before batch request:  2025-08-31 21:24:36.480202
+After batch request:  2025-08-31 21:24:38.789887
+Before batch request:  2025-08-31 21:24:38.812113
+After batch request:  2025-08-31 21:24:41.050484
+Before batch request:  2025-08-31 21:24:41.073089
+After batch request:  2025-08-31 21:24:43.335501
+Before batch request:  2025-08-31 21:24:43.357158
+After batch request:  2025-08-31 21:24:45.717077
+Before batch request:  2025-08-31 21:24:45.741632
+After batch request:  2025-08-31 21:24:48.175388
+Before batch request:  2025-08-31 21:24:48.200527
+After batch request:  2025-08-31 21:24:50.416219
+Before batch request:  2025-08-31 21:24:50.444117
+After batch request:  2025-08-31 21:24:52.728579
+Before batch request:  2025-08-31 21:24:52.752836
+After batch request:  2025-08-31 21:24:55.133767
+Before batch request:  2025-08-31 21:24:55.155961
+After batch request:  2025-08-31 21:24:57.549092
+Before batch request:  2025-08-31 21:24:57.573607
+After batch request:  2025-08-31 21:24:59.842942
+Before batch request:  2025-08-31 21:24:59.865213
+After batch request:  2025-08-31 21:25:02.168762
+Before batch request:  2025-08-31 21:25:02.193561
+After batch request:  2025-08-31 21:25:04.658175
+Before batch request:  2025-08-31 21:25:04.681064
+After batch request:  2025-08-31 21:25:07.108701
+Before batch request:  2025-08-31 21:25:07.131473
+After batch request:  2025-08-31 21:25:09.397411
+Before batch request:  2025-08-31 21:25:09.423264
+After batch request:  2025-08-31 21:25:11.728640
+Before batch request:  2025-08-31 21:25:11.753655
+After batch request:  2025-08-31 21:25:14.238944
+Before batch request:  2025-08-31 21:25:14.262162
+After batch request:  2025-08-31 21:25:16.868801
+Before batch request:  2025-08-31 21:25:16.894030
+After batch request:  2025-08-31 21:25:19.332963
+Before batch request:  2025-08-31 21:25:19.356234
+After batch request:  2025-08-31 21:25:21.502290
+Before batch request:  2025-08-31 21:25:21.525981
+After batch request:  2025-08-31 21:25:23.796917
+Before batch request:  2025-08-31 21:25:23.820670
+After batch request:  2025-08-31 21:25:26.109076
+Before batch request:  2025-08-31 21:25:26.130350
+After batch request:  2025-08-31 21:25:28.398400
+Before batch request:  2025-08-31 21:25:28.424520
+After batch request:  2025-08-31 21:25:30.696476
+Before batch request:  2025-08-31 21:25:30.719482
+After batch request:  2025-08-31 21:25:33.000597
+Before batch request:  2025-08-31 21:25:33.026439
+After batch request:  2025-08-31 21:25:35.298695
+Before batch request:  2025-08-31 21:25:35.322938
+After batch request:  2025-08-31 21:25:37.665912
+
+DEBUG Example 'Sieben weitere Jahre später rutschte der...':
+  Extracted entities: {'PER': [], 'ORG': ['Cardiff City'], 'LOC': ['Berlin']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:25:37.692258
+After batch request:  2025-08-31 21:25:39.958372
+Before batch request:  2025-08-31 21:25:39.981855
+After batch request:  2025-08-31 21:25:42.291529
+Before batch request:  2025-08-31 21:25:42.314761
+After batch request:  2025-08-31 21:25:44.527579
+Before batch request:  2025-08-31 21:25:44.552107
+After batch request:  2025-08-31 21:25:46.900011
+Before batch request:  2025-08-31 21:25:46.922197
+After batch request:  2025-08-31 21:25:47.729812
+Completed: F1=0.6997, Energy Mean=1102.8916J, Whole Energy=87128.4360J
+🏃 View run xtreme_ner_de_prompt6_T192215_695948 at: http://172.26.52.49/#/experiments/283/runs/57e02c13f01e42f1bf5e99e8b279da3b
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=de, system_prompt_choice=6, max_new_tokens=60
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=de, system_prompt_choice=8, max_new_tokens=150 using generic template at 2025-08-31T19:26:35.729245
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.de
+Loaded de dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['WEITERLEITUNG', 'Hu', '(', 'Xi’an', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: WEITERLEITUNG Hu ( Xi’an )
+
+Debug Example 1:
+  Tokens: ['Katja', 'Kipping', ',', 'Bernd', 'Riexinger']
+  Raw NER tag IDs: [1, 2, 0, 1, 2]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+  Sentence: Katja Kipping , Bernd Riexinger
+
+Debug Example 2:
+  Tokens: ['Runde', 'rammte', 'Lorenzo', 'Bandini', 'an', 'zweiter', 'Stelle', 'liegend', 'die', 'Streckenbegrenzung', 'aus', 'Strohballen', '.']
+  Raw NER tag IDs: [0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: Runde rammte Lorenzo Bandini an zweiter Stelle liegend die Streckenbegrenzung aus Strohballen .
+
+Debug Example 3:
+  Tokens: ['Im', 'Doppel', 'waren', 'Marcelo', 'Melo', 'und', 'André', 'Sá', 'die', 'Titelverteidiger', ',', 'sie', 'schieden', 'in', 'der', 'ersten', 'Runde', 'aus', '.']
+  Raw NER tag IDs: [0, 0, 0, 1, 2, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: Im Doppel waren Marcelo Melo und André Sá die Titelverteidiger , sie schieden in der ersten Runde aus .
+
+Debug Example 4:
+  Tokens: ["'", "''", 'Gary', 'Glitter', "''", "'", '-', "''Always", 'Yours', "''"]
+  Raw NER tag IDs: [0, 0, 1, 2, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: ' '' Gary Glitter '' ' - ''Always Yours ''
+
+Before batch request:  2025-08-31 21:26:47.867281
+After batch request:  2025-08-31 21:26:52.762229
+
+DEBUG Example 'WEITERLEITUNG Hu ( Xi’an )...':
+  Extracted entities: {'PER': ['Hu'], 'ORG': [], 'LOC': ['Xi’an']}
+  Generated pred_tags: ['O', 'B-PER', 'O', 'B-LOC', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'Katja Kipping , Bernd Riexinger...':
+  Extracted entities: {'PER': ['Katja Kipping', 'Bernd Riexinger']}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'B-PER', 'I-PER']
+
+DEBUG Example 'Runde rammte Lorenzo Bandini an zweiter ...':
+  Extracted entities: {'PER': ['Lorenzo Bandini'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example 'Im Doppel waren Marcelo Melo und André S...':
+  Extracted entities: {'PER': ['Marcelo Melo', 'André Sá'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example '' '' Gary Glitter '' ' - ''Always Yours ...':
+  Extracted entities: {'PER': ['Gary Glitter'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:26:52.787536
+After batch request:  2025-08-31 21:26:57.459237
+Before batch request:  2025-08-31 21:26:57.486547
+After batch request:  2025-08-31 21:27:02.474500
+
+DEBUG Example '' '' Cardiff City '' '...':
+  Extracted entities: {'ORG': ['Cardiff City']}
+  Generated pred_tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+Before batch request:  2025-08-31 21:27:02.500995
+After batch request:  2025-08-31 21:27:07.099508
+
+DEBUG Example '' '' Cardiff City '' '...':
+  Extracted entities: {'ORG': ['Cardiff City']}
+  Generated pred_tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'O', 'O']
+Before batch request:  2025-08-31 21:27:07.123805
+After batch request:  2025-08-31 21:27:11.580203
+Before batch request:  2025-08-31 21:27:11.603582
+After batch request:  2025-08-31 21:27:16.368579
+Before batch request:  2025-08-31 21:27:16.393901
+After batch request:  2025-08-31 21:27:21.169812
+Before batch request:  2025-08-31 21:27:21.194807
+After batch request:  2025-08-31 21:27:25.599532
+Before batch request:  2025-08-31 21:27:25.625655
+After batch request:  2025-08-31 21:27:30.370593
+Before batch request:  2025-08-31 21:27:30.394059
+After batch request:  2025-08-31 21:27:34.988283
+Before batch request:  2025-08-31 21:27:35.010084
+After batch request:  2025-08-31 21:27:39.574471
+Before batch request:  2025-08-31 21:27:39.599444
+After batch request:  2025-08-31 21:27:44.587374
+Before batch request:  2025-08-31 21:27:44.611627
+After batch request:  2025-08-31 21:27:49.086163
+Before batch request:  2025-08-31 21:27:49.113810
+After batch request:  2025-08-31 21:27:53.866353
+Before batch request:  2025-08-31 21:27:53.891836
+After batch request:  2025-08-31 21:27:58.486937
+Before batch request:  2025-08-31 21:27:58.510197
+After batch request:  2025-08-31 21:28:02.966813
+Before batch request:  2025-08-31 21:28:02.990687
+After batch request:  2025-08-31 21:28:07.611291
+Before batch request:  2025-08-31 21:28:07.635873
+After batch request:  2025-08-31 21:28:12.213008
+Before batch request:  2025-08-31 21:28:12.236291
+After batch request:  2025-08-31 21:28:16.843644
+Before batch request:  2025-08-31 21:28:16.867151
+After batch request:  2025-08-31 21:28:21.506276
+Before batch request:  2025-08-31 21:28:21.529637
+After batch request:  2025-08-31 21:28:26.479438
+Before batch request:  2025-08-31 21:28:26.503348
+After batch request:  2025-08-31 21:28:31.044904
+Before batch request:  2025-08-31 21:28:31.069718
+After batch request:  2025-08-31 21:28:35.604803
+Before batch request:  2025-08-31 21:28:35.631926
+After batch request:  2025-08-31 21:28:40.291313
+Before batch request:  2025-08-31 21:28:40.314842
+After batch request:  2025-08-31 21:28:45.011994
+Before batch request:  2025-08-31 21:28:45.035489
+After batch request:  2025-08-31 21:28:49.633510
+Before batch request:  2025-08-31 21:28:49.657608
+After batch request:  2025-08-31 21:28:54.412053
+Before batch request:  2025-08-31 21:28:54.435481
+After batch request:  2025-08-31 21:28:59.213167
+Before batch request:  2025-08-31 21:28:59.237053
+After batch request:  2025-08-31 21:29:03.721109
+Before batch request:  2025-08-31 21:29:03.743342
+After batch request:  2025-08-31 21:29:08.670074
+Before batch request:  2025-08-31 21:29:08.692596
+After batch request:  2025-08-31 21:29:13.235036
+Before batch request:  2025-08-31 21:29:13.257382
+After batch request:  2025-08-31 21:29:18.009519
+Before batch request:  2025-08-31 21:29:18.033640
+After batch request:  2025-08-31 21:29:22.645033
+Before batch request:  2025-08-31 21:29:22.669490
+After batch request:  2025-08-31 21:29:27.250868
+Before batch request:  2025-08-31 21:29:27.274964
+After batch request:  2025-08-31 21:29:31.959735
+Before batch request:  2025-08-31 21:29:31.984374
+After batch request:  2025-08-31 21:29:36.512691
+Before batch request:  2025-08-31 21:29:36.536281
+After batch request:  2025-08-31 21:29:41.318552
+Before batch request:  2025-08-31 21:29:41.343148
+After batch request:  2025-08-31 21:29:45.992698
+Before batch request:  2025-08-31 21:29:46.019466
+After batch request:  2025-08-31 21:29:50.851647
+Before batch request:  2025-08-31 21:29:50.876572
+After batch request:  2025-08-31 21:29:55.489077
+Before batch request:  2025-08-31 21:29:55.511946
+After batch request:  2025-08-31 21:30:00.197626
+Before batch request:  2025-08-31 21:30:00.221839
+After batch request:  2025-08-31 21:30:04.969484
+Before batch request:  2025-08-31 21:30:04.994777
+After batch request:  2025-08-31 21:30:09.678237
+Before batch request:  2025-08-31 21:30:09.703766
+After batch request:  2025-08-31 21:30:14.374921
+Before batch request:  2025-08-31 21:30:14.399090
+After batch request:  2025-08-31 21:30:18.928132
+Before batch request:  2025-08-31 21:30:18.952621
+After batch request:  2025-08-31 21:30:23.611604
+Before batch request:  2025-08-31 21:30:23.634841
+After batch request:  2025-08-31 21:30:28.317769
+Before batch request:  2025-08-31 21:30:28.343508
+After batch request:  2025-08-31 21:30:33.416425
+Before batch request:  2025-08-31 21:30:33.441850
+After batch request:  2025-08-31 21:30:37.842717
+Before batch request:  2025-08-31 21:30:37.865983
+After batch request:  2025-08-31 21:30:42.656489
+Before batch request:  2025-08-31 21:30:42.682106
+After batch request:  2025-08-31 21:30:47.170476
+Before batch request:  2025-08-31 21:30:47.195362
+After batch request:  2025-08-31 21:30:51.788764
+Before batch request:  2025-08-31 21:30:51.812207
+After batch request:  2025-08-31 21:30:56.575714
+Before batch request:  2025-08-31 21:30:56.599752
+After batch request:  2025-08-31 21:31:01.315934
+Before batch request:  2025-08-31 21:31:01.339480
+After batch request:  2025-08-31 21:31:05.997562
+Before batch request:  2025-08-31 21:31:06.020662
+After batch request:  2025-08-31 21:31:10.534263
+Before batch request:  2025-08-31 21:31:10.555921
+After batch request:  2025-08-31 21:31:15.317857
+Before batch request:  2025-08-31 21:31:15.343387
+After batch request:  2025-08-31 21:31:19.929505
+Before batch request:  2025-08-31 21:31:19.953055
+After batch request:  2025-08-31 21:31:24.748786
+Before batch request:  2025-08-31 21:31:24.776574
+After batch request:  2025-08-31 21:31:29.509007
+Before batch request:  2025-08-31 21:31:29.532195
+After batch request:  2025-08-31 21:31:34.262830
+Before batch request:  2025-08-31 21:31:34.284314
+After batch request:  2025-08-31 21:31:38.700459
+Before batch request:  2025-08-31 21:31:38.724280
+After batch request:  2025-08-31 21:31:43.635522
+Before batch request:  2025-08-31 21:31:43.658046
+After batch request:  2025-08-31 21:31:48.498450
+Before batch request:  2025-08-31 21:31:48.521566
+After batch request:  2025-08-31 21:31:53.113417
+Before batch request:  2025-08-31 21:31:53.138218
+After batch request:  2025-08-31 21:31:58.124332
+Before batch request:  2025-08-31 21:31:58.149643
+After batch request:  2025-08-31 21:32:02.646407
+Before batch request:  2025-08-31 21:32:02.671144
+After batch request:  2025-08-31 21:32:07.151400
+Before batch request:  2025-08-31 21:32:07.176364
+After batch request:  2025-08-31 21:32:11.544392
+Before batch request:  2025-08-31 21:32:11.566807
+After batch request:  2025-08-31 21:32:16.078462
+Before batch request:  2025-08-31 21:32:16.103438
+After batch request:  2025-08-31 21:32:20.968392
+Before batch request:  2025-08-31 21:32:20.992377
+After batch request:  2025-08-31 21:32:25.642158
+Before batch request:  2025-08-31 21:32:25.668818
+After batch request:  2025-08-31 21:32:30.041648
+Before batch request:  2025-08-31 21:32:30.064852
+After batch request:  2025-08-31 21:32:34.736707
+
+DEBUG Example 'Sieben weitere Jahre später rutschte der...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:32:34.760800
+After batch request:  2025-08-31 21:32:39.578230
+Before batch request:  2025-08-31 21:32:39.603848
+After batch request:  2025-08-31 21:32:44.362681
+Before batch request:  2025-08-31 21:32:44.387260
+After batch request:  2025-08-31 21:32:49.123799
+Before batch request:  2025-08-31 21:32:49.148524
+After batch request:  2025-08-31 21:32:53.892134
+Before batch request:  2025-08-31 21:32:53.911579
+After batch request:  2025-08-31 21:32:55.794955
+Completed: F1=0.6023, Energy Mean=1830.8768J, Whole Energy=144639.2640J
+🏃 View run xtreme_ner_de_prompt8_T192635_695948 at: http://172.26.52.49/#/experiments/283/runs/a49cc35514b949f1ac58887121be90f3
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=de, system_prompt_choice=8, max_new_tokens=150
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=ar, system_prompt_choice=6, max_new_tokens=60 using generic template at 2025-08-31T19:33:42.169871
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.ar
+Loaded ar dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['تعلم', 'في', 'جامعة', 'نورث', 'وسترن', 'في', '.']
+  Raw NER tag IDs: [0, 0, 3, 4, 4, 4, 0]
+  Mapped gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+  Sentence: تعلم في جامعة نورث وسترن في .
+
+Debug Example 1:
+  Tokens: ['تحويل', 'ده\u200cشهر', '(', 'مقاطعة', 'كلاردشت', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل ده‌شهر ( مقاطعة كلاردشت )
+
+Debug Example 2:
+  Tokens: ['تحويل', 'ويلفريد', 'أورباين', 'إيلفيس', 'إندزانغا']
+  Raw NER tag IDs: [0, 1, 2, 2, 2]
+  Mapped gold tags: ['O', 'B-PER', 'I-PER', 'I-PER', 'I-PER']
+  Sentence: تحويل ويلفريد أورباين إيلفيس إندزانغا
+
+Debug Example 3:
+  Tokens: ['تحويل', 'مقاطعة', 'روش', '(', 'كانساس', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل مقاطعة روش ( كانساس )
+
+Debug Example 4:
+  Tokens: ['تحويل', 'قائمة', 'المواضيع', 'الأساسية', 'في', 'علم', 'الاجتماع']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل قائمة المواضيع الأساسية في علم الاجتماع
+
+Before batch request:  2025-08-31 21:33:57.787766
+After batch request:  2025-08-31 21:34:00.296668
+
+DEBUG Example 'تعلمفيجامعةنورثوسترنفي....':
+  Extracted entities: {'PER': [], 'ORG': ['جامعة نورثوسترن'], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+
+DEBUG Example 'تحويلده‌شهر(مقاطعةكلاردشت)...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['تحويلده\u200cشهر', 'كلاردشت']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'تحويلويلفريدأورباينإيلفيسإندزانغا...':
+  Extracted entities: {'PER': ['تحويلويلفريدأورباين', 'إيلفيس إندزانغا']}
+  Generated pred_tags: ['B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER']
+  Gold tags: ['O', 'B-PER', 'I-PER', 'I-PER', 'I-PER']
+
+DEBUG Example 'تحويلمقاطعةروش(كانساس)...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['روش(كانساس)']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'تحويلقائمةالمواضيعالأساسيةفيعلمالاجتماع...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+Before batch request:  2025-08-31 21:34:00.320870
+After batch request:  2025-08-31 21:34:02.578996
+Before batch request:  2025-08-31 21:34:02.604558
+After batch request:  2025-08-31 21:34:04.841062
+Before batch request:  2025-08-31 21:34:04.864502
+After batch request:  2025-08-31 21:34:07.102564
+Before batch request:  2025-08-31 21:34:07.127294
+After batch request:  2025-08-31 21:34:09.362468
+Before batch request:  2025-08-31 21:34:09.385821
+After batch request:  2025-08-31 21:34:11.709675
+Before batch request:  2025-08-31 21:34:11.732499
+After batch request:  2025-08-31 21:34:14.232819
+Before batch request:  2025-08-31 21:34:14.256497
+After batch request:  2025-08-31 21:34:16.465927
+Before batch request:  2025-08-31 21:34:16.490030
+After batch request:  2025-08-31 21:34:18.742383
+Before batch request:  2025-08-31 21:34:18.766129
+After batch request:  2025-08-31 21:34:21.264622
+Before batch request:  2025-08-31 21:34:21.287829
+After batch request:  2025-08-31 21:34:23.452423
+Before batch request:  2025-08-31 21:34:23.474934
+After batch request:  2025-08-31 21:34:25.797509
+Before batch request:  2025-08-31 21:34:25.820755
+After batch request:  2025-08-31 21:34:28.376381
+Before batch request:  2025-08-31 21:34:28.399897
+After batch request:  2025-08-31 21:34:30.833181
+Before batch request:  2025-08-31 21:34:30.856089
+After batch request:  2025-08-31 21:34:33.091322
+Before batch request:  2025-08-31 21:34:33.116449
+After batch request:  2025-08-31 21:34:35.380525
+Before batch request:  2025-08-31 21:34:35.404720
+After batch request:  2025-08-31 21:34:37.721180
+Before batch request:  2025-08-31 21:34:37.743801
+After batch request:  2025-08-31 21:34:40.067706
+Before batch request:  2025-08-31 21:34:40.092910
+After batch request:  2025-08-31 21:34:42.395426
+Before batch request:  2025-08-31 21:34:42.417924
+After batch request:  2025-08-31 21:34:44.703394
+Before batch request:  2025-08-31 21:34:44.728151
+After batch request:  2025-08-31 21:34:47.044352
+Before batch request:  2025-08-31 21:34:47.068066
+After batch request:  2025-08-31 21:34:49.316976
+Before batch request:  2025-08-31 21:34:49.345845
+After batch request:  2025-08-31 21:34:51.617737
+Before batch request:  2025-08-31 21:34:51.642688
+After batch request:  2025-08-31 21:34:53.992318
+Before batch request:  2025-08-31 21:34:54.016356
+After batch request:  2025-08-31 21:34:56.409643
+Before batch request:  2025-08-31 21:34:56.434209
+After batch request:  2025-08-31 21:34:58.730339
+Before batch request:  2025-08-31 21:34:58.754375
+After batch request:  2025-08-31 21:35:00.995934
+Before batch request:  2025-08-31 21:35:01.017706
+After batch request:  2025-08-31 21:35:03.222371
+Before batch request:  2025-08-31 21:35:03.244795
+After batch request:  2025-08-31 21:35:05.562953
+Before batch request:  2025-08-31 21:35:05.590051
+After batch request:  2025-08-31 21:35:08.065809
+Before batch request:  2025-08-31 21:35:08.091337
+After batch request:  2025-08-31 21:35:10.595625
+Before batch request:  2025-08-31 21:35:10.619656
+After batch request:  2025-08-31 21:35:13.153735
+Before batch request:  2025-08-31 21:35:13.179380
+After batch request:  2025-08-31 21:35:15.436211
+Before batch request:  2025-08-31 21:35:15.460239
+After batch request:  2025-08-31 21:35:17.909864
+Before batch request:  2025-08-31 21:35:17.934907
+After batch request:  2025-08-31 21:35:20.219988
+Before batch request:  2025-08-31 21:35:20.264205
+After batch request:  2025-08-31 21:35:22.656782
+Before batch request:  2025-08-31 21:35:22.681595
+After batch request:  2025-08-31 21:35:25.198461
+Before batch request:  2025-08-31 21:35:25.222116
+After batch request:  2025-08-31 21:35:27.445095
+Before batch request:  2025-08-31 21:35:27.470285
+After batch request:  2025-08-31 21:35:29.722875
+Before batch request:  2025-08-31 21:35:29.748243
+After batch request:  2025-08-31 21:35:32.224232
+Before batch request:  2025-08-31 21:35:32.248609
+After batch request:  2025-08-31 21:35:34.552985
+Before batch request:  2025-08-31 21:35:34.575001
+After batch request:  2025-08-31 21:35:37.107891
+Before batch request:  2025-08-31 21:35:37.131785
+After batch request:  2025-08-31 21:35:39.415736
+Before batch request:  2025-08-31 21:35:39.437138
+After batch request:  2025-08-31 21:35:41.897825
+Before batch request:  2025-08-31 21:35:41.925039
+After batch request:  2025-08-31 21:35:44.222172
+Before batch request:  2025-08-31 21:35:44.245784
+After batch request:  2025-08-31 21:35:46.537666
+Before batch request:  2025-08-31 21:35:46.565130
+After batch request:  2025-08-31 21:35:48.828927
+Before batch request:  2025-08-31 21:35:48.854016
+After batch request:  2025-08-31 21:35:51.101255
+Before batch request:  2025-08-31 21:35:51.123146
+After batch request:  2025-08-31 21:35:53.381405
+Before batch request:  2025-08-31 21:35:53.406157
+After batch request:  2025-08-31 21:35:55.897876
+Before batch request:  2025-08-31 21:35:55.923310
+After batch request:  2025-08-31 21:35:58.391612
+Before batch request:  2025-08-31 21:35:58.417587
+After batch request:  2025-08-31 21:36:00.662425
+Before batch request:  2025-08-31 21:36:00.686453
+After batch request:  2025-08-31 21:36:02.986831
+Before batch request:  2025-08-31 21:36:03.010714
+After batch request:  2025-08-31 21:36:05.296259
+Before batch request:  2025-08-31 21:36:05.320176
+After batch request:  2025-08-31 21:36:07.653422
+Before batch request:  2025-08-31 21:36:07.680967
+After batch request:  2025-08-31 21:36:09.958945
+Before batch request:  2025-08-31 21:36:09.984240
+After batch request:  2025-08-31 21:36:12.271820
+Before batch request:  2025-08-31 21:36:12.298073
+After batch request:  2025-08-31 21:36:14.553866
+Before batch request:  2025-08-31 21:36:14.577754
+After batch request:  2025-08-31 21:36:17.099907
+Before batch request:  2025-08-31 21:36:17.122373
+After batch request:  2025-08-31 21:36:19.345765
+Before batch request:  2025-08-31 21:36:19.371421
+After batch request:  2025-08-31 21:36:21.678270
+Before batch request:  2025-08-31 21:36:21.704309
+After batch request:  2025-08-31 21:36:24.113920
+Before batch request:  2025-08-31 21:36:24.138573
+After batch request:  2025-08-31 21:36:26.409230
+Before batch request:  2025-08-31 21:36:26.434223
+After batch request:  2025-08-31 21:36:28.703341
+Before batch request:  2025-08-31 21:36:28.728427
+After batch request:  2025-08-31 21:36:31.142337
+Before batch request:  2025-08-31 21:36:31.168935
+After batch request:  2025-08-31 21:36:33.623932
+Before batch request:  2025-08-31 21:36:33.648347
+After batch request:  2025-08-31 21:36:35.918247
+Before batch request:  2025-08-31 21:36:35.942421
+After batch request:  2025-08-31 21:36:38.317503
+Before batch request:  2025-08-31 21:36:38.342387
+After batch request:  2025-08-31 21:36:40.515883
+Before batch request:  2025-08-31 21:36:40.542763
+After batch request:  2025-08-31 21:36:43.307117
+Before batch request:  2025-08-31 21:36:43.331952
+After batch request:  2025-08-31 21:36:45.666201
+Before batch request:  2025-08-31 21:36:45.689504
+After batch request:  2025-08-31 21:36:47.995370
+Before batch request:  2025-08-31 21:36:48.018765
+After batch request:  2025-08-31 21:36:50.305807
+Before batch request:  2025-08-31 21:36:50.329081
+After batch request:  2025-08-31 21:36:52.563515
+Before batch request:  2025-08-31 21:36:52.589875
+After batch request:  2025-08-31 21:36:54.930561
+Before batch request:  2025-08-31 21:36:54.953650
+After batch request:  2025-08-31 21:36:57.287663
+Before batch request:  2025-08-31 21:36:57.311416
+After batch request:  2025-08-31 21:36:59.587908
+Before batch request:  2025-08-31 21:36:59.611801
+After batch request:  2025-08-31 21:37:01.913989
+Before batch request:  2025-08-31 21:37:01.933817
+After batch request:  2025-08-31 21:37:02.586175
+Completed: F1=0.0758, Energy Mean=1095.0473J, Whole Energy=86508.7370J
+🏃 View run xtreme_ner_ar_prompt6_T193342_695948 at: http://172.26.52.49/#/experiments/283/runs/4c685e0b7e89450a9125b89e29ff964c
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=ar, system_prompt_choice=6, max_new_tokens=60
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=ar, system_prompt_choice=8, max_new_tokens=150 using generic template at 2025-08-31T19:37:48.543676
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.ar
+Loaded ar dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['تعلم', 'في', 'جامعة', 'نورث', 'وسترن', 'في', '.']
+  Raw NER tag IDs: [0, 0, 3, 4, 4, 4, 0]
+  Mapped gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+  Sentence: تعلم في جامعة نورث وسترن في .
+
+Debug Example 1:
+  Tokens: ['تحويل', 'ده\u200cشهر', '(', 'مقاطعة', 'كلاردشت', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل ده‌شهر ( مقاطعة كلاردشت )
+
+Debug Example 2:
+  Tokens: ['تحويل', 'ويلفريد', 'أورباين', 'إيلفيس', 'إندزانغا']
+  Raw NER tag IDs: [0, 1, 2, 2, 2]
+  Mapped gold tags: ['O', 'B-PER', 'I-PER', 'I-PER', 'I-PER']
+  Sentence: تحويل ويلفريد أورباين إيلفيس إندزانغا
+
+Debug Example 3:
+  Tokens: ['تحويل', 'مقاطعة', 'روش', '(', 'كانساس', ')']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل مقاطعة روش ( كانساس )
+
+Debug Example 4:
+  Tokens: ['تحويل', 'قائمة', 'المواضيع', 'الأساسية', 'في', 'علم', 'الاجتماع']
+  Raw NER tag IDs: [0, 5, 6, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: تحويل قائمة المواضيع الأساسية في علم الاجتماع
+
+Before batch request:  2025-08-31 21:37:58.818472
+After batch request:  2025-08-31 21:38:03.668532
+
+DEBUG Example 'تعلمفيجامعةنورثوسترنفي....':
+  Extracted entities: {'ORG': ['جامعة نورثوسترن']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O']
+
+DEBUG Example 'تحويلده‌شهر(مقاطعةكلاردشت)...':
+  Extracted entities: {'LOC': ['تحويلده\u200cشهر', 'مقاطعةكلاردشت']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'تحويلويلفريدأورباينإيلفيسإندزانغا...':
+  Extracted entities: {'PER': ['تحويلويلفريد', 'أورباين', 'إيلفيس', 'إندزانغا']}
+  Generated pred_tags: ['B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'B-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER', 'I-PER']
+  Gold tags: ['O', 'B-PER', 'I-PER', 'I-PER', 'I-PER']
+
+DEBUG Example 'تحويلمقاطعةروش(كانساس)...':
+  Extracted entities: {'LOC': ['تحويلمقاطعةروش']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example 'تحويلقائمةالمواضيعالأساسيةفيعلمالاجتماع...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+Before batch request:  2025-08-31 21:38:03.692738
+After batch request:  2025-08-31 21:38:08.084937
+Before batch request:  2025-08-31 21:38:08.110756
+After batch request:  2025-08-31 21:38:12.494558
+Before batch request:  2025-08-31 21:38:12.516539
+After batch request:  2025-08-31 21:38:16.896205
+Before batch request:  2025-08-31 21:38:16.920474
+After batch request:  2025-08-31 21:38:21.440995
+Before batch request:  2025-08-31 21:38:21.464863
+After batch request:  2025-08-31 21:38:26.267016
+Before batch request:  2025-08-31 21:38:26.293062
+After batch request:  2025-08-31 21:38:30.743419
+Before batch request:  2025-08-31 21:38:30.766913
+After batch request:  2025-08-31 21:38:35.169581
+Before batch request:  2025-08-31 21:38:35.194900
+After batch request:  2025-08-31 21:38:39.734768
+Before batch request:  2025-08-31 21:38:39.759930
+After batch request:  2025-08-31 21:38:44.289041
+Before batch request:  2025-08-31 21:38:44.312030
+After batch request:  2025-08-31 21:38:48.869676
+Before batch request:  2025-08-31 21:38:48.893072
+After batch request:  2025-08-31 21:38:53.544856
+Before batch request:  2025-08-31 21:38:53.565917
+After batch request:  2025-08-31 21:38:58.050166
+Before batch request:  2025-08-31 21:38:58.074417
+After batch request:  2025-08-31 21:39:02.487985
+Before batch request:  2025-08-31 21:39:02.510188
+After batch request:  2025-08-31 21:39:06.915954
+Before batch request:  2025-08-31 21:39:06.937568
+After batch request:  2025-08-31 21:39:11.749452
+Before batch request:  2025-08-31 21:39:11.772545
+After batch request:  2025-08-31 21:39:16.400132
+Before batch request:  2025-08-31 21:39:16.422549
+After batch request:  2025-08-31 21:39:20.915148
+Before batch request:  2025-08-31 21:39:20.939231
+After batch request:  2025-08-31 21:39:25.466209
+Before batch request:  2025-08-31 21:39:25.489448
+After batch request:  2025-08-31 21:39:30.010735
+Before batch request:  2025-08-31 21:39:30.032866
+After batch request:  2025-08-31 21:39:34.537627
+Before batch request:  2025-08-31 21:39:34.562031
+After batch request:  2025-08-31 21:39:39.064218
+Before batch request:  2025-08-31 21:39:39.086736
+After batch request:  2025-08-31 21:39:43.525050
+Before batch request:  2025-08-31 21:39:43.548752
+After batch request:  2025-08-31 21:39:47.999997
+Before batch request:  2025-08-31 21:39:48.024330
+After batch request:  2025-08-31 21:39:52.516435
+Before batch request:  2025-08-31 21:39:52.541765
+After batch request:  2025-08-31 21:39:57.313752
+Before batch request:  2025-08-31 21:39:57.337777
+After batch request:  2025-08-31 21:40:01.760718
+Before batch request:  2025-08-31 21:40:01.786114
+After batch request:  2025-08-31 21:40:06.310012
+Before batch request:  2025-08-31 21:40:06.333772
+After batch request:  2025-08-31 21:40:10.527617
+Before batch request:  2025-08-31 21:40:10.550565
+After batch request:  2025-08-31 21:40:15.011562
+Before batch request:  2025-08-31 21:40:15.034683
+After batch request:  2025-08-31 21:40:19.450505
+Before batch request:  2025-08-31 21:40:19.473914
+After batch request:  2025-08-31 21:40:23.807795
+Before batch request:  2025-08-31 21:40:23.830122
+After batch request:  2025-08-31 21:40:28.311014
+Before batch request:  2025-08-31 21:40:28.334077
+After batch request:  2025-08-31 21:40:32.672248
+Before batch request:  2025-08-31 21:40:32.700499
+After batch request:  2025-08-31 21:40:37.221737
+Before batch request:  2025-08-31 21:40:37.249289
+After batch request:  2025-08-31 21:40:41.840088
+Before batch request:  2025-08-31 21:40:41.864744
+After batch request:  2025-08-31 21:40:46.777983
+Before batch request:  2025-08-31 21:40:46.801057
+After batch request:  2025-08-31 21:40:51.208879
+Before batch request:  2025-08-31 21:40:51.233124
+After batch request:  2025-08-31 21:40:55.647170
+Before batch request:  2025-08-31 21:40:55.671967
+After batch request:  2025-08-31 21:41:00.184507
+Before batch request:  2025-08-31 21:41:00.209361
+After batch request:  2025-08-31 21:41:04.729009
+Before batch request:  2025-08-31 21:41:04.754109
+After batch request:  2025-08-31 21:41:09.411994
+Before batch request:  2025-08-31 21:41:09.437000
+After batch request:  2025-08-31 21:41:14.136236
+Before batch request:  2025-08-31 21:41:14.160943
+After batch request:  2025-08-31 21:41:18.717472
+Before batch request:  2025-08-31 21:41:18.740502
+After batch request:  2025-08-31 21:41:23.157604
+Before batch request:  2025-08-31 21:41:23.181452
+After batch request:  2025-08-31 21:41:27.565988
+Before batch request:  2025-08-31 21:41:27.590429
+After batch request:  2025-08-31 21:41:32.381293
+Before batch request:  2025-08-31 21:41:32.402178
+After batch request:  2025-08-31 21:41:36.853493
+Before batch request:  2025-08-31 21:41:36.879598
+After batch request:  2025-08-31 21:41:41.347543
+Before batch request:  2025-08-31 21:41:41.369694
+After batch request:  2025-08-31 21:41:45.681602
+Before batch request:  2025-08-31 21:41:45.706700
+After batch request:  2025-08-31 21:41:50.255010
+Before batch request:  2025-08-31 21:41:50.278841
+After batch request:  2025-08-31 21:41:54.833092
+Before batch request:  2025-08-31 21:41:54.855993
+After batch request:  2025-08-31 21:41:59.212589
+Before batch request:  2025-08-31 21:41:59.237490
+After batch request:  2025-08-31 21:42:03.590954
+Before batch request:  2025-08-31 21:42:03.615888
+After batch request:  2025-08-31 21:42:08.063531
+Before batch request:  2025-08-31 21:42:08.088559
+After batch request:  2025-08-31 21:42:12.553499
+Before batch request:  2025-08-31 21:42:12.575158
+After batch request:  2025-08-31 21:42:17.418898
+Before batch request:  2025-08-31 21:42:17.443063
+After batch request:  2025-08-31 21:42:22.088007
+Before batch request:  2025-08-31 21:42:22.112228
+After batch request:  2025-08-31 21:42:26.526700
+Before batch request:  2025-08-31 21:42:26.549685
+After batch request:  2025-08-31 21:42:31.208636
+Before batch request:  2025-08-31 21:42:31.231601
+After batch request:  2025-08-31 21:42:35.771685
+Before batch request:  2025-08-31 21:42:35.795603
+After batch request:  2025-08-31 21:42:40.329966
+Before batch request:  2025-08-31 21:42:40.354184
+After batch request:  2025-08-31 21:42:44.852054
+Before batch request:  2025-08-31 21:42:44.878110
+After batch request:  2025-08-31 21:42:49.367238
+Before batch request:  2025-08-31 21:42:49.392380
+After batch request:  2025-08-31 21:42:53.770006
+Before batch request:  2025-08-31 21:42:53.795242
+After batch request:  2025-08-31 21:42:58.333093
+Before batch request:  2025-08-31 21:42:58.355976
+After batch request:  2025-08-31 21:43:03.100702
+Before batch request:  2025-08-31 21:43:03.122188
+After batch request:  2025-08-31 21:43:07.578088
+Before batch request:  2025-08-31 21:43:07.756653
+After batch request:  2025-08-31 21:43:12.151613
+Before batch request:  2025-08-31 21:43:12.176464
+After batch request:  2025-08-31 21:43:16.680838
+Before batch request:  2025-08-31 21:43:16.704713
+After batch request:  2025-08-31 21:43:21.146614
+Before batch request:  2025-08-31 21:43:21.169138
+After batch request:  2025-08-31 21:43:25.703820
+Before batch request:  2025-08-31 21:43:25.725678
+After batch request:  2025-08-31 21:43:30.089604
+Before batch request:  2025-08-31 21:43:30.112456
+After batch request:  2025-08-31 21:43:34.712234
+Before batch request:  2025-08-31 21:43:34.735964
+After batch request:  2025-08-31 21:43:39.236291
+Before batch request:  2025-08-31 21:43:39.259875
+After batch request:  2025-08-31 21:43:43.724701
+Before batch request:  2025-08-31 21:43:43.747216
+After batch request:  2025-08-31 21:43:48.513797
+Before batch request:  2025-08-31 21:43:48.537599
+After batch request:  2025-08-31 21:43:52.923913
+Before batch request:  2025-08-31 21:43:52.946826
+After batch request:  2025-08-31 21:43:54.842824
+Completed: F1=0.0747, Energy Mean=1778.5351J, Whole Energy=140504.2720J
+🏃 View run xtreme_ner_ar_prompt8_T193748_695948 at: http://172.26.52.49/#/experiments/283/runs/7f2cae5d256c4976a0c82ac44d55f9df
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=ar, system_prompt_choice=8, max_new_tokens=150
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=bg, system_prompt_choice=6, max_new_tokens=60 using generic template at 2025-08-31T19:44:41.282082
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.bg
+Loaded bg dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['Видът', 'е', 'разпространен', 'във', 'Венецуела', ',', 'Еквадор', 'и', 'Колумбия', '.']
+  Raw NER tag IDs: [0, 0, 0, 0, 5, 0, 5, 0, 5, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+  Sentence: Видът е разпространен във Венецуела , Еквадор и Колумбия .
+
+Debug Example 1:
+  Tokens: ['в', 'курорта', '``', 'Пампорово', "''", '.']
+  Raw NER tag IDs: [0, 0, 0, 5, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+  Sentence: в курорта `` Пампорово '' .
+
+Debug Example 2:
+  Tokens: ['В', 'България', 'е', 'обичаен', 'и', 'широко', 'разпространен', 'вид', '.']
+  Raw NER tag IDs: [0, 5, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: В България е обичаен и широко разпространен вид .
+
+Debug Example 3:
+  Tokens: ['Мишел', 'Пиколи', '(', 'р', '.']
+  Raw NER tag IDs: [1, 2, 0, 0, 0]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: Мишел Пиколи ( р .
+
+Debug Example 4:
+  Tokens: ['Тереза', 'Маринова', '(', 'р', '.']
+  Raw NER tag IDs: [1, 2, 0, 0, 0]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: Тереза Маринова ( р .
+
+Before batch request:  2025-08-31 21:45:04.334070
+After batch request:  2025-08-31 21:45:06.872843
+
+DEBUG Example 'Видът е разпространен във Венецуела , Ек...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['Венецуела', 'Еквадор', 'Колумбия']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+
+DEBUG Example 'в курорта `` Пампорово '' ....':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['Пампорово']}
+  Generated pred_tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+
+DEBUG Example 'В България е обичаен и широко разпростра...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['България']}
+  Generated pred_tags: ['O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example 'Мишел Пиколи ( р ....':
+  Extracted entities: {'PER': ['Мишел Пиколи'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+
+DEBUG Example 'Тереза Маринова ( р ....':
+  Extracted entities: {'PER': ['Тереза Маринова'], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:45:06.899462
+After batch request:  2025-08-31 21:45:09.491504
+Before batch request:  2025-08-31 21:45:09.515104
+After batch request:  2025-08-31 21:45:12.070056
+Before batch request:  2025-08-31 21:45:12.092245
+After batch request:  2025-08-31 21:45:14.490668
+Before batch request:  2025-08-31 21:45:14.515964
+After batch request:  2025-08-31 21:45:17.155917
+Before batch request:  2025-08-31 21:45:17.179728
+After batch request:  2025-08-31 21:45:19.480004
+Before batch request:  2025-08-31 21:45:19.504156
+After batch request:  2025-08-31 21:45:21.856983
+Before batch request:  2025-08-31 21:45:21.879056
+After batch request:  2025-08-31 21:45:24.456720
+Before batch request:  2025-08-31 21:45:24.480308
+After batch request:  2025-08-31 21:45:26.905067
+Before batch request:  2025-08-31 21:45:26.927940
+After batch request:  2025-08-31 21:45:29.525755
+Before batch request:  2025-08-31 21:45:29.550257
+After batch request:  2025-08-31 21:45:31.920986
+Before batch request:  2025-08-31 21:45:31.944732
+After batch request:  2025-08-31 21:45:34.307628
+Before batch request:  2025-08-31 21:45:34.332858
+After batch request:  2025-08-31 21:45:36.611600
+Before batch request:  2025-08-31 21:45:36.635203
+After batch request:  2025-08-31 21:45:39.144506
+Before batch request:  2025-08-31 21:45:39.171890
+After batch request:  2025-08-31 21:45:41.468295
+Before batch request:  2025-08-31 21:45:41.491601
+After batch request:  2025-08-31 21:45:44.182908
+Before batch request:  2025-08-31 21:45:44.208405
+After batch request:  2025-08-31 21:45:46.734944
+Before batch request:  2025-08-31 21:45:46.759264
+After batch request:  2025-08-31 21:45:49.301021
+Before batch request:  2025-08-31 21:45:49.324489
+After batch request:  2025-08-31 21:45:51.858585
+Before batch request:  2025-08-31 21:45:51.881685
+After batch request:  2025-08-31 21:45:54.410804
+Before batch request:  2025-08-31 21:45:54.434837
+After batch request:  2025-08-31 21:45:56.972614
+Before batch request:  2025-08-31 21:45:56.994465
+After batch request:  2025-08-31 21:45:59.422165
+Before batch request:  2025-08-31 21:45:59.446960
+After batch request:  2025-08-31 21:46:01.780178
+Before batch request:  2025-08-31 21:46:01.801782
+After batch request:  2025-08-31 21:46:04.221649
+Before batch request:  2025-08-31 21:46:04.246163
+After batch request:  2025-08-31 21:46:06.784358
+Before batch request:  2025-08-31 21:46:06.808336
+After batch request:  2025-08-31 21:46:09.216519
+Before batch request:  2025-08-31 21:46:09.242316
+After batch request:  2025-08-31 21:46:11.793002
+Before batch request:  2025-08-31 21:46:11.818336
+After batch request:  2025-08-31 21:46:14.345561
+Before batch request:  2025-08-31 21:46:14.370879
+After batch request:  2025-08-31 21:46:16.940350
+Before batch request:  2025-08-31 21:46:16.964086
+After batch request:  2025-08-31 21:46:19.312595
+Before batch request:  2025-08-31 21:46:19.334916
+After batch request:  2025-08-31 21:46:21.905123
+Before batch request:  2025-08-31 21:46:21.929531
+After batch request:  2025-08-31 21:46:24.403583
+Before batch request:  2025-08-31 21:46:24.429728
+After batch request:  2025-08-31 21:46:26.781275
+Before batch request:  2025-08-31 21:46:26.806056
+After batch request:  2025-08-31 21:46:29.437376
+Before batch request:  2025-08-31 21:46:29.460798
+After batch request:  2025-08-31 21:46:31.842003
+Before batch request:  2025-08-31 21:46:31.864995
+After batch request:  2025-08-31 21:46:34.289868
+Before batch request:  2025-08-31 21:46:34.443033
+After batch request:  2025-08-31 21:46:36.912540
+Before batch request:  2025-08-31 21:46:36.936906
+After batch request:  2025-08-31 21:46:39.452541
+Before batch request:  2025-08-31 21:46:39.475175
+After batch request:  2025-08-31 21:46:41.905247
+Before batch request:  2025-08-31 21:46:41.927185
+After batch request:  2025-08-31 21:46:44.433404
+Before batch request:  2025-08-31 21:46:44.456925
+After batch request:  2025-08-31 21:46:47.027521
+Before batch request:  2025-08-31 21:46:47.051862
+After batch request:  2025-08-31 21:46:49.566294
+Before batch request:  2025-08-31 21:46:49.589768
+After batch request:  2025-08-31 21:46:52.169935
+Before batch request:  2025-08-31 21:46:52.192256
+After batch request:  2025-08-31 21:46:54.744943
+Before batch request:  2025-08-31 21:46:54.771217
+After batch request:  2025-08-31 21:46:57.116897
+Before batch request:  2025-08-31 21:46:57.141742
+After batch request:  2025-08-31 21:46:59.692933
+Before batch request:  2025-08-31 21:46:59.717233
+After batch request:  2025-08-31 21:47:02.339470
+Before batch request:  2025-08-31 21:47:02.363284
+After batch request:  2025-08-31 21:47:04.774918
+Before batch request:  2025-08-31 21:47:04.797852
+After batch request:  2025-08-31 21:47:07.265637
+Before batch request:  2025-08-31 21:47:07.289519
+After batch request:  2025-08-31 21:47:09.879004
+Before batch request:  2025-08-31 21:47:09.903995
+After batch request:  2025-08-31 21:47:12.443884
+Before batch request:  2025-08-31 21:47:12.467774
+After batch request:  2025-08-31 21:47:15.319156
+Before batch request:  2025-08-31 21:47:15.346161
+After batch request:  2025-08-31 21:47:17.695119
+Before batch request:  2025-08-31 21:47:17.721658
+After batch request:  2025-08-31 21:47:20.236432
+Before batch request:  2025-08-31 21:47:20.260866
+After batch request:  2025-08-31 21:47:22.727890
+Before batch request:  2025-08-31 21:47:22.750484
+After batch request:  2025-08-31 21:47:25.091302
+Before batch request:  2025-08-31 21:47:25.114085
+After batch request:  2025-08-31 21:47:27.653853
+Before batch request:  2025-08-31 21:47:27.679178
+After batch request:  2025-08-31 21:47:29.999832
+Before batch request:  2025-08-31 21:47:30.024795
+After batch request:  2025-08-31 21:47:32.570334
+Before batch request:  2025-08-31 21:47:32.594302
+After batch request:  2025-08-31 21:47:35.072367
+Before batch request:  2025-08-31 21:47:35.095375
+After batch request:  2025-08-31 21:47:37.435428
+Before batch request:  2025-08-31 21:47:37.457486
+After batch request:  2025-08-31 21:47:40.004155
+Before batch request:  2025-08-31 21:47:40.027970
+After batch request:  2025-08-31 21:47:42.396514
+Before batch request:  2025-08-31 21:47:42.419823
+After batch request:  2025-08-31 21:47:44.834521
+Before batch request:  2025-08-31 21:47:44.856399
+After batch request:  2025-08-31 21:47:47.434421
+Before batch request:  2025-08-31 21:47:47.456597
+After batch request:  2025-08-31 21:47:49.962440
+Before batch request:  2025-08-31 21:47:49.985971
+After batch request:  2025-08-31 21:47:52.342039
+Before batch request:  2025-08-31 21:47:52.367497
+After batch request:  2025-08-31 21:47:54.760399
+Before batch request:  2025-08-31 21:47:54.783613
+After batch request:  2025-08-31 21:47:57.385037
+Before batch request:  2025-08-31 21:47:57.412997
+After batch request:  2025-08-31 21:48:00.328717
+Before batch request:  2025-08-31 21:48:00.353570
+After batch request:  2025-08-31 21:48:02.965554
+Before batch request:  2025-08-31 21:48:02.989799
+After batch request:  2025-08-31 21:48:05.370368
+Before batch request:  2025-08-31 21:48:05.392970
+After batch request:  2025-08-31 21:48:07.970221
+Before batch request:  2025-08-31 21:48:07.995204
+After batch request:  2025-08-31 21:48:10.365912
+Before batch request:  2025-08-31 21:48:10.391046
+After batch request:  2025-08-31 21:48:12.984252
+Before batch request:  2025-08-31 21:48:13.010090
+After batch request:  2025-08-31 21:48:15.630910
+Before batch request:  2025-08-31 21:48:15.655596
+After batch request:  2025-08-31 21:48:18.049302
+Before batch request:  2025-08-31 21:48:18.072792
+After batch request:  2025-08-31 21:48:20.642467
+Before batch request:  2025-08-31 21:48:20.662441
+After batch request:  2025-08-31 21:48:21.260668
+Completed: F1=0.7191, Energy Mean=1154.3439J, Whole Energy=91193.1690J
+🏃 View run xtreme_ner_bg_prompt6_T194441_695948 at: http://172.26.52.49/#/experiments/283/runs/f070173a4b864c40a27f3f7a99c7aa16
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=bg, system_prompt_choice=6, max_new_tokens=60
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=bg, system_prompt_choice=8, max_new_tokens=150 using generic template at 2025-08-31T19:49:07.483212
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.bg
+Loaded bg dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['Видът', 'е', 'разпространен', 'във', 'Венецуела', ',', 'Еквадор', 'и', 'Колумбия', '.']
+  Raw NER tag IDs: [0, 0, 0, 0, 5, 0, 5, 0, 5, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+  Sentence: Видът е разпространен във Венецуела , Еквадор и Колумбия .
+
+Debug Example 1:
+  Tokens: ['в', 'курорта', '``', 'Пампорово', "''", '.']
+  Raw NER tag IDs: [0, 0, 0, 5, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+  Sentence: в курорта `` Пампорово '' .
+
+Debug Example 2:
+  Tokens: ['В', 'България', 'е', 'обичаен', 'и', 'широко', 'разпространен', 'вид', '.']
+  Raw NER tag IDs: [0, 5, 0, 0, 0, 0, 0, 0, 0]
+  Mapped gold tags: ['O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Sentence: В България е обичаен и широко разпространен вид .
+
+Debug Example 3:
+  Tokens: ['Мишел', 'Пиколи', '(', 'р', '.']
+  Raw NER tag IDs: [1, 2, 0, 0, 0]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: Мишел Пиколи ( р .
+
+Debug Example 4:
+  Tokens: ['Тереза', 'Маринова', '(', 'р', '.']
+  Raw NER tag IDs: [1, 2, 0, 0, 0]
+  Mapped gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: Тереза Маринова ( р .
+
+Before batch request:  2025-08-31 21:49:18.353424
+After batch request:  2025-08-31 21:49:23.051524
+
+DEBUG Example 'Видът е разпространен във Венецуела , Ек...':
+  Extracted entities: {'LOC': ['Венецуела', 'Еквадор', 'Колумбия']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'O', 'B-LOC', 'O', 'B-LOC', 'O']
+
+DEBUG Example 'в курорта `` Пампорово '' ....':
+  Extracted entities: {'LOC': ['Пампорово']}
+  Generated pred_tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'B-LOC', 'O', 'O']
+
+DEBUG Example 'В България е обичаен и широко разпростра...':
+  Extracted entities: {'LOC': ['В България']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'B-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+
+DEBUG Example 'Мишел Пиколи ( р ....':
+  Extracted entities: {'PER': ['Мишел Пиколи']}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+
+DEBUG Example 'Тереза Маринова ( р ....':
+  Extracted entities: {'PER': ['Тереза Маринова']}
+  Generated pred_tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+  Gold tags: ['B-PER', 'I-PER', 'O', 'O', 'O']
+Before batch request:  2025-08-31 21:49:23.076417
+After batch request:  2025-08-31 21:49:27.656672
+Before batch request:  2025-08-31 21:49:27.682859
+After batch request:  2025-08-31 21:49:32.052319
+Before batch request:  2025-08-31 21:49:32.077962
+After batch request:  2025-08-31 21:49:36.503723
+Before batch request:  2025-08-31 21:49:36.528925
+After batch request:  2025-08-31 21:49:41.088724
+Before batch request:  2025-08-31 21:49:41.112554
+After batch request:  2025-08-31 21:49:45.683135
+Before batch request:  2025-08-31 21:49:45.708262
+After batch request:  2025-08-31 21:49:50.158919
+Before batch request:  2025-08-31 21:49:50.181795
+After batch request:  2025-08-31 21:49:54.680573
+Before batch request:  2025-08-31 21:49:54.705917
+After batch request:  2025-08-31 21:49:59.322264
+Before batch request:  2025-08-31 21:49:59.347048
+After batch request:  2025-08-31 21:50:03.850538
+Before batch request:  2025-08-31 21:50:03.875437
+After batch request:  2025-08-31 21:50:08.504629
+Before batch request:  2025-08-31 21:50:08.531439
+After batch request:  2025-08-31 21:50:12.738488
+Before batch request:  2025-08-31 21:50:12.772402
+After batch request:  2025-08-31 21:50:17.186022
+Before batch request:  2025-08-31 21:50:17.726490
+After batch request:  2025-08-31 21:50:22.304493
+Before batch request:  2025-08-31 21:50:22.559128
+After batch request:  2025-08-31 21:50:26.989632
+Before batch request:  2025-08-31 21:50:27.263067
+After batch request:  2025-08-31 21:50:32.206263
+Before batch request:  2025-08-31 21:50:32.226847
+After batch request:  2025-08-31 21:50:36.714376
+Before batch request:  2025-08-31 21:50:36.739505
+After batch request:  2025-08-31 21:50:41.363930
+Before batch request:  2025-08-31 21:50:41.388089
+After batch request:  2025-08-31 21:50:45.743790
+Before batch request:  2025-08-31 21:50:45.815451
+After batch request:  2025-08-31 21:50:50.448615
+Before batch request:  2025-08-31 21:50:50.472412
+After batch request:  2025-08-31 21:50:55.081368
+Before batch request:  2025-08-31 21:50:55.267891
+After batch request:  2025-08-31 21:50:59.754777
+Before batch request:  2025-08-31 21:50:59.917112
+After batch request:  2025-08-31 21:51:04.592779
+Before batch request:  2025-08-31 21:51:04.750934
+After batch request:  2025-08-31 21:51:09.207361
+Before batch request:  2025-08-31 21:51:09.317919
+After batch request:  2025-08-31 21:51:13.612050
+Before batch request:  2025-08-31 21:51:13.635050
+After batch request:  2025-08-31 21:51:18.200809
+Before batch request:  2025-08-31 21:51:18.223565
+After batch request:  2025-08-31 21:51:22.738749
+Before batch request:  2025-08-31 21:51:22.765264
+After batch request:  2025-08-31 21:51:27.381879
+Before batch request:  2025-08-31 21:51:27.406498
+After batch request:  2025-08-31 21:51:31.845381
+Before batch request:  2025-08-31 21:51:31.870772
+After batch request:  2025-08-31 21:51:36.185333
+Before batch request:  2025-08-31 21:51:36.211051
+After batch request:  2025-08-31 21:51:40.778119
+Before batch request:  2025-08-31 21:51:40.801461
+After batch request:  2025-08-31 21:51:45.398060
+Before batch request:  2025-08-31 21:51:45.423947
+After batch request:  2025-08-31 21:51:49.858808
+Before batch request:  2025-08-31 21:51:49.881636
+After batch request:  2025-08-31 21:51:54.425976
+Before batch request:  2025-08-31 21:51:54.450554
+After batch request:  2025-08-31 21:51:59.227440
+Before batch request:  2025-08-31 21:51:59.251399
+After batch request:  2025-08-31 21:52:03.818647
+Before batch request:  2025-08-31 21:52:03.843644
+After batch request:  2025-08-31 21:52:08.458908
+Before batch request:  2025-08-31 21:52:08.483582
+After batch request:  2025-08-31 21:52:12.820132
+Before batch request:  2025-08-31 21:52:12.845178
+After batch request:  2025-08-31 21:52:17.545520
+Before batch request:  2025-08-31 21:52:17.572188
+After batch request:  2025-08-31 21:52:22.100849
+Before batch request:  2025-08-31 21:52:22.123673
+After batch request:  2025-08-31 21:52:26.709738
+Before batch request:  2025-08-31 21:52:26.733402
+After batch request:  2025-08-31 21:52:31.169216
+Before batch request:  2025-08-31 21:52:31.192592
+After batch request:  2025-08-31 21:52:35.707688
+Before batch request:  2025-08-31 21:52:35.731726
+After batch request:  2025-08-31 21:52:40.085947
+Before batch request:  2025-08-31 21:52:40.111786
+After batch request:  2025-08-31 21:52:44.923746
+Before batch request:  2025-08-31 21:52:44.948713
+After batch request:  2025-08-31 21:52:49.615168
+Before batch request:  2025-08-31 21:52:49.638043
+After batch request:  2025-08-31 21:52:54.159148
+Before batch request:  2025-08-31 21:52:54.184678
+After batch request:  2025-08-31 21:52:58.738028
+Before batch request:  2025-08-31 21:52:58.762394
+After batch request:  2025-08-31 21:53:03.211154
+Before batch request:  2025-08-31 21:53:03.235832
+After batch request:  2025-08-31 21:53:07.799529
+Before batch request:  2025-08-31 21:53:07.823572
+After batch request:  2025-08-31 21:53:12.343753
+Before batch request:  2025-08-31 21:53:12.368740
+After batch request:  2025-08-31 21:53:16.711181
+Before batch request:  2025-08-31 21:53:16.734413
+After batch request:  2025-08-31 21:53:21.066080
+Before batch request:  2025-08-31 21:53:21.089801
+After batch request:  2025-08-31 21:53:25.744435
+Before batch request:  2025-08-31 21:53:25.768671
+After batch request:  2025-08-31 21:53:30.448994
+Before batch request:  2025-08-31 21:53:30.472182
+After batch request:  2025-08-31 21:53:35.007560
+Before batch request:  2025-08-31 21:53:35.031145
+After batch request:  2025-08-31 21:53:39.550218
+Before batch request:  2025-08-31 21:53:39.573483
+After batch request:  2025-08-31 21:53:44.229135
+Before batch request:  2025-08-31 21:53:44.252608
+After batch request:  2025-08-31 21:53:48.796650
+Before batch request:  2025-08-31 21:53:48.821594
+After batch request:  2025-08-31 21:53:53.406902
+Before batch request:  2025-08-31 21:53:53.432145
+After batch request:  2025-08-31 21:53:58.084461
+Before batch request:  2025-08-31 21:53:58.108787
+After batch request:  2025-08-31 21:54:02.573856
+Before batch request:  2025-08-31 21:54:02.595655
+After batch request:  2025-08-31 21:54:07.049442
+Before batch request:  2025-08-31 21:54:07.075095
+After batch request:  2025-08-31 21:54:11.540385
+Before batch request:  2025-08-31 21:54:11.565672
+After batch request:  2025-08-31 21:54:16.249658
+Before batch request:  2025-08-31 21:54:16.400843
+After batch request:  2025-08-31 21:54:20.989212
+Before batch request:  2025-08-31 21:54:21.013414
+After batch request:  2025-08-31 21:54:25.684020
+Before batch request:  2025-08-31 21:54:25.707894
+After batch request:  2025-08-31 21:54:30.243225
+Before batch request:  2025-08-31 21:54:30.265856
+After batch request:  2025-08-31 21:54:34.989465
+Before batch request:  2025-08-31 21:54:35.011828
+After batch request:  2025-08-31 21:54:39.522230
+Before batch request:  2025-08-31 21:54:39.546773
+After batch request:  2025-08-31 21:54:44.062017
+Before batch request:  2025-08-31 21:54:44.085340
+After batch request:  2025-08-31 21:54:48.458561
+Before batch request:  2025-08-31 21:54:56.025624
+After batch request:  2025-08-31 21:54:58.275681
+Before batch request:  2025-08-31 21:54:58.298353
+After batch request:  2025-08-31 21:55:02.559420
+Before batch request:  2025-08-31 21:55:02.583441
+After batch request:  2025-08-31 21:55:07.131091
+Before batch request:  2025-08-31 21:55:07.155649
+After batch request:  2025-08-31 21:55:11.884546
+Before batch request:  2025-08-31 21:55:13.885297
+After batch request:  2025-08-31 21:55:18.364174
+Before batch request:  2025-08-31 21:55:18.387256
+After batch request:  2025-08-31 21:55:23.084516
+Before batch request:  2025-08-31 21:55:23.103250
+After batch request:  2025-08-31 21:55:25.009127
+Completed: F1=0.5845, Energy Mean=1792.5942J, Whole Energy=141614.9400J
+🏃 View run xtreme_ner_bg_prompt8_T194907_695948 at: http://172.26.52.49/#/experiments/283/runs/30d59562ec364d6ab79de5d5993606e1
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=bg, system_prompt_choice=8, max_new_tokens=150
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=zh, system_prompt_choice=6, max_new_tokens=60 using generic template at 2025-08-31T19:57:58.951193
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.zh
+Loaded zh dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['香', '港', '著', '名', '電', '影', '從', '業', '員', '、', '監', '製', '黃', '百', '鳴']
+  Raw NER tag IDs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 4]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG']
+  Sentence: 香 港 著 名 電 影 從 業 員 、 監 製 黃 百 鳴
+
+Debug Example 1:
+  Tokens: ['#', '威', '斯', '巴', '登']
+  Raw NER tag IDs: [0, 5, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: # 威 斯 巴 登
+
+Debug Example 2:
+  Tokens: ['重', '定', '向', '#', '萨', '普', '卡', '伊', '米', '林']
+  Raw NER tag IDs: [0, 0, 0, 0, 5, 6, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: 重 定 向 # 萨 普 卡 伊 米 林
+
+Debug Example 3:
+  Tokens: ['希', '腊', '雅', '典']
+  Raw NER tag IDs: [5, 6, 5, 6]
+  Mapped gold tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+  Sentence: 希 腊 雅 典
+
+Debug Example 4:
+  Tokens: ['2', '0', '1', '3', '年', '7', '月', '2', '6', '日', '，', '[', '[', '社', '民', '連', '主', '席', '「', '長', '毛', '」', '梁', '國', '雄', '昨', '天', '剛', '完', '成', '絕', '食', '的', '，', '深', '夜', '到', '訪', '探', '望', '人', '民', '力', '量', '主', '席', '袁', '彌', '明', '等', '絕', '食', '人', '士', '。', '兩', '黨', '相', '約', '翌', '日', '上', '街', '遊', '行', '「', '倒', '波', '」', '反', '對', '陳', '茂', '波', '。', ']', ']']
+  Raw NER tag IDs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: 2 0 1 3 年 7 月 2 6 日 ， [ [ 社 民 連 主 席 「 長 毛 」 梁 國 雄 昨 天 剛 完 成 絕 食 的 ， 深 夜 到 訪 探 望 人 民 力 量 主 席 袁 彌 明 等 絕 食 人 士 。 兩 黨 相 約 翌 日 上 街 遊 行 「 倒 波 」 反 對 陳 茂 波 。 ] ]
+
+Before batch request:  2025-08-31 22:06:02.408710
+After batch request:  2025-08-31 22:06:05.089120
+
+DEBUG Example '香港著名電影從業員、監製黃百鳴...':
+  Extracted entities: {'PER': ['黃百鳴'], 'ORG': [], 'LOC': ['香港']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG']
+
+DEBUG Example '#威斯巴登...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['威斯巴登']}
+  Generated pred_tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example '重定向#萨普卡伊米林...':
+  Extracted entities: {'PER': [], 'ORG': ['萨普'], 'LOC': ['卡伊米林']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example '希腊雅典...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': ['希腊', '雅典']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+  Gold tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+
+DEBUG Example '2013年7月26日，[[社民連主席「長毛」梁國雄昨天剛完成絕食的，深夜到訪探望...':
+  Extracted entities: {'PER': ['長毛', '梁國雄', '袁彌明'], 'ORG': ['社民連', '人民力量'], 'LOC': ['北京']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'O', 'B-PER', 'I-PER', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O']
+Before batch request:  2025-08-31 22:06:05.114576
+After batch request:  2025-08-31 22:06:07.373735
+Before batch request:  2025-08-31 22:06:07.399927
+After batch request:  2025-08-31 22:06:09.629279
+Before batch request:  2025-08-31 22:06:09.653288
+After batch request:  2025-08-31 22:06:11.895640
+Before batch request:  2025-08-31 22:06:11.921327
+After batch request:  2025-08-31 22:06:14.301162
+Before batch request:  2025-08-31 22:06:14.327167
+After batch request:  2025-08-31 22:06:16.679362
+Before batch request:  2025-08-31 22:06:16.705301
+After batch request:  2025-08-31 22:06:19.023636
+Before batch request:  2025-08-31 22:06:19.047808
+After batch request:  2025-08-31 22:06:21.232956
+Before batch request:  2025-08-31 22:06:21.260596
+After batch request:  2025-08-31 22:06:23.568784
+Before batch request:  2025-08-31 22:06:23.596579
+After batch request:  2025-08-31 22:06:25.777754
+Before batch request:  2025-08-31 22:06:25.808215
+After batch request:  2025-08-31 22:06:28.070470
+Before batch request:  2025-08-31 22:06:28.096954
+After batch request:  2025-08-31 22:06:30.327343
+Before batch request:  2025-08-31 22:06:30.353037
+After batch request:  2025-08-31 22:06:32.771392
+Before batch request:  2025-08-31 22:06:32.798182
+After batch request:  2025-08-31 22:06:35.301946
+Before batch request:  2025-08-31 22:06:35.327389
+After batch request:  2025-08-31 22:06:37.790579
+Before batch request:  2025-08-31 22:06:37.816848
+After batch request:  2025-08-31 22:06:40.294527
+Before batch request:  2025-08-31 22:06:40.322069
+After batch request:  2025-08-31 22:06:42.530557
+Before batch request:  2025-08-31 22:06:42.559120
+After batch request:  2025-08-31 22:06:44.973567
+Before batch request:  2025-08-31 22:06:44.999432
+After batch request:  2025-08-31 22:06:47.239162
+Before batch request:  2025-08-31 22:06:47.264726
+After batch request:  2025-08-31 22:06:49.508168
+Before batch request:  2025-08-31 22:06:49.532940
+After batch request:  2025-08-31 22:06:51.748016
+Before batch request:  2025-08-31 22:06:51.775659
+After batch request:  2025-08-31 22:06:54.243283
+Before batch request:  2025-08-31 22:06:54.269884
+After batch request:  2025-08-31 22:06:56.685358
+Before batch request:  2025-08-31 22:06:56.715200
+After batch request:  2025-08-31 22:06:58.912508
+Before batch request:  2025-08-31 22:06:59.225487
+After batch request:  2025-08-31 22:07:01.455201
+Before batch request:  2025-08-31 22:07:01.481835
+After batch request:  2025-08-31 22:07:03.907050
+Before batch request:  2025-08-31 22:07:03.934117
+After batch request:  2025-08-31 22:07:06.084938
+Before batch request:  2025-08-31 22:07:06.112131
+After batch request:  2025-08-31 22:07:08.527378
+Before batch request:  2025-08-31 22:07:08.554591
+After batch request:  2025-08-31 22:07:10.910874
+Before batch request:  2025-08-31 22:07:10.936969
+After batch request:  2025-08-31 22:07:13.231484
+Before batch request:  2025-08-31 22:07:13.258194
+After batch request:  2025-08-31 22:07:15.499255
+Before batch request:  2025-08-31 22:07:15.524360
+After batch request:  2025-08-31 22:07:17.777164
+Before batch request:  2025-08-31 22:07:17.804586
+After batch request:  2025-08-31 22:07:20.120655
+Before batch request:  2025-08-31 22:07:20.146079
+After batch request:  2025-08-31 22:07:22.687386
+Before batch request:  2025-08-31 22:07:22.713985
+After batch request:  2025-08-31 22:07:24.920195
+Before batch request:  2025-08-31 22:07:24.946368
+After batch request:  2025-08-31 22:07:27.384532
+Before batch request:  2025-08-31 22:07:27.411115
+After batch request:  2025-08-31 22:07:29.751715
+Before batch request:  2025-08-31 22:07:29.778118
+After batch request:  2025-08-31 22:07:31.983779
+Before batch request:  2025-08-31 22:07:32.010982
+After batch request:  2025-08-31 22:07:34.399217
+Before batch request:  2025-08-31 22:07:34.423760
+After batch request:  2025-08-31 22:07:36.684410
+Before batch request:  2025-08-31 22:07:36.711140
+After batch request:  2025-08-31 22:07:39.026223
+Before batch request:  2025-08-31 22:07:39.049369
+After batch request:  2025-08-31 22:07:41.367712
+Before batch request:  2025-08-31 22:07:41.394190
+After batch request:  2025-08-31 22:07:43.743919
+Before batch request:  2025-08-31 22:07:43.772787
+After batch request:  2025-08-31 22:07:46.049980
+Before batch request:  2025-08-31 22:07:46.078393
+After batch request:  2025-08-31 22:07:48.364571
+Before batch request:  2025-08-31 22:07:48.390444
+After batch request:  2025-08-31 22:07:50.748563
+Before batch request:  2025-08-31 22:07:50.774471
+After batch request:  2025-08-31 22:07:53.044317
+Before batch request:  2025-08-31 22:07:53.071996
+After batch request:  2025-08-31 22:07:55.292024
+Before batch request:  2025-08-31 22:07:55.319858
+After batch request:  2025-08-31 22:07:57.672486
+Before batch request:  2025-08-31 22:07:57.696741
+After batch request:  2025-08-31 22:08:00.084602
+Before batch request:  2025-08-31 22:08:00.114279
+After batch request:  2025-08-31 22:08:02.433664
+Before batch request:  2025-08-31 22:08:02.457955
+After batch request:  2025-08-31 22:08:04.857716
+Before batch request:  2025-08-31 22:08:04.882515
+After batch request:  2025-08-31 22:08:07.279402
+Before batch request:  2025-08-31 22:08:07.306367
+After batch request:  2025-08-31 22:08:09.859029
+Before batch request:  2025-08-31 22:08:09.885417
+After batch request:  2025-08-31 22:08:12.093485
+Before batch request:  2025-08-31 22:08:12.118195
+After batch request:  2025-08-31 22:08:14.499801
+Before batch request:  2025-08-31 22:08:14.527554
+After batch request:  2025-08-31 22:08:16.927733
+Before batch request:  2025-08-31 22:08:16.951957
+After batch request:  2025-08-31 22:08:19.242276
+Before batch request:  2025-08-31 22:08:19.268263
+After batch request:  2025-08-31 22:08:21.471859
+Before batch request:  2025-08-31 22:08:21.498008
+After batch request:  2025-08-31 22:08:23.728276
+Before batch request:  2025-08-31 22:08:23.753668
+After batch request:  2025-08-31 22:08:26.100714
+Before batch request:  2025-08-31 22:08:26.127680
+After batch request:  2025-08-31 22:08:28.423839
+Before batch request:  2025-08-31 22:08:28.454134
+After batch request:  2025-08-31 22:08:30.848001
+Before batch request:  2025-08-31 22:08:30.873847
+After batch request:  2025-08-31 22:08:33.164501
+Before batch request:  2025-08-31 22:08:33.190615
+After batch request:  2025-08-31 22:08:35.450070
+Before batch request:  2025-08-31 22:08:35.476674
+After batch request:  2025-08-31 22:08:37.894438
+Before batch request:  2025-08-31 22:08:37.919954
+After batch request:  2025-08-31 22:08:40.226231
+Before batch request:  2025-08-31 22:08:40.255529
+After batch request:  2025-08-31 22:08:42.543159
+Before batch request:  2025-08-31 22:08:42.569160
+After batch request:  2025-08-31 22:08:44.757361
+Before batch request:  2025-08-31 22:08:44.782937
+After batch request:  2025-08-31 22:08:46.961357
+Before batch request:  2025-08-31 22:08:46.986899
+After batch request:  2025-08-31 22:08:49.328490
+Before batch request:  2025-08-31 22:08:49.355549
+After batch request:  2025-08-31 22:08:51.562513
+Before batch request:  2025-08-31 22:08:51.587387
+After batch request:  2025-08-31 22:08:53.833746
+Before batch request:  2025-08-31 22:08:53.858421
+After batch request:  2025-08-31 22:08:56.430964
+Before batch request:  2025-08-31 22:08:56.458201
+After batch request:  2025-08-31 22:08:58.779260
+Before batch request:  2025-08-31 22:08:58.806491
+After batch request:  2025-08-31 22:09:01.164892
+Before batch request:  2025-08-31 22:09:01.193524
+After batch request:  2025-08-31 22:09:03.653993
+Before batch request:  2025-08-31 22:09:03.679280
+After batch request:  2025-08-31 22:09:05.923048
+Before batch request:  2025-08-31 22:09:05.944161
+After batch request:  2025-08-31 22:09:06.526775
+Completed: F1=0.5310, Energy Mean=1083.5182J, Whole Energy=85597.9340J
+🏃 View run xtreme_ner_zh_prompt6_T195758_695948 at: http://172.26.52.49/#/experiments/283/runs/5cc35381d5f64266b1891fb6205f2f3f
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=zh, system_prompt_choice=6, max_new_tokens=60
+[INFO] Cooling down for 30 seconds before next run
+[INFO] Starting run for language=zh, system_prompt_choice=8, max_new_tokens=150 using generic template at 2025-08-31T20:09:55.862976
+Activating venv: /data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py311
+http://c68.capella.hpc.tu-dresden.de:8000/v1/chat/completions
+695948
+Loading XTREME subset: PAN-X.zh
+Loaded zh dataset with 10000 samples and 7 labels: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Label list mapping: ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC']
+
+Debug Example 0:
+  Tokens: ['香', '港', '著', '名', '電', '影', '從', '業', '員', '、', '監', '製', '黃', '百', '鳴']
+  Raw NER tag IDs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 4]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG']
+  Sentence: 香 港 著 名 電 影 從 業 員 、 監 製 黃 百 鳴
+
+Debug Example 1:
+  Tokens: ['#', '威', '斯', '巴', '登']
+  Raw NER tag IDs: [0, 5, 6, 6, 6]
+  Mapped gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: # 威 斯 巴 登
+
+Debug Example 2:
+  Tokens: ['重', '定', '向', '#', '萨', '普', '卡', '伊', '米', '林']
+  Raw NER tag IDs: [0, 0, 0, 0, 5, 6, 6, 6, 6, 6]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Sentence: 重 定 向 # 萨 普 卡 伊 米 林
+
+Debug Example 3:
+  Tokens: ['希', '腊', '雅', '典']
+  Raw NER tag IDs: [5, 6, 5, 6]
+  Mapped gold tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+  Sentence: 希 腊 雅 典
+
+Debug Example 4:
+  Tokens: ['2', '0', '1', '3', '年', '7', '月', '2', '6', '日', '，', '[', '[', '社', '民', '連', '主', '席', '「', '長', '毛', '」', '梁', '國', '雄', '昨', '天', '剛', '完', '成', '絕', '食', '的', '，', '深', '夜', '到', '訪', '探', '望', '人', '民', '力', '量', '主', '席', '袁', '彌', '明', '等', '絕', '食', '人', '士', '。', '兩', '黨', '相', '約', '翌', '日', '上', '街', '遊', '行', '「', '倒', '波', '」', '反', '對', '陳', '茂', '波', '。', ']', ']']
+  Raw NER tag IDs: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0]
+  Mapped gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O']
+  Sentence: 2 0 1 3 年 7 月 2 6 日 ， [ [ 社 民 連 主 席 「 長 毛 」 梁 國 雄 昨 天 剛 完 成 絕 食 的 ， 深 夜 到 訪 探 望 人 民 力 量 主 席 袁 彌 明 等 絕 食 人 士 。 兩 黨 相 約 翌 日 上 街 遊 行 「 倒 波 」 反 對 陳 茂 波 。 ] ]
+
+Before batch request:  2025-08-31 22:10:09.280804
+After batch request:  2025-08-31 22:10:13.801926
+
+DEBUG Example '香港著名電影從業員、監製黃百鳴...':
+  Extracted entities: {'LOC': ['香港'], 'PER': ['黃百鳴']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG']
+
+DEBUG Example '#威斯巴登...':
+  Extracted entities: {'LOC': ['威斯巴登']}
+  Generated pred_tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Gold tags: ['O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example '重定向#萨普卡伊米林...':
+  Extracted entities: {'LOC': ['萨普卡伊米林']}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+  Gold tags: ['O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC', 'I-LOC']
+
+DEBUG Example '希腊雅典...':
+  Extracted entities: {'LOC': ['希腊', '雅典']}
+  Generated pred_tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+  Gold tags: ['B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
+
+DEBUG Example '2013年7月26日，[[社民連主席「長毛」梁國雄昨天剛完成絕食的，深夜到訪探望...':
+  Extracted entities: {'PER': [], 'ORG': [], 'LOC': []}
+  Generated pred_tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+  Gold tags: ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-ORG', 'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-PER', 'I-PER', 'I-PER', 'O', 'O', 'O']
+Before batch request:  2025-08-31 22:10:13.829278
+After batch request:  2025-08-31 22:10:17.896641
+Before batch request:  2025-08-31 22:10:17.920068
+After batch request:  2025-08-31 22:10:22.245717
+Before batch request:  2025-08-31 22:10:22.271438
+After batch request:  2025-08-31 22:10:26.462010
+Before batch request:  2025-08-31 22:10:26.489022
+After batch request:  2025-08-31 22:10:30.659201
+Before batch request:  2025-08-31 22:10:30.684865
+After batch request:  2025-08-31 22:10:34.944957
+Before batch request:  2025-08-31 22:10:34.969234
+After batch request:  2025-08-31 22:10:39.412414
+Before batch request:  2025-08-31 22:10:39.437955
+After batch request:  2025-08-31 22:10:43.653870
+Before batch request:  2025-08-31 22:10:43.680994
+After batch request:  2025-08-31 22:10:48.294182
+Before batch request:  2025-08-31 22:10:48.319271
+After batch request:  2025-08-31 22:10:52.574795
+Before batch request:  2025-08-31 22:10:52.600210
+After batch request:  2025-08-31 22:10:56.835085
+Before batch request:  2025-08-31 22:10:56.859952
+After batch request:  2025-08-31 22:11:01.097955
+Before batch request:  2025-08-31 22:11:01.123905
+After batch request:  2025-08-31 22:11:05.497815
+Before batch request:  2025-08-31 22:11:05.526189
+After batch request:  2025-08-31 22:11:09.801970
+Before batch request:  2025-08-31 22:11:09.829582
+After batch request:  2025-08-31 22:11:14.133732
+Before batch request:  2025-08-31 22:11:14.159034
+After batch request:  2025-08-31 22:11:18.531267
+Before batch request:  2025-08-31 22:11:18.560047
+After batch request:  2025-08-31 22:11:22.783146
+Before batch request:  2025-08-31 22:11:22.807542
+After batch request:  2025-08-31 22:11:27.069313
+Before batch request:  2025-08-31 22:11:27.096769
+After batch request:  2025-08-31 22:11:31.338910
+Before batch request:  2025-08-31 22:11:31.363808
+After batch request:  2025-08-31 22:11:35.916217
+Before batch request:  2025-08-31 22:11:35.942259
+After batch request:  2025-08-31 22:11:40.098994
+Before batch request:  2025-08-31 22:11:40.124117
+After batch request:  2025-08-31 22:11:44.442864
+Before batch request:  2025-08-31 22:11:44.470369
+After batch request:  2025-08-31 22:11:48.625886
+Before batch request:  2025-08-31 22:11:48.652470
+After batch request:  2025-08-31 22:11:52.947368
+Before batch request:  2025-08-31 22:11:52.974482
+After batch request:  2025-08-31 22:11:57.216530
+Before batch request:  2025-08-31 22:11:57.242310
+After batch request:  2025-08-31 22:12:01.502729
+Before batch request:  2025-08-31 22:12:01.529128
+After batch request:  2025-08-31 22:12:05.662010
+Before batch request:  2025-08-31 22:12:05.687643
+After batch request:  2025-08-31 22:12:09.928650
+Before batch request:  2025-08-31 22:12:09.955767
+After batch request:  2025-08-31 22:12:14.165037
+Before batch request:  2025-08-31 22:12:14.188781
+After batch request:  2025-08-31 22:12:18.452318
+Before batch request:  2025-08-31 22:12:18.477629
+After batch request:  2025-08-31 22:12:22.612092
+Before batch request:  2025-08-31 22:12:22.636275
+After batch request:  2025-08-31 22:12:27.154663
+Before batch request:  2025-08-31 22:12:27.181270
+After batch request:  2025-08-31 22:12:31.352479
+Before batch request:  2025-08-31 22:12:31.377876
+After batch request:  2025-08-31 22:12:35.621898
+Before batch request:  2025-08-31 22:12:35.647658
+After batch request:  2025-08-31 22:12:39.846359
+Before batch request:  2025-08-31 22:12:39.870070
+After batch request:  2025-08-31 22:12:44.130690
+Before batch request:  2025-08-31 22:12:44.157338
+After batch request:  2025-08-31 22:12:48.425973
+Before batch request:  2025-08-31 22:12:48.452754
+After batch request:  2025-08-31 22:12:52.542260
+Before batch request:  2025-08-31 22:12:52.568037
+After batch request:  2025-08-31 22:12:56.957311
+Before batch request:  2025-08-31 22:12:56.984689
+After batch request:  2025-08-31 22:13:01.187958
+Before batch request:  2025-08-31 22:13:01.213693
+After batch request:  2025-08-31 22:13:05.383865
+Before batch request:  2025-08-31 22:13:05.409564
+After batch request:  2025-08-31 22:13:09.665879
+Before batch request:  2025-08-31 22:13:09.692162
+After batch request:  2025-08-31 22:13:14.217189
+Before batch request:  2025-08-31 22:13:14.244359
+After batch request:  2025-08-31 22:13:18.451123
+Before batch request:  2025-08-31 22:13:18.476173
+After batch request:  2025-08-31 22:13:22.769894
+Before batch request:  2025-08-31 22:13:22.796268
+After batch request:  2025-08-31 22:13:27.147919
+Before batch request:  2025-08-31 22:13:27.172056
+After batch request:  2025-08-31 22:13:31.456862
+Before batch request:  2025-08-31 22:13:31.483600
+After batch request:  2025-08-31 22:13:35.686477
+Before batch request:  2025-08-31 22:13:35.712562
+After batch request:  2025-08-31 22:13:40.063991
+Before batch request:  2025-08-31 22:13:40.090501
+After batch request:  2025-08-31 22:13:44.370215
+Before batch request:  2025-08-31 22:13:44.397668
+After batch request:  2025-08-31 22:13:48.749327
+Before batch request:  2025-08-31 22:13:48.776954
+After batch request:  2025-08-31 22:13:53.088076
+Before batch request:  2025-08-31 22:13:53.114124
+After batch request:  2025-08-31 22:13:57.422179
+Before batch request:  2025-08-31 22:13:57.449586
+After batch request:  2025-08-31 22:14:02.025633
+Before batch request:  2025-08-31 22:14:02.051739
+After batch request:  2025-08-31 22:14:06.381379
+Before batch request:  2025-08-31 22:14:06.405257
+After batch request:  2025-08-31 22:14:10.587362
+Before batch request:  2025-08-31 22:14:10.612491
+After batch request:  2025-08-31 22:14:14.942141
+Before batch request:  2025-08-31 22:14:14.967323
+After batch request:  2025-08-31 22:14:19.350639
+Before batch request:  2025-08-31 22:14:19.378376
+After batch request:  2025-08-31 22:14:23.644995
+Before batch request:  2025-08-31 22:14:23.670739
+After batch request:  2025-08-31 22:14:27.838551
+Before batch request:  2025-08-31 22:14:27.864260
+After batch request:  2025-08-31 22:14:32.152331
+Before batch request:  2025-08-31 22:14:32.177689
+After batch request:  2025-08-31 22:14:36.521807
+Before batch request:  2025-08-31 22:14:36.546359
+After batch request:  2025-08-31 22:14:40.738796
+Before batch request:  2025-08-31 22:14:40.765065
+After batch request:  2025-08-31 22:14:44.954134
+Before batch request:  2025-08-31 22:14:44.980145
+After batch request:  2025-08-31 22:14:49.442759
+Before batch request:  2025-08-31 22:14:49.466297
+After batch request:  2025-08-31 22:14:53.755821
+Before batch request:  2025-08-31 22:14:53.780248
+After batch request:  2025-08-31 22:14:58.013767
+Before batch request:  2025-08-31 22:14:58.042467
+After batch request:  2025-08-31 22:15:02.319945
+Before batch request:  2025-08-31 22:15:02.345580
+After batch request:  2025-08-31 22:15:06.408090
+Before batch request:  2025-08-31 22:15:06.432425
+After batch request:  2025-08-31 22:15:10.645535
+Before batch request:  2025-08-31 22:15:10.671172
+After batch request:  2025-08-31 22:15:14.848512
+Before batch request:  2025-08-31 22:15:14.873978
+After batch request:  2025-08-31 22:15:18.977298
+Before batch request:  2025-08-31 22:15:19.009004
+After batch request:  2025-08-31 22:15:23.173852
+Before batch request:  2025-08-31 22:15:23.201420
+After batch request:  2025-08-31 22:15:27.426860
+Before batch request:  2025-08-31 22:15:27.451299
+After batch request:  2025-08-31 22:15:31.846439
+Before batch request:  2025-08-31 22:15:31.871318
+After batch request:  2025-08-31 22:15:36.112209
+Before batch request:  2025-08-31 22:15:36.141624
+After batch request:  2025-08-31 22:15:41.026852
+Before batch request:  2025-08-31 22:15:41.052684
+After batch request:  2025-08-31 22:15:45.196086
+Before batch request:  2025-08-31 22:15:45.217618
+After batch request:  2025-08-31 22:15:46.938996
+Completed: F1=0.5159, Energy Mean=1718.8635J, Whole Energy=135790.2180J
+🏃 View run xtreme_ner_zh_prompt8_T200955_695948 at: http://172.26.52.49/#/experiments/283/runs/82bfe605c1564cee9db15cb378ac91eb
+🧪 View experiment at: http://172.26.52.49/#/experiments/283
+[INFO] Completed run for language=zh, system_prompt_choice=8, max_new_tokens=150
+[INFO] Cooling down for 30 seconds before next run
+[INFO] All evaluations completed
+[INFO] stopping scraper 619936

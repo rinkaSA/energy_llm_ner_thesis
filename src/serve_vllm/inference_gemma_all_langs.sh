@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --time=08:00:00
+#SBATCH --time=02:00:00
 #SBATCH --output=ev_gemma_all_langs_%j.out
 #SBATCH --error=ev_gemma_all_langs_%j.err
 
@@ -14,13 +14,12 @@ VENV_PATH="/data/horse/ws/irve354e-energy_llm_ner/super_weights/universal-ner-py
 METRICS_DIR="${WORKSPACE_DIR}/gpu_metrics_server"
 METRICS_SCRIPT="${WORKSPACE_DIR}/collect_gpu_nvml.py"   
 
-# All languages in XTREME
-languages=("en" "de" "ar" "bg" "zh")
-prompt_style=5  # Using prompt style 5 for all languages
+# All languages to evaluate
+languages=("es" "fr" "el" "hi" "id")
+prompt_styles=(6)
 batch_size=128
-max_new_tokens=60
 sample_limit=10000
-cooldown_seconds=30  # Longer cooldown between languages
+cooldown_seconds=30  # Longer cooldown between runs
 use_generic_template=true  # Using the generic template for all languages
 
 if [[ -f "${WORKSPACE_DIR}/.env" ]]; then
@@ -57,42 +56,53 @@ echo "[INFO] scraper PID=${SCRAPER_PID}"
 trap 'echo "[INFO] stopping scraper ${SCRAPER_PID}"; kill ${SCRAPER_PID} 2>/dev/null || true' EXIT
 
 for lang in "${languages[@]}"; do
-  # record the start timestamp for this run
-  start_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%6N")
-  
-  template_flag=""
-  if [[ "${use_generic_template}" == "true" ]]; then
-    template_flag="--use-generic-template"
-    echo "[INFO] Starting run for language=${lang} with system_prompt_choice=${prompt_style} using generic template at ${start_timestamp}"
-  else
-    echo "[INFO] Starting run for language=${lang} with system_prompt_choice=${prompt_style} at ${start_timestamp}"
-  fi
-  
-  srun bash -lc "
-    set -euo pipefail
+  for style in "${prompt_styles[@]}"; do
+    # Set max_new_tokens based on prompt style
+    if [[ "${style}" -eq 6 ]]; then
+      max_new_tokens=100
+    elif [[ "${style}" -eq 8 ]]; then
+      max_new_tokens=200
+    else
+      max_new_tokens=100  # Default fallback
+    fi
+    
+    # record the start timestamp for this run
+    start_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%6N")
+    
+    template_flag=""
+    if [[ "${use_generic_template}" == "true" ]]; then
+      template_flag="--use-generic-template"
+      echo "[INFO] Starting run for language=${lang}, system_prompt_choice=${style}, max_new_tokens=${max_new_tokens} using generic template at ${start_timestamp}"
+    else
+      echo "[INFO] Starting run for language=${lang}, system_prompt_choice=${style}, max_new_tokens=${max_new_tokens} at ${start_timestamp}"
+    fi
+    
+    srun bash -lc "
+      set -euo pipefail
 
-    echo 'Activating venv: ${VENV_PATH}'
-    source ${VENV_PATH}/bin/activate
+      echo 'Activating venv: ${VENV_PATH}'
+      source ${VENV_PATH}/bin/activate
 
-    cd ${WORKSPACE_DIR}
+      cd ${WORKSPACE_DIR}
 
-    # Using chat API (process_batch_chat) for Gemma
-    python ${WORKSPACE_DIR}/evaluation_scripts/xtreme/lang_eval_mlflow_mi_gol.py \
-      --language ${lang} \
-      --model /gemma-3-4b-it \
-      --system-prompt-choice ${prompt_style} \
-      --batch-size ${batch_size} \
-      --max-new-tokens ${max_new_tokens} \
-      --limit ${sample_limit} \
-      --run-start-timestamp \"${start_timestamp}\" \
-      ${template_flag}
-  "
-  
-  echo "[INFO] Completed run for language=${lang}"
-  
-  # wait between runs to allow GPU utilization to drop
-  echo "[INFO] Cooling down for ${cooldown_seconds} seconds before next language"
-  sleep ${cooldown_seconds}
+      # Using chat API (process_batch_chat) for Gemma
+      python ${WORKSPACE_DIR}/evaluation_scripts/xtreme/lang_eval_mlflow_mi_gol.py \
+        --language ${lang} \
+        --model /gemma-3-4b-it \
+        --system-prompt-choice ${style} \
+        --batch-size ${batch_size} \
+        --max-new-tokens ${max_new_tokens} \
+        --limit ${sample_limit} \
+        --run-start-timestamp \"${start_timestamp}\" \
+        ${template_flag}
+    "
+    
+    echo "[INFO] Completed run for language=${lang}, system_prompt_choice=${style}, max_new_tokens=${max_new_tokens}"
+    
+    # wait between runs to allow GPU utilization to drop
+    echo "[INFO] Cooling down for ${cooldown_seconds} seconds before next run"
+    sleep ${cooldown_seconds}
+  done
 done
 
-echo "[INFO] All language evaluations completed"
+echo "[INFO] All evaluations completed"

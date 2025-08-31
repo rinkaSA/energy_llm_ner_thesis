@@ -1,0 +1,19 @@
++ singularity exec --nv --network host docker://nvidia/dcgm-exporter:3.1.7-3.1.4-ubuntu20.04 /usr/bin/dcgm-exporter --address=:9400 --collect-interval=100
++ singularity exec --network host -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring:/monitoring:rw docker://prom/prometheus:v3.4.0 prometheus --config.file=/monitoring/prometheus.yml
++ export SINGULARITYENV_GF_SECURITY_ADMIN_PASSWORD=admin
++ SINGULARITYENV_GF_SECURITY_ADMIN_PASSWORD=admin
++ export SINGULARITYENV_GF_DASHBOARDS_JSON_ENABLED=true
++ SINGULARITYENV_GF_DASHBOARDS_JSON_ENABLED=true
++ singularity run --network host -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring:/monitoring:rw docker://jaegertracing/all-in-one:1.57 --collector.zipkin.host-port=9411
++ singularity exec --network host -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring/grafana/data:/var/lib/grafana:rw -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring/grafana/logs:/var/log/grafana:rw -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro docker://grafana/grafana:latest /run.sh
++ export VLLM_LOG_LEVEL=DEBUG
++ VLLM_LOG_LEVEL=DEBUG
++ export TORCH_COMPILE_DEBUG=1
++ TORCH_COMPILE_DEBUG=1
++ export TORCH_DYNAMO_DISABLE=1
++ TORCH_DYNAMO_DISABLE=1
++ export TORCHDYNAMO_DISABLE=1
++ TORCHDYNAMO_DISABLE=1
++ gpu_log_pid=1792477
++ nvidia-smi --query-gpu=timestamp,utilization.gpu,utilization.memory,temperature.gpu --format=csv -l 5
++ singularity exec --nv --network host -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/models/base/gemma-3-4b-it:/gemma-3-4b-it:ro -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/monitoring:/monitoring -B /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/templates:/templates:ro /data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src/serve_vllm/containers/vllm_serve_otel.sif opentelemetry-instrument vllm serve /gemma-3-4b-it --host 0.0.0.0 --port 8000 --tensor-parallel-size 1 --dtype bfloat16 --kv-cache-dtype fp8 --calculate-kv-scales --gpu-memory-utilization 0.95 --enable-prefix-caching --enable-chunked-prefill --block-size 16 --max-model-len 4096 --max-num-batched-tokens 49152 --max-num-seqs 128 --otlp-traces-endpoint=grpc://localhost:4317
