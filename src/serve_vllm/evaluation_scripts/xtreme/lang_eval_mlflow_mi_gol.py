@@ -17,10 +17,11 @@ import argparse
 import mlflow
 import pandas as pd
 from math import isnan
+import torch
 
 
 
-# Add the serve_vllm directory to Python path to find prompts_in_all_languages module
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 serve_vllm_dir = os.path.join(script_dir, '../../')
 sys.path.insert(0, os.path.abspath(serve_vllm_dir))
@@ -54,13 +55,52 @@ LANG2HEADER = {
     "zh": CHINESE_HEADER,
     "ar": ARABIC_HEADER,
     "bg": BULGARIAN_HEADER,
+    # For other languages without specific headers, we'll handle them at runtime
+    # by replacing placeholders in the template headers
 }
 
 # ---------- dataset helpers ----------
 def resolve_xtreme_subset(language: str) -> str:
-    mapping = {"de": "PAN-X.de", "en": "PAN-X.en", "ar": "PAN-X.ar", "bg": "PAN-X.bg", "zh": "PAN-X.zh"}
+    """
+    Maps language code to XTREME dataset subset name.
+    
+    For PAN-X datasets, the format is "PAN-X.<lang_code>"
+    
+    Args:
+        language: ISO 639-1 language code (e.g., 'en', 'de')
+    
+    Returns:
+        The XTREME dataset subset name
+    
+    Raises:
+        ValueError: If language is not supported in XTREME
+    """
+    # Currently, only PAN-X dataset subsets are used for NER evaluation
+    # XTREME supports more languages, but this function only handles the ones with NER data
+    mapping = {
+        "ar": "PAN-X.ar",
+        "bg": "PAN-X.bg",
+        "de": "PAN-X.de", 
+        "en": "PAN-X.en",
+        "es": "PAN-X.es", 
+        "fr": "PAN-X.fr",
+        "el": "PAN-X.el",
+        "hi": "PAN-X.hi",
+        "id": "PAN-X.id",
+        "it": "PAN-X.it",
+        "ja": "PAN-X.ja",
+        "ko": "PAN-X.ko",
+        "nl": "PAN-X.nl",
+        "pt": "PAN-X.pt",
+        "ru": "PAN-X.ru",
+        "th": "PAN-X.th",
+        "tr": "PAN-X.tr",
+        "ur": "PAN-X.ur",
+        "vi": "PAN-X.vi",
+        "zh": "PAN-X.zh"
+    }
     if language not in mapping:
-        raise ValueError(f"Unsupported language: {language}")
+        raise ValueError(f"Unsupported language: {language}. Available languages: {', '.join(sorted(mapping.keys()))}")
     return mapping[language]
 
 def build_artifacts_dir(language: str, batch_size: int, model_name: str):
@@ -82,13 +122,121 @@ SYSTEM_TEMPLATE = (
 
 
 def full_lang_name(language: str) -> str:
+    """
+    Returns the full language name for a given language code.
+    
+    This function maps ISO 639-1 language codes to their full language names.
+    It supports all 40 languages in the XTREME benchmark.
+    
+    Args:
+        language: ISO 639-1 language code (e.g., 'en', 'de')
+    
+    Returns:
+        Full language name (e.g., 'English', 'German')
+    """
     return {
-        "de": "German",
+        # Indo-European languages
+        # Germanic
+        "af": "Afrikaans",
+        "de": "German", 
         "en": "English",
-        "ar": "Arabic",
+        "nl": "Dutch",
+        # Romance
+        "es": "Spanish",
+        "fr": "French", 
+        "it": "Italian",
+        "pt": "Portuguese",
+        # Slavic
         "bg": "Bulgarian",
-        "zh": "Chinese"
+        "ru": "Russian",
+        # Indo-Aryan
+        "bn": "Bengali",
+        "hi": "Hindi",
+        "mr": "Marathi",
+        "ur": "Urdu",
+        # Iranian
+        "fa": "Persian",
+        # Other Indo-European
+        "el": "Greek",
+        
+        # Sino-Tibetan
+        "zh": "Chinese",
+        "my": "Burmese",
+        
+        # Afro-Asiatic
+        "ar": "Arabic",
+        "he": "Hebrew",
+        
+        # Japonic
+        "ja": "Japanese",
+        
+        # Koreanic (isolate)
+        "ko": "Korean",
+        
+        # Turkic
+        "kk": "Kazakh",
+        "tr": "Turkish",
+        
+        # Uralic
+        "et": "Estonian",
+        "fi": "Finnish",
+        "hu": "Hungarian",
+        
+        # Austronesian
+        "id": "Indonesian",
+        "jv": "Javanese", 
+        "ms": "Malay",
+        "tl": "Tagalog",
+        
+        # Dravidian
+        "ml": "Malayalam",
+        "ta": "Tamil",
+        "te": "Telugu",
+        
+        # Niger-Congo
+        "sw": "Swahili",
+        "yo": "Yoruba",
+        
+        # Kartvelian
+        "ka": "Georgian",
+        
+        # Kra-Dai
+        "th": "Thai",
+        
+        # Austro-Asiatic
+        "vi": "Vietnamese",
+        
+        # Language isolate
+        "eu": "Basque"
     }.get(language, language)
+
+# ---------- Gemma prompt + parser ----------
+def load_gemma_system_template(language:str, system_prompt_choice:int, use_generic_template=False) -> str:
+    """Load a system prompt template for Gemma from JSON file by choice number.
+    
+    Args:
+        language: Language code (e.g., 'en', 'de')
+        system_prompt_choice: Which prompt variation to use (1-8)
+        use_generic_template: If True, use Template_system_prompt.json instead of language-specific file
+    """
+    if use_generic_template:
+        template_path = os.path.join(serve_vllm_dir, "prompts_in_all_languages/Template_system_prompt.json")
+    else:
+        template_path = os.path.join(serve_vllm_dir, f"prompts_in_all_languages/{full_lang_name(language)}_system_prompt.json")
+    
+    with open(template_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    if str(system_prompt_choice) not in data:
+        raise ValueError(f"No system prompt found for choice: {system_prompt_choice}")
+    else:
+        prompt = data[str(system_prompt_choice)] if isinstance(data[str(system_prompt_choice)], str) else "\n".join(data[str(system_prompt_choice)])
+
+    # If using template, replace {language} placeholder with actual language name
+    if use_generic_template:
+        prompt = prompt.replace("{language}", full_lang_name(language))
+
+    return prompt
 
 
 def build_system_msg(language: str) -> dict:
@@ -165,11 +313,90 @@ def parse_response_json_like(response_text: str) -> dict:
 
 
 # ---------- GoLLIE (code) prompt + parser ----------
-def build_gollie_prompt(sentence: str, language: str) -> str:
-    header = LANG2HEADER[language]
+def build_gollie_prompt(sentence: str, language: str, use_generic_template=False) -> str:
+    """
+    Build a prompt for GoLLIE model
+    
+    Args:
+        sentence: Input sentence to analyze
+        language: ISO 639-1 language code (e.g., 'en', 'de')
+        use_generic_template: Whether to use a generic template with language injection
+    
+    Returns:
+        The complete prompt for the GoLLIE model
+    """
+    # Use language-specific header if available
+    if language in LANG2HEADER and not use_generic_template:
+        header = LANG2HEADER[language]
+    else:
+        # For languages without specific headers, use English header with language name injected
+        template_header = ENGLISH_HEADER
+        header = template_header.replace("English language", f"{full_lang_name(language)} language")
+    
     text_literal = json.dumps(sentence, ensure_ascii=False)
     # model completes after 'result = ['
-    return header + f"\ntext = {text_literal}\n# Annotate entities in the given language.\nresult = [\n"
+    return header + f"\ntext = {text_literal}\n# Annotate entities in the {full_lang_name(language)} language.\nresult = [\n"
+
+# ---------- Gemma prompt + parser ----------
+def save_messages_to_file(messages_list, out_dir, model_name, language, batch_size):
+    """
+    Save messages to a JSON file for later analysis and logging
+    """
+    messages_dir = os.path.join(out_dir, "messages")
+    os.makedirs(messages_dir, exist_ok=True)
+    
+    messages_path = os.path.join(messages_dir, f"{model_name.replace('/', '')}_messages_{language}_B{batch_size}.json")
+    
+    with open(messages_path, "w", encoding="utf-8") as f:
+        json.dump(messages_list, f, indent=2, ensure_ascii=False)
+    
+    return messages_path
+
+def build_gemma_messages(sentence: str, language: str, system_prompt_choice: int, examples_for_lang: list, use_generic_template=False) -> list:
+    """
+    Builds a list of messages for Gemma models in the chat format.
+    Returns a list of messages with roles and content.
+    
+    Args:
+        sentence: The input sentence to analyze
+        language: Language code (e.g., 'en', 'de')
+        system_prompt_choice: Which prompt variation to use (1-8)
+        examples_for_lang: Few-shot examples for the language
+        use_generic_template: If True, use Template_system_prompt.json instead of language-specific file
+    """
+    # Get the system prompt based on choice
+    sys_msg = load_gemma_system_template(
+        language=language, 
+        system_prompt_choice=system_prompt_choice, 
+        use_generic_template=use_generic_template
+    )
+    
+    # Create system message
+    messages = [{"role": "system", "content": sys_msg}]
+    
+    # Set number of few-shot examples based on system prompt choice
+    pairs_for_choice = {
+        1: 0,  # no shots
+        2: 1,  # 1 pair
+        3: 0,  # constraints, no shots
+        4: 1,  # constraints + 1 pair
+        5: 2,  # constraints + 2 pairs
+        6: 3,  # constraints + 2 pairs + 1 hard-neg 
+        7: 0,  # rules only
+        8: 0,  # CoT demo inline in system, kinda few shot already
+    }
+    n_pairs = pairs_for_choice.get(system_prompt_choice, 0)
+    
+    # Add few-shot examples if needed
+    if n_pairs > 0:
+        # Take only the requested number of example pairs
+        for i in range(min(n_pairs * 2, len(examples_for_lang))):
+            messages.append(examples_for_lang[i])
+    
+    # Add the user query with the sentence
+    messages.append({"role": "user", "content": sentence})
+    
+    return messages
 
 CLASS_PATTERNS = {
     "PER": re.compile(r'PER\s*\(\s*mention\s*=\s*(?P<q>["\'])(?P<val>.+?)\1\s*\)'),
@@ -187,6 +414,83 @@ def parse_gollie_output_to_entities(text: str) -> dict:
             if v not in seen: seen.add(v); dedup.append(v)
         out[k]=dedup
     return out
+
+def robust_gemma_entity_extraction(text: str) -> dict:
+    """
+    Extracts PER, ORG, LOC lists from any text, even if JSON is incomplete or broken.
+    Handles malformed model outputs with missing brackets or incomplete JSON.
+    Also handles code block markers.
+    """
+    # Clean up code block markers if present
+    if "```json" in text:
+        # Extract the JSON content between the markers
+        json_match = re.search(r'```json\s*\n(.*?)```', text, re.DOTALL)
+        if json_match:
+            text = json_match.group(1).strip()
+        else:
+            # If no closing marker, take everything after the opening marker
+            text = re.sub(r'```json\s*\n', '', text, 1)
+    
+    # First try the standard parser
+    result = parse_response_json_like(text)
+    
+    # If we got entities, return them
+    if any(result.get(key, []) for key in ["PER", "ORG", "LOC"]):
+        return result
+        
+    # Otherwise, use aggressive regex extraction
+    out = {"PER": [], "ORG": [], "LOC": []}
+    for key in ["PER", "ORG", "LOC"]:
+        # Match: "PER": [ ... ] or "PER": [
+        pattern = rf'"{key}"\s*:\s*\[([^\]]*)'
+        m = re.search(pattern, text)
+        if m:
+            # Extract all quoted strings after the key, even if the list is not closed
+            items = re.findall(r'"([^"]+)"', m.group(1))
+            out[key] = items
+            
+    return out
+
+
+
+# Create a sample prompt for MLflow logging
+def create_sample_prompt(model_name, language, system_prompt_choice=None, use_generic_template=False):
+    """
+    Create a sample prompt for logging to MLflow based on model type
+    """
+    # Use a simple sample sentence
+    sample_sentence = "John Smith from Microsoft visited Berlin last week."
+    few_shots = load_few_shots(language)
+    
+    if model_name == "/gemma-3-4b-it" and system_prompt_choice is not None:
+        # For Gemma models
+        messages = build_gemma_messages(
+            sample_sentence, 
+            language, 
+            system_prompt_choice, 
+            few_shots, 
+            use_generic_template=use_generic_template
+        )
+        return {
+            "prompt_type": "gemma_chat",
+            "messages": messages,
+            "system_prompt_choice": system_prompt_choice,
+            "use_generic_template": use_generic_template
+        }
+    elif model_name == "/mistral":
+        # For Mistral models
+        messages = make_messages_for(sample_sentence, language, few_shots)
+        return {
+            "prompt_type": "mistral_chat",
+            "messages": messages
+        }
+    else:  # GoLLIE
+        prompt = build_gollie_prompt(sample_sentence, language, use_generic_template=use_generic_template)
+        return {
+            "prompt_type": "gollie_completion",
+            "prompt": prompt,
+            "use_generic_template": use_generic_template
+        }
 
 
 
@@ -328,10 +632,26 @@ def read_vllm_metrics() -> dict:
             "request_inference_time_sum", "request_decode_time_sum"
         ]}
 
-async def process_batch_chat(session, sentences, max_tokens, model_name, language):
+async def process_batch_chat(session, sentences, max_tokens, model_name, language, system_prompt_choice=None, use_generic_template=False):
+
     async def single_request(sentence):
         few_shots = load_few_shots(language)
-        messages = make_messages_for(sentence, language, few_shots)
+        
+        # Use different message construction based on model
+        if model_name == "/gemma-3-4b-it" and system_prompt_choice is not None:
+            # For Gemma, use the specialized message construction with system_prompt_choice
+            messages = build_gemma_messages(
+                sentence, 
+                language, 
+                system_prompt_choice, 
+                few_shots, 
+                use_generic_template=use_generic_template
+            )
+        else:
+            # For Mistral, use the standard message construction
+            messages = make_messages_for(sentence, language, few_shots)
+    
+            
         payload = {
             "model": model_name,
             "messages": messages,
@@ -342,12 +662,15 @@ async def process_batch_chat(session, sentences, max_tokens, model_name, languag
         async with session.post(CHAT_URL, json=payload) as resp:
             result = await resp.json()
             return result
+            
     tasks = [single_request(s) for s in sentences]
-    return await asyncio.gather(*tasks, return_exceptions=True)
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    return results
 
-async def process_batch_completion(session, sentences, max_tokens, model_name, language):
+async def process_batch_completion(session, sentences, max_tokens, model_name, language, system_prompt_choice=None, use_generic_template=False):
     async def single_request(sentence):
-        prompt = build_gollie_prompt(sentence, language)
+        # Only GoLLIE uses completions API
+        prompt = build_gollie_prompt(sentence, language, use_generic_template)
         payload = {
             "model": model_name,
             "prompt": prompt,
@@ -355,23 +678,34 @@ async def process_batch_completion(session, sentences, max_tokens, model_name, l
             "max_tokens": max_tokens,
             "stop": ["]\n", "\n]", "]"]
         }
+        # Use completions URL for GoLLIE
         async with session.post(COMPLETIONS_URL, json=payload, timeout=aiohttp.ClientTimeout(total=60)) as resp:
             if resp.status != 200:
                 return {"error": f"HTTP {resp.status}", "text": await resp.text()}
             return await resp.json()
+    
     tasks = [single_request(s) for s in sentences]
     return await asyncio.gather(*tasks, return_exceptions=True)
 
-async def process_and_measure(session, prompts, max_tokens, model_name, language):
+async def process_and_measure(session, prompts, max_tokens, model_name, language, system_prompt_choice=None, use_generic_template=False):
     e0 = read_energy_joules()
     v0 = read_vllm_metrics()
     t0 = time.perf_counter()
     print("Before batch request: ", datetime.datetime.now())
 
-    if model_name == "/mistral":
-        responses = await process_batch_chat(session, prompts, max_tokens, model_name, language)
-    else:
-        responses = await process_batch_completion(session, prompts, max_tokens, model_name, language)
+    if model_name in ["/mistral", "/gemma-3-4b-it"]:
+        # Both Mistral and Gemma use chat API with process_batch_chat
+        responses = await process_batch_chat(
+            session, 
+            prompts, 
+            max_tokens, 
+            model_name, 
+            language, 
+            system_prompt_choice, 
+            use_generic_template
+        )
+    else:  # GoLLIE
+        responses = await process_batch_completion(session, prompts, max_tokens, model_name, language, use_generic_template=use_generic_template)
 
     t1 = time.perf_counter()
     print("After batch request: ", datetime.datetime.now())
@@ -432,7 +766,8 @@ async def process_and_measure(session, prompts, max_tokens, model_name, language
     return responses, telemetry
 
 async def evaluate_ner_pipeline_xtreme(
-    test_dataset, label_list, batch_size, model_name, max_new_tokens=150, language="de"
+    test_dataset, label_list, batch_size, model_name, max_new_tokens=150, language="de", 
+    system_prompt_choice=None, use_generic_template=False
 ):
     all_gold, all_pred = [], []
     generated_results = []
@@ -462,28 +797,39 @@ async def evaluate_ner_pipeline_xtreme(
 
             try:
                 responses, telemetry = await process_and_measure(
-                    session, sentences, max_new_tokens, model_name, language
+                    session, sentences, max_new_tokens, model_name, language, 
+                    system_prompt_choice, use_generic_template
                 )
                 batch_telemetry.append(telemetry)
 
                 for (response, gold_tags, sentence) in zip(responses, gold_batch, sentences):
-                    # Extract text from the two schemas:
+                    # Extract text from the response:
                     if isinstance(response, Exception):
                         text = ""
                     elif isinstance(response, dict) and "choices" in response and len(response["choices"]) > 0:
-                        if model_name == "/mistral":
-                            # chat
+                        if model_name in ["/mistral", "/gemma-3-4b-it"]:
+                            # Chat format for both Mistral and Gemma
                             text = response["choices"][0]["message"]["content"] \
                                    if "message" in response["choices"][0] \
                                    else response["choices"][0].get("text", "")
                         else:
-                            # completions
+                            # Completions format for GoLLIE
                             text = response["choices"][0].get("text", "")
                     else:
                         text = str(response)
 
+                    # Parse the text based on model type
                     if model_name == "/mistral":
                         entities = parse_response_json_like(text)
+                    elif model_name == "/gemma-3-4b-it":
+                        # Add debugging for the first few examples
+                        if i < batch_size and len(generated_results) < 3:
+                            print(f"\nDEBUG Gemma Entity Extraction for example {len(generated_results)}:")
+                            print(f"Raw text starts with: {text[:100]}...")
+                        entities = robust_gemma_entity_extraction(text)
+                        # Print extracted entities for debugging
+                        if i < batch_size and len(generated_results) < 3:
+                            print(f"Extracted entities: {entities}")
                     else:
                         entities = parse_gollie_output_to_entities(text)
 
@@ -535,82 +881,92 @@ async def evaluate_ner_pipeline_xtreme(
     return ner_metrics, generated_results, batch_telemetry
 
 
-
-import os
-import pandas as pd
-import numpy as np
-
-def compute_energy_corrected(csv_path: str, off_grace: int = 3) -> dict:
+def compute_energy_corrected(
+    csv_path: str,
+    util_col: str = "gpu_util",
+    energy_col: str = "energy_consumption",
+    timestamp_col: str = "timestamp",
+    util_threshold: float = 0.0,   # strictly > 0 regarded as "active"
+    energy_in_mJ: bool = True,     # DCGM TOTAL_ENERGY_CONSUMPTION is in millijoules,
+    start_timestamp: str = None,   # Optional ISO timestamp to start analysis from
+) -> dict:
     """
-    Compute energy over the first active GPU-utilization window in a DCGM timeseries,
-    tolerating brief zero-util dips. The window starts at the first gpu_util > 0 sample
-    and ends right before the first run of `off_grace` consecutive zeros.
-
-    Args:
-        csv_path: Path to the CSV produced by the scraper.
-        off_grace: Number of consecutive zero-util samples required to declare "inactive".
+    Compute energy between the FIRST non-zero GPU util sample and the LAST non-zero GPU util sample.
+    When start_timestamp is provided, only consider rows with timestamp >= start_timestamp.
+    Any zero-util gaps in the middle are ignored.
 
     Returns:
-        dict with keys:
-          ok (bool), reason (str if not ok),
-          energy_corrected (J), latency_corrected (s),
+        {
+          ok, reason?,
+          energy_corrected (J),
+          latency_corrected (s),
           t_start (iso), t_end (iso),
-          start_util, end_util
+          start_util, end_util,
+          n_rows, n_active
+        }
     """
     if not csv_path or not os.path.isfile(csv_path):
         return {"ok": False, "reason": f"CSV missing: {csv_path}"}
 
-    df = pd.read_csv(
-        csv_path,
-        parse_dates=["timestamp"],
-        dtype={"gpu_util": "float64", "energy_consumption": "float64"},
-        on_bad_lines="skip",
-        engine="python",
-    ).sort_values("timestamp")
+    try:
+        df = pd.read_csv(
+            csv_path,
+            parse_dates=[timestamp_col],
+            dtype={util_col: "float64", energy_col: "float64"},
+            on_bad_lines="skip",
+            engine="python",
+        )
+    except Exception as e:
+        return {"ok": False, "reason": f"Failed to read CSV: {e}"}
 
-    df = df.dropna(subset=["gpu_util", "energy_consumption"])
+    if timestamp_col not in df or util_col not in df or energy_col not in df:
+        return {"ok": False, "reason": f"CSV lacks required columns: {timestamp_col}, {util_col}, {energy_col}"}
+
+    # Clean & order
+    df = (
+        df.dropna(subset=[timestamp_col, util_col, energy_col])
+          .sort_values(timestamp_col, kind="mergesort")  # stable sort
+          .reset_index(drop=True)
+    )
+    
+    # Filter by start timestamp if provided
+    if start_timestamp:
+        try:
+            start_dt = pd.to_datetime(start_timestamp)
+            df = df[df[timestamp_col] >= start_dt]
+        except Exception as e:
+            return {"ok": False, "reason": f"Invalid start_timestamp format: {e}"}
+        
     if df.empty:
-        return {"ok": False, "reason": "No valid rows after cleaning."}
+        return {"ok": False, "reason": "No valid rows after filtering."}
 
-    print(f"[DEBUG] CSV rows after cleaning: {len(df)}")
-    print(f"[DEBUG] Last row (cleaned):\n{df.iloc[[-1]].to_string(index=False)}")
+    util = df[util_col].to_numpy()
+    active_idx = np.nonzero(util > util_threshold)[0]
 
-    active_mask = (df["gpu_util"].values > 0)
-    if not active_mask.any():
+    if active_idx.size == 0:
         return {"ok": False, "reason": "GPU util never > 0."}
 
-    idx_labels = df.index.to_numpy()
+    start_pos = int(active_idx[0])
+    end_pos   = int(active_idx[-1])
 
-    # Start at first active sample
-    start_pos = int(np.argmax(active_mask))  # first True
-    # Find end: first occurrence AFTER start where we have `off_grace` consecutive zeros
-    end_pos = None
-    consec_off = 0
-    for i in range(start_pos + 1, len(active_mask)):
-        if not active_mask[i]:
-            consec_off += 1
-            if consec_off >= off_grace:
-                # end at the sample just BEFORE the zero run starts
-                end_pos = i - consec_off
-                break
-        else:
-            consec_off = 0
+    # Indices
+    start_idx = start_pos
+    end_idx   = end_pos
 
-    if end_pos is None:
-        # Never saw a long-enough zero run → use last row as end
-        end_pos = len(active_mask) - 1
+    # Extract values
+    e0 = float(df.at[start_idx, energy_col])
+    e1 = float(df.at[end_idx,   energy_col])
 
-    start_idx = idx_labels[start_pos]
-    end_idx   = idx_labels[end_pos]
+    # Convert mJ -> J if needed
+    if energy_in_mJ:
+        e0 /= 1000.0
+        e1 /= 1000.0
 
-    # Compute energy delta (DCGM TOTAL_ENERGY_CONSUMPTION is in millijoules)
-    e0_mj = float(df.at[start_idx, "energy_consumption"])
-    e1_mj = float(df.at[end_idx,   "energy_consumption"])
-    energy_corrected = max((e1_mj - e0_mj) / 1000.0, 0.0)  # mJ → J
+    energy_corrected = max(e1 - e0, 0.0)
 
-    t_start = pd.to_datetime(df.at[start_idx, "timestamp"])
-    t_end   = pd.to_datetime(df.at[end_idx,   "timestamp"])
-    latency_s = (t_end - t_start).total_seconds()
+    t_start = pd.to_datetime(df.at[start_idx, timestamp_col])
+    t_end   = pd.to_datetime(df.at[end_idx,   timestamp_col])
+    latency_s = max((t_end - t_start).total_seconds(), 0.0)
 
     return {
         "ok": True,
@@ -618,17 +974,18 @@ def compute_energy_corrected(csv_path: str, off_grace: int = 3) -> dict:
         "latency_corrected": latency_s,
         "t_start": t_start.isoformat(),
         "t_end": t_end.isoformat(),
-        "start_util": float(df.at[start_idx, "gpu_util"]),
-        "end_util": float(df.at[end_idx, "gpu_util"]),
+        "start_util": float(df.at[start_idx, util_col]),
+        "end_util": float(df.at[end_idx,   util_col]),
+        "n_rows": int(len(df)),
+        "n_active": int(active_idx.size),
     }
-
 
 async def run(args):
 
     subset = resolve_xtreme_subset(args.language)
     print(f"Loading XTREME subset: {subset}")
     test_ds = load_dataset("google/xtreme", subset, split="test", trust_remote_code=True)
-    test_subset = test_ds.select(range(min(10000, len(test_ds)))) 
+    test_subset = test_ds.select(range(min(args.limit if args.limit else 10000, len(test_ds))))
     labels = test_ds.features["ner_tags"].feature.names
     print(f"Loaded {args.language} dataset with {len(test_subset)} samples and {len(labels)} labels: {labels}")
 
@@ -645,26 +1002,65 @@ async def run(args):
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment(experiment_name)
     # ----- MLflow run -----
-    with mlflow.start_run(run_name=f"xtreme_ner_{args.language}_{job_id}"):
-        mlflow.set_tags({
+    # Include timestamp in run name if provided
+    timestamp_suffix = ""
+    if getattr(args, 'run_start_timestamp', None):
+        try:
+            # Extract just the time part for the run name to keep it short
+            dt = pd.to_datetime(args.run_start_timestamp)
+            timestamp_suffix = f"_T{dt.strftime('%H%M%S')}"
+        except:
+            pass
+    
+    with mlflow.start_run(run_name=f"xtreme_ner_{args.language}_prompt{args.system_prompt_choice}{timestamp_suffix}_{job_id}"):
+        tags = {
             "language": args.language,
             "batch_size": str(args.batch_size),
             "model": args.model,
             "dataset": "xtreme",
             "n_samples" : str(len(test_subset))
-        })
-        mlflow.log_params({
+        }
+        params = {
             "language": args.language,
             "batch_size": args.batch_size,
             "model": args.model,
             "max_new_tokens": args.max_new_tokens,
             "dataset": "xtreme",
             "n_samples" : str(len(test_subset))
-        })
+        }
+        
+        # Add Gemma-specific parameters if needed
+        if args.model == "/gemma-3-4b-it" and args.system_prompt_choice is not None:
+            tags["system_prompt_choice"] = str(args.system_prompt_choice)
+            params["system_prompt_choice"] = args.system_prompt_choice
+            
+        # Add template usage info
+        if args.use_generic_template:
+            tags["use_generic_template"] = "True"
+            params["use_generic_template"] = True
+            
+        mlflow.set_tags(tags)
+        mlflow.log_params(params)
+        
+        # Create and log a sample prompt to MLflow
+        sample_prompt = create_sample_prompt(
+            args.model, 
+            args.language, 
+            args.system_prompt_choice if args.model == "/gemma-3-4b-it" else None,
+            use_generic_template=args.use_generic_template
+        )
+        
+        # Save sample prompt to JSON file and log as artifact
+        sample_prompt_path = os.path.join(out_dir, "sample_prompt.json")
+        with open(sample_prompt_path, "w") as f:
+            json.dump(sample_prompt, f, indent=2, ensure_ascii=False)
+        mlflow.log_artifact(sample_prompt_path)
 
         ner_metrics, gen_responses, batch_telemetry = await evaluate_ner_pipeline_xtreme(
             test_subset, labels, batch_size=args.batch_size, model_name=args.model,
-            max_new_tokens=args.max_new_tokens, language=args.language
+            max_new_tokens=args.max_new_tokens, language=args.language,
+            system_prompt_choice=args.system_prompt_choice if args.model == "/gemma-3-4b-it" else None,
+            use_generic_template=args.use_generic_template
         )
 
         responses_path = os.path.join(out_dir, "generated_responses", f"responses_B{args.batch_size}.json")
@@ -708,7 +1104,14 @@ async def run(args):
             mlflow.log_artifact(mean_metrics_path)
 
         time.sleep(10)
-        res = compute_energy_corrected(metrics_csv_path)
+        # Get the start timestamp from args if provided, otherwise None (use full CSV)
+        run_start_timestamp = getattr(args, 'run_start_timestamp', None)
+        
+        res = compute_energy_corrected(
+            metrics_csv_path,
+            start_timestamp=run_start_timestamp
+        )
+        
         if res.get("ok"):
             mlflow.log_metric("energy_corrected", float(res["energy_corrected"]))
             mlflow.log_metric("latency_corrected", float(res["latency_corrected"]))
@@ -721,6 +1124,7 @@ async def run(args):
                 "energy_window_end": res["t_end"],
                 "energy_start_util": res["start_util"],
                 "energy_end_util": res["end_util"],
+                "run_start_timestamp": run_start_timestamp,
             })
         else:
             mlflow.set_tag("energy_window_note", f"skipped: {res.get('reason')}")
@@ -732,19 +1136,24 @@ async def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description="XTREME NER evaluation with vLLM + energy & MLflow")
+    # Get all supported languages from resolve_xtreme_subset
+    supported_languages = sorted([
+        "ar", "bg", "de", "en", "es", "fr", "el", "hi", "id", 
+        "it", "ja", "ko", "nl", "pt", "ru", "th", "tr", "ur", "vi", "zh"
+    ])
     parser.add_argument(
         "--language",
         type=str,
-        required=True,
-        choices=["en", "de", "ar", "bg", "zh"],
-        help="Language subset from XTREME PAN-X."
+        default="en",
+        choices=supported_languages + ["all"],
+        help="Language subset from XTREME PAN-X. Use 'all' to run all supported languages."
     )
     parser.add_argument(
         "--model",
         type=str,
         required=True,
-        choices=["/mistral", "/gollie"],
-        help="Model identifier passed in the request payload (e.g., '/model' or 'my-deployed-model')."
+        choices=["/mistral", "/gollie", "/gemma-3-4b-it"],
+        help="Model identifier passed in the request payload."
     )
     parser.add_argument(
         "--batch-size",
@@ -758,8 +1167,49 @@ def main():
         default=150,
         help="Max tokens to generate per request (default: 150)."
     )
+    parser.add_argument(
+        "--system-prompt-choice",
+        type=int,
+        choices=range(1, 9),  # 1-8
+        default=1,
+        help="Which system prompt to use for Gemma (1-8). Only used if model is '/gemma'."
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Optional cap on number of test examples (default: 10000)."
+    )
+    parser.add_argument(
+        "--run-start-timestamp", 
+        type=str,
+        default=None,
+        help="ISO timestamp marking the start of this run for energy calculation. Format: YYYY-MM-DDTHH:MM:SS.ssssss"
+    )
+    parser.add_argument(
+        "--use-generic-template",
+        action="store_true",
+        help="Use the generic Template_system_prompt.json instead of language-specific system prompts"
+    )
     args = parser.parse_args()
-    asyncio.run(run(args))
+    
+    if args.language == "all":
+        # Run for all supported languages sequentially
+        languages = sorted([
+            "ar", "bg", "de", "en", "es", "fr", "el", "hi", "id", 
+            "it", "ja", "ko", "nl", "pt", "ru", "th", "tr", "ur", "vi", "zh"
+        ])
+        for lang in languages:
+            try:
+                print(f"\n\n===== Running for language: {lang} ({full_lang_name(lang)}) =====\n")
+                args.language = lang
+                asyncio.run(run(args))
+            except Exception as e:
+                print(f"Error processing language {lang}: {e}")
+                continue
+    else:
+        # Run for a single language
+        asyncio.run(run(args))
 
 
 if __name__ == "__main__":
