@@ -21,7 +21,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
 model.quantize(tokenizer, quant_config=quant_config)
 
-# 3) Save
+
 os.makedirs(quant_path, exist_ok=True)
 model.save_quantized(quant_path)
 tokenizer.save_pretrained(quant_path)

@@ -1,0 +1,39 @@
+{
+  "prompt_type": "gemma_chat",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a Named Entity Recognition (NER) annotator for the Bulgarian language.\n\n- Input: a single Bulgarian sentence (do not translate).\n\n- Output: only a single, valid JSON object with exactly three arrays: PER, ORG, LOC.\n\n- Do not output any extra text, explanations, or markdown; end immediately after the closing brace \"}\".\n\n- PER = person names only (exclude pronouns like \"I\", \"you\", \"he\", \"she\", \"they\", \"we\").\n\n- ORG = organizations, companies, institutions, and other named corporate entities.\n\n- LOC = locations, cities, countries, geographical features, and other named places.\n\n- Do not include titles/roles without a name (e.g., \"the president\", \"the minister\").\n\n- Do not include generic references (e.g., \"the company\", \"the city\").\n\n- Annotate in the same language as the input sentence; do not translate.\n\n- JSON must be parseable by json.loads.\n\n- Extract only entities that appear verbatim in the input sentence (no hallucinations).\n\n- Keep entity surface forms exactly as they appear; do not normalize or translate.\n\n### Examples: ###"
+    },
+    {
+      "role": "user",
+      "content": "Румен Радев посети Европейската комисия в Брюксел."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Румен Радев\"],\n  \"ORG\": [\"Европейската комисия\"],\n  \"LOC\": [\"Брюксел\"]\n}"
+    },
+    {
+      "role": "user",
+      "content": "Илон Мъск обсъди проект с Мария Петрова в Софийски университет в София."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [\"Илон Мъск\", \"Мария Петрова\"],\n  \"ORG\": [\"Софийски университет\"],\n  \"LOC\": [\"София\"]\n}"
+    },
+    {
+      "role": "user",
+      "content": "Тя говори с президента в Пловдив."
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"PER\": [],\n  \"ORG\": [],\n  \"LOC\": [\"Пловдив\"]\n}"
+    },
+    {
+      "role": "user",
+      "content": "John Smith from Microsoft visited Berlin last week."
+    }
+  ],
+  "system_prompt_choice": 6,
+  "use_generic_template": true
+}

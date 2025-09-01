@@ -1,4 +1,4 @@
-.env
+
 .vscode/
 mlruns/
 # Data
@@ -143,7 +143,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+
 .venv
 env/
 venv/
@@ -188,7 +188,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-.env
+
 .vscode/
 mlruns/
 
@@ -202,7 +202,7 @@ src/serve_vllm/monitoring/grafana/data/grafana.db
 
 /src/models/*
 !/src/models/.gitkeep
-.env
+
 *.db
 
 /src/serve_vllm/containers/*
@@ -211,5 +211,3 @@ src/serve_vllm/monitoring/grafana/data/grafana.db
 
 /src/serve_vllm/data/
 
-/src/serve_vllm/inference_eval_artifacts/
-/

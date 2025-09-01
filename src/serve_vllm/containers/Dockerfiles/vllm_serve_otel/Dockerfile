@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
       && apt-get install -y python3.10 python3.10-distutils python3.10-venv curl git cargo build-essential \
       && rm -rf /var/lib/apt/lists/*
 
-# Make python3 → python3.10 (no otel semantic conventions otherwise)
+# make python3 → python3.10 (no otel semantic conventions otherwise)
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10

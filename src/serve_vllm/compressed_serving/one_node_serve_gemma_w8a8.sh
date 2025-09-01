@@ -5,15 +5,19 @@
 #SBATCH --gres=gpu:1        
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
-#SBATCH --output=slurm_onenode/slurm_%x_%j.out
-#SBATCH --error=slurm_onenode/slurm_%x_%j.err
+#SBATCH --output=slurm_out/slurm_onenode/slurm_%x_%j.out
+#SBATCH --error=slurm_out/slurm_onenode/slurm_%x_%j.err
 
 BASE="/data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src"
 HOST_BASE="${BASE}/serve_vllm"
 
+MODEL_NAME="gemma-3-12b-it"
 HOST_MON="${HOST_BASE}/monitoring"
-HOST_MODEL="${BASE}/models/base/Llama-2-7b-chat-hf"
+HOST_MODEL="${BASE}/models/base/gemma-3-12b-it-quantized.w8a8"
 SIF_IMAGE="${HOST_BASE}/containers/vllm_serve_otel.sif"
+ENV_FILE="${HOST_BASE}/.env"
+
+
 
 mkdir -p "${HOST_MON}"/{prometheus,jaeger,grafana/{data,logs,provisioning,dashboards}}
 srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores bash <<EOF &
@@ -23,7 +27,7 @@ srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores bash <<EOF &
   singularity exec --nv --network host \
     docker://nvidia/dcgm-exporter:3.1.7-3.1.4-ubuntu20.04 \
     /usr/bin/dcgm-exporter --address=:9400 \
-    --c 500 \
+    --collect-interval=100 \
     > "${HOST_MON}/dcgm.log" 2>&1 &
 
   # Prometheus
@@ -64,6 +68,10 @@ srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores --gres=gpu:1 bash <<EOF #w
   set -x
 
   export VLLM_LOG_LEVEL=DEBUG
+  # Disable torch dynamo compilation to avoid gcc errors
+  export TORCH_COMPILE_DEBUG=1
+  export TORCH_DYNAMO_DISABLE=1
+  export TORCHDYNAMO_DISABLE=1
 
   # Record GPU metrics
   nvidia-smi \
@@ -74,21 +82,24 @@ srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores --gres=gpu:1 bash <<EOF #w
 
   # Start vLLM server
   singularity exec --nv --network host \
-    -B "${HOST_MODEL}":/model:ro \
+    -B "${HOST_MODEL}":/${MODEL_NAME}:ro \
     -B "${HOST_MON}":/monitoring \
     -B "${HOST_BASE}/templates":/templates:ro \
     "${SIF_IMAGE}" \
-      opentelemetry-instrument vllm serve /model \
+    opentelemetry-instrument vllm serve "/${MODEL_NAME}" \
         --host 0.0.0.0 --port 8000 \
-        --chat-template /templates/mistral.jinja \
+        --trust-remote-code \
         --tensor-parallel-size 1 \
-        --max-num-batched-tokens 32768 \
-        --max-num-seqs 256 \
+        --dtype auto \
+        --kv-cache-dtype fp8 \
+        --enable-chunked-prefill --enable-prefix-caching \
+        --gpu-memory-utilization 0.95 \
         --block-size 16 \
-        --otlp-traces-endpoint="grpc://localhost:4317" \
+        --max-model-len 4096 \
+        --max-num-batched-tokens 49152 \
+        --max-num-seqs 128 \
+      --otlp-traces-endpoint="grpc://localhost:4317" \
     > "${HOST_MON}/vllm.log" 2>&1
-
-  kill \${gpu_log_pid}
 EOF
 
 wait

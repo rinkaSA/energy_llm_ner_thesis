@@ -12,7 +12,7 @@ BASE="/data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/src"
 HOST_BASE="${BASE}/serve_vllm"
 
 MODEL_NAME="mistral"
-HOST_MON="${HOST_BASE}/monitoring"
+HOST_MON="${HOST_BASE}/monitoring_m"
 HOST_MODEL="${BASE}/models/base/Mistral-7B-Instruct-v0.2"
 SIF_IMAGE="${HOST_BASE}/containers/vllm_serve_otel.sif"
 
@@ -91,17 +91,21 @@ srun --overlap -n1 --cpus-per-task=3 --cpu-bind=cores --gres=gpu:1 bash <<EOF #w
     -B "${HOST_MON}":/monitoring \
     -B "${HOST_BASE}/templates":/templates:ro \
     "${SIF_IMAGE}" \
-      opentelemetry-instrument vllm serve /${MODEL_NAME} \
-        --host 0.0.0.0 --port 8000 \
-        --chat-template /templates/mistral.jinja \
-        --tensor-parallel-size 1 \
-        --max-num-batched-tokens 32768 \
-        --max-num-seqs 256 \
-        --block-size 16 \
-        --otlp-traces-endpoint="grpc://localhost:4317" \
+    opentelemetry-instrument vllm serve "/${MODEL_NAME}" \
+      --host 0.0.0.0 --port 8000 \
+      --tensor-parallel-size 1 \
+      --dtype bfloat16 \
+      --kv-cache-dtype fp8 \
+      --calculate-kv-scales \
+      --gpu-memory-utilization 0.95 \
+      --enable-prefix-caching \
+      --enable-chunked-prefill \
+      --block-size 16 \
+      --max-model-len 4096 \
+      --max-num-batched-tokens 49152 \
+      --max-num-seqs 128 \
+      --otlp-traces-endpoint="grpc://localhost:4317" \
     > "${HOST_MON}/vllm.log" 2>&1
-
-  kill \${gpu_log_pid}
 EOF
 
 wait

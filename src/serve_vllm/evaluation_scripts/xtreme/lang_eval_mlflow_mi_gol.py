@@ -37,7 +37,7 @@ ENERGY_URL = os.getenv("ENERGY_URL")
 VLLM_METRICS_URL = os.getenv("VLLM_METRICS_URL")
 ENERGY_METRIC_NAME = "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION"
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
-FEW_SHOTS_PATH = os.path.join(serve_vllm_dir, "prompts_in_all_languages/ner_few_shots_panx.json")
+FEW_SHOTS_PATH = os.path.join(serve_vllm_dir, "prompts_in_all_languages/ner_few_shots_full_panx.json")
 metrics_csv_path = os.environ.get("METRICS_CSV")
 job_id = os.getenv("JOB_ID")
 
@@ -97,7 +97,8 @@ def resolve_xtreme_subset(language: str) -> str:
         "tr": "PAN-X.tr",
         "ur": "PAN-X.ur",
         "vi": "PAN-X.vi",
-        "zh": "PAN-X.zh"
+        "zh": "PAN-X.zh",
+        "yo": "PAN-X.yo"
     }
     if language not in mapping:
         raise ValueError(f"Unsupported language: {language}. Available languages: {', '.join(sorted(mapping.keys()))}")
@@ -461,8 +462,8 @@ def create_sample_prompt(model_name, language, system_prompt_choice=None, use_ge
     # Use a simple sample sentence
     sample_sentence = "John Smith from Microsoft visited Berlin last week."
     few_shots = load_few_shots(language)
-    
-    if model_name == "/gemma-3-4b-it" and system_prompt_choice is not None:
+
+    if model_name in ["/gemma-3-4b-it", "/gemma-3-12b-it", "/mistral"] and system_prompt_choice is not None:
         # For Gemma models
         messages = build_gemma_messages(
             sample_sentence, 
@@ -476,13 +477,6 @@ def create_sample_prompt(model_name, language, system_prompt_choice=None, use_ge
             "messages": messages,
             "system_prompt_choice": system_prompt_choice,
             "use_generic_template": use_generic_template
-        }
-    elif model_name == "/mistral":
-        # For Mistral models
-        messages = make_messages_for(sample_sentence, language, few_shots)
-        return {
-            "prompt_type": "mistral_chat",
-            "messages": messages
         }
     else:  # GoLLIE
         prompt = build_gollie_prompt(sample_sentence, language, use_generic_template=use_generic_template)
@@ -638,7 +632,7 @@ async def process_batch_chat(session, sentences, max_tokens, model_name, languag
         few_shots = load_few_shots(language)
         
         # Use different message construction based on model
-        if model_name == "/gemma-3-4b-it" and system_prompt_choice is not None:
+        if model_name in ["/gemma-3-4b-it","/gemma-3-12b-it", "/mistral"] and system_prompt_choice is not None:
             # For Gemma, use the specialized message construction with system_prompt_choice
             messages = build_gemma_messages(
                 sentence, 
@@ -693,7 +687,7 @@ async def process_and_measure(session, prompts, max_tokens, model_name, language
     t0 = time.perf_counter()
     print("Before batch request: ", datetime.datetime.now())
 
-    if model_name in ["/mistral", "/gemma-3-4b-it"]:
+    if model_name in ["/mistral", "/gemma-3-4b-it", "/gemma-3-12b-it"]:
         # Both Mistral and Gemma use chat API with process_batch_chat
         responses = await process_batch_chat(
             session, 
@@ -807,7 +801,7 @@ async def evaluate_ner_pipeline_xtreme(
                     if isinstance(response, Exception):
                         text = ""
                     elif isinstance(response, dict) and "choices" in response and len(response["choices"]) > 0:
-                        if model_name in ["/mistral", "/gemma-3-4b-it"]:
+                        if model_name in ["/mistral", "/gemma-3-4b-it", "/gemma-3-12b-it"]:
                             # Chat format for both Mistral and Gemma
                             text = response["choices"][0]["message"]["content"] \
                                    if "message" in response["choices"][0] \
@@ -821,7 +815,7 @@ async def evaluate_ner_pipeline_xtreme(
                     # Parse the text based on model type
                     if model_name == "/mistral":
                         entities = parse_response_json_like(text)
-                    elif model_name == "/gemma-3-4b-it":
+                    elif model_name in ["/gemma-3-4b-it", "/gemma-3-12b-it"]:
                         # Add debugging for the first few examples
                         if i < batch_size and len(generated_results) < 3:
                             print(f"\nDEBUG Gemma Entity Extraction for example {len(generated_results)}:")
@@ -998,7 +992,7 @@ async def run(args):
     
 
     experiment_name = f"{args.model}_xtreme"
-    
+
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment(experiment_name)
     # ----- MLflow run -----
@@ -1030,7 +1024,7 @@ async def run(args):
         }
         
         # Add Gemma-specific parameters if needed
-        if args.model == "/gemma-3-4b-it" and args.system_prompt_choice is not None:
+        if args.model in ["/gemma-3-4b-it", "/gemma-3-12b-it", "/mistral"] and args.system_prompt_choice is not None:
             tags["system_prompt_choice"] = str(args.system_prompt_choice)
             params["system_prompt_choice"] = args.system_prompt_choice
             
@@ -1046,7 +1040,7 @@ async def run(args):
         sample_prompt = create_sample_prompt(
             args.model, 
             args.language, 
-            args.system_prompt_choice if args.model == "/gemma-3-4b-it" else None,
+            args.system_prompt_choice if args.model in ["/gemma-3-4b-it", "/gemma-3-12b-it", "/mistral"] else None,
             use_generic_template=args.use_generic_template
         )
         
@@ -1059,7 +1053,7 @@ async def run(args):
         ner_metrics, gen_responses, batch_telemetry = await evaluate_ner_pipeline_xtreme(
             test_subset, labels, batch_size=args.batch_size, model_name=args.model,
             max_new_tokens=args.max_new_tokens, language=args.language,
-            system_prompt_choice=args.system_prompt_choice if args.model == "/gemma-3-4b-it" else None,
+            system_prompt_choice=args.system_prompt_choice if args.model in ["/gemma-3-4b-it", "/gemma-3-12b-it", "/mistral"]   else None,
             use_generic_template=args.use_generic_template
         )
 
@@ -1129,7 +1123,6 @@ async def run(args):
         else:
             mlflow.set_tag("energy_window_note", f"skipped: {res.get('reason')}")
 
-        # Always log the CSV so you can inspect it next to the run
         if metrics_csv_path and os.path.isfile(metrics_csv_path):
             mlflow.log_artifact(metrics_csv_path)
         print(f"Completed: F1={ner_metrics['f1']:.4f}, Energy Mean={mean_metrics['mean_energy_j']:.4f}J, Whole Energy={mean_metrics['whole_energy']:.4f}J")
@@ -1139,7 +1132,7 @@ def main():
     # Get all supported languages from resolve_xtreme_subset
     supported_languages = sorted([
         "ar", "bg", "de", "en", "es", "fr", "el", "hi", "id", 
-        "it", "ja", "ko", "nl", "pt", "ru", "th", "tr", "ur", "vi", "zh"
+        "it", "ja", "ko", "nl", "pt", "ru", "th", "tr", "ur", "vi", "zh", "yo"
     ])
     parser.add_argument(
         "--language",
@@ -1152,7 +1145,7 @@ def main():
         "--model",
         type=str,
         required=True,
-        choices=["/mistral", "/gollie", "/gemma-3-4b-it"],
+        choices=["/mistral", "/gollie", "/gemma-3-4b-it", "/gemma-3-12b-it"],
         help="Model identifier passed in the request payload."
     )
     parser.add_argument(
@@ -1172,7 +1165,7 @@ def main():
         type=int,
         choices=range(1, 9),  # 1-8
         default=1,
-        help="Which system prompt to use for Gemma (1-8). Only used if model is '/gemma'."
+        help="Which system prompt to use for Gemma & Mistral (1-8). Only used if model is '/gemma'."
     )
     parser.add_argument(
         "--limit",

@@ -1,93 +1,118 @@
-# Energy_NER_LLM
+# Energy Consumption Measurement for Multilingual NER with Large Language Models
 
+This repository contains code and experiments for measuring the energy efficiency of various Large Language Models (LLMs) when performing Named Entity Recognition (NER) tasks across multiple languages. The experiments focus on comparing Mistral, Gollie, and Gemma models while analyzing their energy consumption per token and total energy usage in joules.
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Repository Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.hrz.tu-chemnitz.de/anpo879a--tu-dresden.de/energy_ner_llm.git
-git branch -M main
-git push -uf origin main
+energy_llm_ner/
+├── energy_llm_ner_thesis/        # Main project code
+│   ├── src/                      # Source code
+│   │   ├── serve_vllm/           # VLLM serving and metrics collection
+│   │   │   ├── collect_gpu_nvml.py     # Script to collect GPU metrics via NVML
+│   │   │   ├── inference_base.sh       # Base script to initialize metrics for most models
+│   │   │   ├── inference_base_gollie.sh # Base script to initialize metrics for Gollie model
+│   │   │   ├── inference_gemma.sh      # Script to run inference with Gemma across languages
+│   │   │   ├── metrics_exporter.py     # Exports metrics from VLLM for collection
+│   │   │   └── serve_model.py          # Script to serve models using VLLM
+│   │   │
+│   │   └── xtreme/               # XTREME dataset handling and inference scripts
+│   │       ├── dataset_utils.py        # Utilities for processing the XTREME dataset
+│   │       ├── inference.py            # Main inference logic for NER tasks
+│   │       ├── language_specific/      # Language-specific configurations
+│   │       ├── ner_prompts.py          # NER prompting templates
+│   │       └── result_processing.py    # Process and evaluate NER results
+│   │
+│   ├── data/                     # Data storage
+│   │   ├── xtreme/                     # XTREME dataset
+│   │   └── metrics/                    # Collected energy and performance metrics
+│   │
+│   └── results/                  # Results and analysis
+│       ├── energy/                     # Energy consumption measurements
+│       └── ner/                        # NER performance results
 ```
 
-## Integrate with your tools
+## Experimental Setup
 
-- [ ] [Set up project integrations](https://gitlab.hrz.tu-chemnitz.de/anpo879a--tu-dresden.de/energy_ner_llm/-/settings/integrations)
+### Task Description
+The main task is **multilingual Named Entity Recognition (NER)** using the XTREME dataset. The goal is to evaluate how different LLMs perform on this task across multiple languages while measuring their energy consumption.
 
-## Collaborate with your team
+### Models Evaluated
+- **Mistral**: A state-of-the-art language model
+- **Gollie**: A multilingual language model
+- **Gemma**: Google's lightweight language model
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Languages
+The experiments are conducted across multiple languages from the XTREME dataset to evaluate the models' multilingual capabilities.
 
-## Test and Deploy
+## Energy Measurement Methodology
 
-Use the built-in continuous integration in GitLab.
+Energy consumption is measured using NVIDIA's Data Center GPU Manager (DCGM) metrics, collected through the `collect_gpu_nvml.py` script. Key metrics include:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- GPU utilization
+- Memory usage
+- Temperature
+- Power consumption
+- Total energy consumption in joules
 
-***
+These metrics are collected at regular intervals (configurable via `METRICS_INTERVAL_MS`) during model inference.
 
-# Editing this README
+## Running Experiments
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Prerequisites
+1. Set up environment variables:
+   - `ENERGY_URL`: URL to access GPU metrics
+   - `METRICS_CSV`: Path to save metrics data
+   - `METRICS_INTERVAL_MS`: Sampling interval in milliseconds (default: 1000ms)
 
-## Suggestions for a good README
+### Step 1: Initialize VLLM Metrics Collection
+Before running inference, you must initialize the Grafana dashboard and VLLM metrics collection. Use one of the following scripts depending on the model:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+```bash
+# For most models
+./src/serve_vllm/inference_base.sh
 
-## Name
-Choose a self-explaining name for your project.
+# For Gollie model
+./src/serve_vllm/inference_base_gollie.sh
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+These scripts set up the necessary environment for metrics collection before the actual inference takes place.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Step 2: Run Inference
+After initializing metrics collection, you can run the inference experiments:
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```bash
+# For Gemma across all languages
+./src/serve_vllm/inference_gemma.sh
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+The scripts in the `xtreme` folder handle sending requests to the models using the XTREME dataset for NER tasks.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## Energy Efficiency Analysis
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The collected metrics are used to analyze two key aspects of energy efficiency:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+1. **Energy per token**: How much energy (in joules) is required to process each token
+2. **Total energy consumption**: The overall energy used during the entire inference process
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## Results
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Energy Consumption
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+| Model  | Language | Energy per Token (J) | Total Energy (J) | Inference Time (s) |
+|--------|----------|---------------------|-----------------|-------------------|
+|        |          |                     |                 |                   |
+|        |          |                     |                 |                   |
+|        |          |                     |                 |                   |
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### NER Performance
 
-## License
-For open source projects, say how it is licensed.
+| Model  | Language | Precision | Recall | F1 Score |
+|--------|----------|-----------|--------|----------|
+|        |          |           |        |          |
+|        |          |           |        |          |
+|        |          |           |        |          |
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Analysis and Conclusions
+
+(This section will be updated after experiments are completed with analysis of the energy consumption patterns and their correlation with model performance across different languages.)

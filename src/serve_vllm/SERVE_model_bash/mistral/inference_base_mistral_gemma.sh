@@ -26,5 +26,5 @@ echo "Using COMPLETIONS_URL: ${COMPLETIONS_URL}"
 srun bash -c "
 source ${VENV_PATH}/bin/activate
 cd ${WORKSPACE_DIR}
-python3 evaluation_scripts/eval_llm_batches.py
+python3 evaluation_scripts/eval_llm_batches.py --model_name /mistral
 "

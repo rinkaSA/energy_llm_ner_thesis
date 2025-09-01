@@ -11,6 +11,7 @@ import re
 import ast
 from dotenv import load_dotenv
 from huggingface_hub import login
+import argparse
 
 load_dotenv()
 SERVER_URL = os.getenv("SERVER_URL")
@@ -137,7 +138,7 @@ def get_bio_tags(sentence, entities):
                     break  # Mark only the first occurrence
     return tokens, tags
 
-def send_inference_request(prompt, max_new_tokens=150):
+def send_inference_request(model_name, prompt, max_new_tokens=150):
     """
     Send an HTTP POST request to the remote inference server.
     
@@ -150,7 +151,7 @@ def send_inference_request(prompt, max_new_tokens=150):
     """
 
     payload = {
-        "model": "/model",
+        "model": model_name,
         "prompt": prompt,
         "max_tokens": max_new_tokens,
         "temperature": 0.0  
@@ -161,7 +162,7 @@ def send_inference_request(prompt, max_new_tokens=150):
     print(f"gen: {data['choices'][0]['text']}")
     return data["choices"][0]["text"]
 
-def evaluate_ner_pipeline_conll03(test_dataset, label_list, max_new_tokens=100, batch_size=8):
+def evaluate_ner_pipeline_conll03(model_name, test_dataset, label_list, max_new_tokens=100, batch_size=8):
     """
     Evaluate NER performance on the CoNLL03 test set using remote inference.
     
@@ -204,7 +205,7 @@ def evaluate_ner_pipeline_conll03(test_dataset, label_list, max_new_tokens=100, 
         
         if len(prompts_batch) == batch_size:
             # Instead of using pipeline generator, we call the remote server for each prompt
-            outputs = [send_inference_request(prompt, max_new_tokens) for prompt in prompts_batch]
+            outputs = [send_inference_request(model_name, prompt, max_new_tokens) for prompt in prompts_batch]
             for out, (sentence, gold_tags) in zip(outputs, gold_sentences_batch):
                 # Expecting the response to be a JSON with a key "generated_text"
                 generated_text = out
@@ -225,7 +226,7 @@ def evaluate_ner_pipeline_conll03(test_dataset, label_list, max_new_tokens=100, 
     
     # Process any remaining prompts
     if prompts_batch:
-        outputs = [send_inference_request(prompt, max_new_tokens) for prompt in prompts_batch]
+        outputs = [send_inference_request(model_name, prompt, max_new_tokens) for prompt in prompts_batch]
         for out, (sentence, gold_tags) in zip(outputs, gold_sentences_batch):
             generated_text = out
             if "### Response:" in generated_text:
@@ -251,16 +252,23 @@ def evaluate_ner_pipeline_conll03(test_dataset, label_list, max_new_tokens=100, 
     return metrics, generated_results
 
 def main():
-    
+    parser = argparse.ArgumentParser(description="XTREME NER evaluation with vLLM + energy & MLflow")
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="/mistral",
+        choices=["/mistral", "/gemma-3-4b-it", "/gemma-3-12b-it"],
+        help="send request to this served model."
+    )
+    args = parser.parse_args()
+    experiment_name = "Server_StartUP"
+    run_name = f"{args.model}"
 
-    experiment_name = "Server_Evaluation"
-    run_name = "mistral_awq"
-    
     #mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment(experiment_name)
     
     with mlflow.start_run(run_name=run_name, log_system_metrics=True) as run:
-        model_name = "meta-llama/Llama-2-7b-chat-hf"
+        model_name = args.model
         mlflow.log_param("model_name", model_name)
         
         # Optionally: skip local model and tokenizer loading if they are not used.
@@ -278,7 +286,7 @@ def main():
                                     split="test").select(range(20))
         label_list = test_dataset.features["ner_tags"].feature.names
 
-        metrics, generated_results = evaluate_ner_pipeline_conll03(test_dataset, label_list, batch_size=8)
+        metrics, generated_results = evaluate_ner_pipeline_conll03(model_name, test_dataset, label_list, batch_size=8)
         print("Evaluation Metrics:")
         print(metrics)
 
