@@ -182,6 +182,14 @@ Each srun executes inference pass of selected language (using its whole test spl
 - Richer instructions = better model behavior.
 - But comes at token consumption + energy overhead.
 
+1. **No shots**: Basic instruction only
+2. **1-shot**: One example pair
+3. **Constraints**: Detailed formatting rules
+4. **Constraints + 1-shot**: Rules with one example
+5. **Constraints + 2-shot**: Rules with two examples
+6. **Hard negatives**: Include challenging examples
+7. **Rules only**: Explicit formatting rules
+8. **Chain of Thought**: Step-by-step reasoning
 
 ## Results
 
