@@ -131,6 +131,15 @@ Put it into `./serve_vllm/containers` directory.
 
 ```singularity build vllm_serve_otel.sif docker://irv12/vllm_serve_otel:latest```
 (note: docker build is restricted on the HPC, only singularity is used, image has to be created locally beforehand)
+4. Create venv.
+
+ ```python3.11 -m venv universal-ner-py311``
+ source universal-ner-py311/bin/activate
+
+```python -m pip install --upgrade pip```
+
+```pip install -r requirements.txt```
+5. Be sure to use pathes adapted to your workspace in all bash script!!!
 
 ### Step 2. Host the model
 
