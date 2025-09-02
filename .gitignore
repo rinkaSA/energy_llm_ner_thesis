@@ -200,7 +200,7 @@ src/serve_vllm/monitoring/grafana/data/grafana.db
 
 /src/serve_vllm/data
 
-/src/models/*
+
 !/src/models/.gitkeep
 
 *.db
