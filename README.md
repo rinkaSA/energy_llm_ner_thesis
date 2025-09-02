@@ -101,6 +101,9 @@ Key metrics include:
 - Temperature,  C
 - Power consumption, Watts
 - Total energy consumption since boot, Joules
+
+**Refer to [this readme](src/serve_vllm/README_metrics.md) for better energy metric understanding!**
+
 ## Energy Efficiency Analysis & Accuracy
 **Find high accuracy with lesser energy usage**
 
@@ -183,10 +186,95 @@ Each srun executes inference pass of selected language (using its whole test spl
 ## Results
 
 #### A glimpse what we observe on the Grafana dashboard:
-
+![grafana screenshot vllm metrics_1](plots_readme/grafana_ex1.png)
+![grafana vllm metrcis_2](plots_readme/grafana_ex2.png)
+![dcgm mgpu metrics](plots_readme/grafana_ex3.png)
 #### Experiment #1
 
-#### Experiemnt #2
-### Energy Consumption
+! Here two models are observed that are not used anymore, but for reference:
+![Latency grows with batch size](plots_readme/exp_n2_1.png)
+
+![Energy spent on one token diminishes](plots_readme/exp_n1_2.png)
+
+Here we see that even thoun the time spent on one batch on average increases, but since we are utilizing GPU more efficiently, the energy spent per token is less -> therefore for experiment number 2 the higher batch size will be used aiming at gpu util near 95%.
+
+#### Experiment #2
+
+#### Gollie model evaluation.
+Check prompts_in_all_languages/gollie_prompts.py to see the prompt style - python code with dataclasses as definitions of NER entities.
+10000 examples	lang	F1	Energy, [J]	Energy per token
+GOllie	de	0.6936	74090	0.0304
+	en	0.5540	67978	0.032
+	zh	0.3543	97877	0.03
+	ar	0.0313	130367	0.028
+	bg	0.7037	92794	0.032
+
+### Mistral - multiple prompt styles, multiple languages
+Mistral 7B instruct, de	F1	Energy	energy per token
+pr 1	0.64116	37366	0.0094
+2	0.6415	33510	0.0085
+3	0.6415	3332833328	0.00838
+4	0.6412	33762	0.00863
+5	0.6408	33354	0.0083
+6	0.65035	37394	0.00950
+7	0.6412	33517	0.0086576
+8	0.6543	38772	0.0099
+Mistral 7 B, en			
+1	0.501	35799	0.00996
+2	0.5014	33678	0.00938
+3	0.5006	33840	0.0094
+4	0.5009	34044	0.0094
+5	0.5022	33930	0.0092
+6	0.5075	38481	0.0105
+7	0.5013	33916	0.00944
+8	0.5111	41295	0.0113524
+
+Mistral , pr 6, 10000	F1	Energy	energy per token
+en	0.5075	38481	0.0105
+de	0.65035	37394	0.00950
+bg	0.6603	43978	0.01103
+zh	0.42157	44006	0.01121
+it	0.6453	49956.	0.01178
+
+### Gemma. Will the scale add acccuracy? Comparison 4b-12b models.
+prompt (de, test)	Gemma 3 4b, F1	approx energy, J	 Gemma 3 12b	approx energy
+1	0.6469	42732	0.7231	94769
+2	0.6160	47323	0.721	109245
+3	0.6338	51730	0.707	123031
+4	0.6466	56922	0.7299	146306
+5	0.6807	64628	0.7384	180663
+6	0.7044	76981	0.7455	230148
+7	0.6394	51373	0.7326	131446
+8	0.6557	98408	0.7146	375045
+
+prompt (en, test)- generic	Gemma 3 4b, F1	approx energy, J	 Gemma 3 12b	approx energy
+1	0.5423	40985	0.5761	94061
+2	0.555	46942	0.592	110443.
+3	0.5277	48884	0.5707	117217
+4	0.56	54476.	0.592	143385
+5	0.55	62661	0.5875	168171
+6	0.5667	84169	0.5917	222480
+7	0.54	58585	0.5992	125414
+8	0.53	132303	0.5615	350255
+
+| GEmma 12 b | F1 | Energy | Energy per token |
+| --- | --- | --- | --- |
+| "de"  | 0.7461 | 230681 | 0.04924 |
+| "en"  | 0.592 | 222348 | 0.0480 |
+| "bg"  | 0.7486 | 243379 | 0.050 |
+| "zh"  | 0.568 | 230906 | 0.04973 |
+| "it"  | 0.746 | 254732 | 0.05019 |
+
+	Gemma 4b p6 	Energy, J	energy per token
+en	0.568	84277.5	0.0186
+de	0.69	87128	0.0186
+bg	0.719	91193	0.018
+it	0.73149	94581.3	0.0191
+zh	0.531	85597	0.0185
+
+![Quantized Gemma-3-12b-it W8A8](plots_readme/quantized_gemma12b.png)
+
+#### Towards quantization
+
 
 

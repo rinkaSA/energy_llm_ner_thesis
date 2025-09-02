@@ -15,7 +15,7 @@ METRICS_DIR="${WORKSPACE_DIR}/gpu_metrics_server"
 METRICS_SCRIPT="${WORKSPACE_DIR}/collect_gpu_nvml.py"   
 
 # All languages to evaluate
-languages=("it" "bg" "zh")
+languages=("de" "it" "bg" "zh" "en")
 prompt_styles=(6)
 batch_size=128
 sample_limit=10000

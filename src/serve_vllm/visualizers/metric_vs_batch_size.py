@@ -9,7 +9,7 @@ import math
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DEFAULT_PATTERN = os.path.join('/data/horse/ws/irve354e-energy_llm_ner/energy_ner_llm/qlora-ner/serve_vllm/INFERENCE_TWINER_1-128_awq_mistrall_full/telemetry', "telemetry_B_*.json")
+DEFAULT_PATTERN = os.path.join('./telemetry', "telemetry_B_*.json")
 
 
 def plot_metrics_vs_batch_size(
